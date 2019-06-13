@@ -6,6 +6,7 @@ class GUI:
     def __init__(self, master):
         self.master = master
         master.title('Simple Clicker')
+        master.iconbitmap('icon.ico')
 
         self.label = Label(master, text='Options')
         self.label.pack()
