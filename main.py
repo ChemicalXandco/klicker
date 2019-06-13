@@ -8,29 +8,41 @@ class GUI:
         self.master = master
         master.title('Simple Clicker')
         master.iconbitmap('icon.ico')
+        master.geometry("200x200")
 
-        self.label = Label(master, text='Options')
-        self.label.pack()
+        self.options = LabelFrame(master, text='Options')
+        self.options.pack()
 
-        self.hotkey = Entry(master)
-        self.hotkey.pack()
+        self.hotkeyLabel = Label(self.options, text='Hotkey')
+        vcmd = (master.register(self.limitChar), '%i')
+        self.hotkey = Entry(self.options, validate='key', validatecommand=vcmd, width=5)
+        self.hotkeyLabel.grid(row=0, column=0)
+        self.hotkey.grid(row=0, column=1)
 
-        self.choices = ['left', 'right', 'both']
+        self.choices = ['left', 'right']
         self.choice = StringVar(master)
         self.choice.set(self.choices[0])
-        self.mouseClick = OptionMenu(master, self.choice, *self.choices)
-        self.mouseClick.pack()
+        self.mouseClickLabel = Label(self.options, text='Mouse Button')
+        self.mouseClick = OptionMenu(self.options, self.choice, *self.choices)
+        self.mouseClickLabel.grid(row=1, column=0)
+        self.mouseClick.grid(row=1, column=1)
 
-        self.refreshButton = Button(master, text='Refresh', command=self.readSetting)
-        self.refreshButton.pack()
+        self.refreshButton = Button(self.options, text='Refresh', command=self.readSetting)
+        self.refreshButton.grid(row=2, column=1)
 
-        self.saveButton = Button(master, text='Save', command=self.writeSetting)
-        self.saveButton.pack()
+        self.saveButton = Button(self.options, text='Save', command=self.writeSetting)
+        self.saveButton.grid(row=3, column=1)
 
-        self.error = Label(master, text='', fg='#ff0000')
+        self.error = Label(master, text='', fg='#ff0000', wraplengt=master.winfo_width())
         self.error.pack()
 
         self.readSetting()
+
+    def limitChar(self, i):
+        if i == '1': #if the index is 1 it means the string will be 2 characters long
+            return False
+        else:
+            return True
 
     def readSetting(self):
         f = open('config.ini', 'r')
@@ -47,22 +59,32 @@ class GUI:
 
 root = Tk()
 gui = GUI(root)
-try:
-    click = False
-    currentButton = None
-    while True:
-        if keyboard.is_pressed(gui.hotkey.get()):
-            if click:
-                pyautogui.mouseUp(button=currentButton)
-                click = False
-            else:
-                currentButton = gui.choice.get()
-                pyautogui.mouseDown(button=currentButton)
-                click = True
-            sleep(1)
+keys = [i[0] for i in keyboard._winkeyboard.official_virtual_keys.values()]
+click = False
+currentButton = None
+warning = 'Cannot activate autoclick when this GUI is in focus'
+while True:
+    try:
+        if root.focus_get() != None:
+            if gui.error.cget('text') != warning:
+                gui.error.config(text=warning)
+        else:
+            if gui.error.cget('text') == warning:
+                gui.error.config(text='')
+            if gui.hotkey.get() in keys:
+                if keyboard.is_pressed(gui.hotkey.get()):
+                    if click:
+                        pyautogui.mouseUp(button=currentButton)
+                        click = False
+                    else:
+                        currentButton = gui.choice.get()
+                        pyautogui.mouseDown(button=currentButton)
+                        click = True
+                    sleep(1)
         root.update_idletasks()
         root.update()
+        sleep(0.01)#minimise CPU usage
+    except Exception as e:
+        gui.error.config(text=e)
     
-except Exception as e:
-    gui.error.config(text=e)
     
