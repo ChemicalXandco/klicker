@@ -1,5 +1,6 @@
 import pyautogui
 import keyboard
+from time import sleep
 from tkinter import *
 
 class GUI:
@@ -47,7 +48,18 @@ class GUI:
 root = Tk()
 gui = GUI(root)
 try:
+    click = False
+    currentButton = None
     while True:
+        if keyboard.is_pressed(gui.hotkey.get()):
+            if click:
+                pyautogui.mouseUp(button=currentButton)
+                click = False
+            else:
+                currentButton = gui.choice.get()
+                pyautogui.mouseDown(button=currentButton)
+                click = True
+            sleep(1)
         root.update_idletasks()
         root.update()
     
