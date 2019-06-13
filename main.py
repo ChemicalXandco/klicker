@@ -28,8 +28,10 @@ class GUI:
         self.saveButton = Button(master, text='Save', command=self.writeSetting)
         self.saveButton.pack()
 
-        self.closeButton = Button(master, text='Close', command=master.quit)
-        self.closeButton.pack()
+        self.error = Label(master, text='', fg='#ff0000')
+        self.error.pack()
+
+        self.readSetting()
 
     def readSetting(self):
         f = open('config.ini', 'r')
@@ -49,4 +51,11 @@ class GUI:
 
 root = Tk()
 gui = GUI(root)
-root.mainloop()
+try:
+    while True:
+        root.update_idletasks()
+        root.update()
+    
+except Exception as e:
+    gui.error.config(text=e)
+    
