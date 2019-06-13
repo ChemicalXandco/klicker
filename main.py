@@ -25,6 +25,9 @@ class GUI:
         self.refreshButton = Button(master, text='Refresh', command=self.readSetting)
         self.refreshButton.pack()
 
+        self.saveButton = Button(master, text='Save', command=self.writeSetting)
+        self.saveButton.pack()
+
         self.closeButton = Button(master, text='Close', command=master.quit)
         self.closeButton.pack()
 
@@ -36,6 +39,13 @@ class GUI:
         self.key2.insert(0, f.readline().strip())
         self.choice.set(f.readline().strip())
         f.close
+
+    def writeSetting(self):
+        f = open('config.ini', 'w')
+        f.write(self.key1.get()+'\n')
+        f.write(self.key2.get()+'\n')
+        f.write(self.choice.get())
+        f.close()
 
 root = Tk()
 gui = GUI(root)
