@@ -10,11 +10,8 @@ class GUI:
         self.label = Label(master, text='Options')
         self.label.pack()
 
-        self.key1 = Entry(master)
-        self.key1.pack()
-
-        self.key2 = Entry(master)
-        self.key2.pack()
+        self.hotkey = Entry(master)
+        self.hotkey.pack()
 
         self.choices = ['left', 'right', 'both']
         self.choice = StringVar(master)
@@ -35,17 +32,14 @@ class GUI:
 
     def readSetting(self):
         f = open('config.ini', 'r')
-        self.key1.delete(0, END)
-        self.key2.delete(0, END)
-        self.key1.insert(0, f.readline().strip())
-        self.key2.insert(0, f.readline().strip())
+        self.hotkey.delete(0, END)
+        self.hotkey.insert(0, f.readline().strip())
         self.choice.set(f.readline().strip())
         f.close
 
     def writeSetting(self):
         f = open('config.ini', 'w')
-        f.write(self.key1.get()+'\n')
-        f.write(self.key2.get()+'\n')
+        f.write(self.hotkey.get()+'\n')
         f.write(self.choice.get())
         f.close()
 
