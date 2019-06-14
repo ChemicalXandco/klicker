@@ -15,7 +15,7 @@ class GUI:
 
         self.hotkeyLabel = Label(self.options, text='Hotkey')
         vcmd = (master.register(self.limitChar), '%i')
-        self.hotkey = Entry(self.options, validate='key', validatecommand=vcmd, width=5)
+        self.hotkey = Entry(self.options, validate='key', validatecommand=vcmd, width=2)
         self.hotkeyLabel.grid(row=0, column=0)
         self.hotkey.grid(row=0, column=1)
 
@@ -66,8 +66,7 @@ warning = 'Cannot activate autoclick when this GUI is in focus'
 while True:
     try:
         if root.focus_get() != None:
-            if gui.error.cget('text') != warning:
-                gui.error.config(text=warning)
+            gui.error.config(text=warning)
         else:
             if gui.error.cget('text') == warning:
                 gui.error.config(text='')
