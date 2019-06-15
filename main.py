@@ -1,8 +1,6 @@
-import pyautogui
-import keyboard
+import sys, pyautogui, keyboard
 from time import sleep
 from tkinter import *
-import sys
 
 class GUI:
     def __init__(self, master):
@@ -84,9 +82,10 @@ while True:
         root.update_idletasks()
         root.update()
         sleep(0.01)#minimise CPU usage
-    except TclError:
-        sys.exit()
     except Exception as e:
-        gui.error.config(text=e)
+        try:
+            gui.error.config(text=e)
+        except TclError:
+            sys.exit()
     
     
