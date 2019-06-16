@@ -4,4 +4,4 @@ from options import *
 
 optDict = {'scroll': scroll}
 
-optList = list(optDict.values())
+optList = list(optDict.keys())
