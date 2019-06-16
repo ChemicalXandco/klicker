@@ -26,10 +26,10 @@ class GUI:
         self.mouseClickLabel.grid(row=1, column=0)
         self.mouseClick.grid(row=1, column=1)
 
-        self.refreshButton = Button(self.options, text='Refresh', command=self.readSetting)
+        self.refreshButton = Button(self.options, text='Refresh Options From File', command=self.readSetting)
         self.refreshButton.grid(row=2, column=1)
 
-        self.saveButton = Button(self.options, text='Save', command=self.writeSetting)
+        self.saveButton = Button(self.options, text='Save Options To File', command=self.writeSetting)
         self.saveButton.grid(row=3, column=1)
 
         self.error = Label(master, text='', fg='#ff0000', wraplengt=master.winfo_width())
