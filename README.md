@@ -1,4 +1,4 @@
-# ![icon](icon.ico =32x32) Simple Clicker
+# <img src="icon.ico" width="32" height="32"> Simple Clicker
 
 # Download the latest binary [here](https://github.com/ChemicalXandco/simple-clicker/releases)
 
