@@ -1,3 +1,7 @@
 __all__ = ['scroll']
+
 from options import *
-options = [scroll]
+
+optDict = {'scroll': scroll}
+
+optList = list(optDict.values())
