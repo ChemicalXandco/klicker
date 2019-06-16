@@ -1,4 +1,4 @@
-# ![icon](icon.ico) Simple Clicker
+# ![icon](icon.ico =32x32) Simple Clicker
 
 # Download the latest binary [here](https://github.com/ChemicalXandco/simple-clicker/releases)
 
