@@ -1,6 +1,6 @@
 from tkinter import *
 
-class Widget
+class Widget:
     def __init__(self, parent, spacing):
         self.parent = parent
 
