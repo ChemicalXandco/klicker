@@ -1,7 +1,7 @@
-__all__ = ['scroll']
+__all__ = ['holdClick', 'scroll']
 
 from options import *
 
-optDict = {'scroll': scroll}
+optDict = {'holdClick': holdClick, 'scroll': scroll}
 
 optList = list(optDict.keys())
