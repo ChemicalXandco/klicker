@@ -1,6 +1,4 @@
-__all__ = ['holdClick', 'scroll']
-
-from options import *
+from options import holdClick, scroll
 
 optDict = {'holdClick': holdClick, 'scroll': scroll}
 
