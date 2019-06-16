@@ -2,6 +2,8 @@ import sys, pyautogui, keyboard
 from time import sleep
 from tkinter import *
 
+import options
+
 class GUI:
     def __init__(self, master):
         self.master = master
