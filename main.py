@@ -20,7 +20,7 @@ class GUI:
         self.options = LabelFrame(master, text='Options')
         self.options.grid(row=1, column=0, columnspan=2)
 
-        self.optionWrapper(self.options, 'holdClick').pack()
+        OptionWrapper(self.options, 'holdClick')
 
         self.refreshButton = Button(master, text='Refresh Options From File', command=self.readSetting)
         self.refreshButton.grid(row=2, column=0, columnspan=2)
@@ -39,16 +39,6 @@ class GUI:
         else:
             return True
 
-    def optionWrapper(self, master, option):
-        frame = LabelFrame(master, text=option)
-
-        deleteButton = Button(frame, text='❌', command=lambda: frame.destroy())
-        deleteButton.grid(row=0, column=1)
-
-        options.optDict.get(option).Widget(frame, 2)
-        
-        return frame
-
     def readSetting(self):
         f = open('config.ini', 'r')
         self.hotkey.delete(0, END)
@@ -59,6 +49,17 @@ class GUI:
         f = open('config.ini', 'w')
         f.write(self.hotkey.get()+'\n')
         f.close()
+
+class OptionWrapper:
+    def __init__(self, master, option):
+        frame = LabelFrame(master, text=option)
+
+        deleteButton = Button(frame, text='❌', command=lambda: frame.destroy())
+        deleteButton.grid(row=0, column=1)
+
+        options.optDict.get(option).Widget(frame, 2)
+        
+        frame.pack()
 
 root = Tk()
 gui = GUI(root)
