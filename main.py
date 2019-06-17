@@ -20,7 +20,9 @@ class GUI:
         self.options = LabelFrame(master, text='Options')
         self.options.grid(row=1, column=0, columnspan=2)
 
-        OptionWrapper(self.options, 'holdClick')
+        self.optionWidgets = []
+
+        self.optionWidgets.append(OptionWrapper(self.options, 'holdClick'))
 
         self.refreshButton = Button(master, text='Refresh Options From File', command=self.readSetting)
         self.refreshButton.grid(row=2, column=0, columnspan=2)
@@ -55,9 +57,9 @@ class OptionWrapper:
         frame = LabelFrame(master, text=option)
 
         deleteButton = Button(frame, text='❌', command=lambda: frame.destroy())
-        deleteButton.grid(row=0, column=1)
+        deleteButton.grid(row=0, column=0)
 
-        options.optDict.get(option).Widget(frame, 2)
+        options.optDict.get(option).Widget(frame, 1)
         
         frame.pack()
 
