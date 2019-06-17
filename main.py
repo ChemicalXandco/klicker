@@ -17,21 +17,25 @@ class GUI:
         self.hotkeyLabel.grid(row=0, column=0)
         self.hotkey.grid(row=0, column=1)
 
+        self.addOption = StringVar(master)
+        self.addOption.set('➕')
+        self.addOption.trace('w', self.handleAddOption)
+        self.addOptions = OptionMenu(master, self.addOption, *options.optList)
+        self.addOptions.grid(row=1, column=1)
+        
         self.options = LabelFrame(master, text='Options')
-        self.options.grid(row=1, column=0, columnspan=2)
+        self.options.grid(row=2, column=0, columnspan=2)
 
         self.optionWidgets = []
 
-        self.optionWidgets.append(OptionWrapper(self.options, 'holdClick'))
-
         self.refreshButton = Button(master, text='Refresh Options From File', command=self.readSetting)
-        self.refreshButton.grid(row=2, column=0, columnspan=2)
+        self.refreshButton.grid(row=3, column=0, columnspan=2)
 
         self.saveButton = Button(master, text='Save Options To File', command=self.writeSetting)
-        self.saveButton.grid(row=3, column=0, columnspan=2)
+        self.saveButton.grid(row=4, column=0, columnspan=2)
 
         self.error = Label(master, text='', fg='#ff0000', wraplengt=master.winfo_width())
-        self.error.grid(row=4, column=0, columnspan=2)
+        self.error.grid(row=5, column=0, columnspan=2)
 
         self.readSetting()
 
@@ -40,6 +44,10 @@ class GUI:
             return False
         else:
             return True
+
+    def handleAddOption(self, *args):
+        self.optionWidgets.append(OptionWrapper(self.options, self.addOption.get()))
+        self.addOption.set('➕')
 
     def readSetting(self):
         f = open('config.ini', 'r')
