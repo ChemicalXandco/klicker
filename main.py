@@ -61,14 +61,20 @@ class GUI:
 
 class OptionWrapper:
     def __init__(self, master, option):
-        frame = LabelFrame(master, text=option)
+        self.frame = LabelFrame(master, text=option)
 
-        deleteButton = Button(frame, text='❌', command=lambda: frame.destroy())
-        deleteButton.grid(row=0, column=0)
+        self.deleteButton = Button(self.frame, text='❌', command=self.findIdAndDestroy)
+        self.deleteButton.grid(row=0, column=0)
 
-        options.optDict.get(option).Widget(frame, 1)
+        options.optDict.get(option).Widget(self.frame, 1)
         
-        frame.pack()
+        self.frame.pack()
+
+    def findIdAndDestroy(self):
+        for i in gui.optionWidgets:
+            if id(i) == id(self):
+                gui.optionWidgets.remove(i)
+        self.frame.destroy()
 
 root = Tk()
 gui = GUI(root)
