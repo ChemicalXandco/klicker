@@ -19,8 +19,7 @@ class GUI:
 
         self.addOption = StringVar(master)
         self.addOption.set('➕')
-        self.addOption.trace('w', self.handleAddOption)
-        self.addOptions = OptionMenu(master, self.addOption, *options.optList)
+        self.addOptions = OptionMenu(master, self.addOption, *options.optList, command=self.handleAddOption)
         self.addOptions.grid(row=1, column=1)
         
         self.options = LabelFrame(master, text='Options')
