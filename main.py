@@ -45,7 +45,10 @@ class GUI:
             return True
 
     def handleAddOption(self, *args):
-        self.optionWidgets.append(OptionWrapper(self.options, self.addOption.get()))
+        if len(self.optionWidgets) < 10:
+            self.optionWidgets.append(OptionWrapper(self.options, self.addOption.get()))
+        else:
+            self.error.config(text='Too many options')
         self.addOption.set('➕')
 
     def readSetting(self):
@@ -82,13 +85,17 @@ keys = [i[0] for i in keyboard._winkeyboard.official_virtual_keys.values()]
 click = False
 currentButton = None
 warning = 'Cannot activate autoclick when this GUI is in focus'
+focus = False
 while True:
     try:
         if root.focus_get() != None:
-            gui.error.config(text=warning)
+            if not focus:
+                gui.error.config(text=warning)
+            focus = True
         else:
             if gui.error.cget('text') == warning:
                 gui.error.config(text='')
+                focus = False
             if gui.hotkey.get() in keys:
                 if keyboard.is_pressed(gui.hotkey.get()):
                     if click:
