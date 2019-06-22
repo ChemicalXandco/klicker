@@ -93,9 +93,9 @@ while True:
                 gui.error.config(text=warning)
             focus = True
         else:
+            focus = False
             if gui.error.cget('text') == warning:
-                gui.error.config(text='')
-                focus = False
+                gui.error.config(text='') 
             if gui.hotkey.get() in keys:
                 if keyboard.is_pressed(gui.hotkey.get()):
                     if click:
