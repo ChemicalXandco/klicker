@@ -71,7 +71,7 @@ class OptionWrapper:
 
         self.widget = options.optDict.get(option).Widget(self.frame, 1)
         
-        self.frame.pack()
+        self.frame.pack(anchor=W)
 
     def findIdAndDestroy(self):
         for i in gui.optionWidgets:
