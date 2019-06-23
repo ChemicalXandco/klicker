@@ -1,4 +1,5 @@
 from tkinter import *
+import time, pyautogui
 
 class Widget:
     def __init__(self, parent, spacing):
@@ -18,3 +19,17 @@ class Widget:
     
         self.labelThree = Label(parent, text='"clicks" (negative number will scroll down)')
         self.labelThree.grid(row=0, column=spacing+4)
+
+    def start(self):
+        self.timer = time.time()
+        self.period = float(self.seconds.get())
+        self.amount = int(self.clicks.get())
+
+    def stop(self):
+        return
+
+    def update(self):
+        timed = time.time()-self.timer
+        if timed >= self.period:
+            pyautogui.scroll(self.amount)
+            self.timer = time.time()

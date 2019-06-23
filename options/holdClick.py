@@ -1,4 +1,5 @@
 from tkinter import *
+import pyautogui
 
 class Widget:
     def __init__(self, parent, spacing):
@@ -15,3 +16,13 @@ class Widget:
 
         self.labelTwo = Label(parent, text='mouse button')
         self.labelTwo.grid(row=0, column=spacing+2)
+
+    def start(self):
+        self.currentButton = self.choice.get()
+        pyautogui.mouseDown(button=self.currentButton)
+
+    def stop(self):
+        pyautogui.mouseUp(button=self.currentButton)
+
+    def update(self):
+        return

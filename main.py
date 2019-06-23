@@ -1,4 +1,4 @@
-import sys, pyautogui, keyboard
+import sys, keyboard
 from time import sleep
 from tkinter import *
 
@@ -69,7 +69,7 @@ class OptionWrapper:
         self.deleteButton = Button(self.frame, text='❌', command=self.findIdAndDestroy)
         self.deleteButton.grid(row=0, column=0)
 
-        options.optDict.get(option).Widget(self.frame, 1)
+        self.widget = options.optDict.get(option).Widget(self.frame, 1)
         
         self.frame.pack()
 
@@ -82,7 +82,7 @@ class OptionWrapper:
 root = Tk()
 gui = GUI(root)
 keys = [i[0] for i in keyboard._winkeyboard.official_virtual_keys.values()]
-click = False
+activated = False
 currentButton = None
 warning = 'Cannot activate autoclick when this GUI is in focus'
 focus = False
@@ -98,20 +98,26 @@ while True:
                 gui.error.config(text='') 
             if gui.hotkey.get() in keys:
                 if keyboard.is_pressed(gui.hotkey.get()):
-                    if click:
-                        pyautogui.mouseUp(button=currentButton)
-                        click = False
+                    if activated:
+                        for o in gui.optionWidgets:
+                            o.widget.stop()
+                        activated = False
                     else:
-                        currentButton = gui.choice.get()
-                        pyautogui.mouseDown(button=currentButton)
-                        click = True
+                        activated = True
+                        for o in gui.optionWidgets:
+                            o.widget.start()
                     sleep(1)
+        if activated:
+            for o in gui.optionWidgets:
+                o.widget.update()
         root.update_idletasks()
         root.update()
         sleep(0.01)#minimise CPU usage
     except Exception as e:
         try:
             gui.error.config(text=e)
+            root.update_idletasks()
+            root.update()
         except TclError:
             sys.exit()
     
