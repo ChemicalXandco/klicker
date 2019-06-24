@@ -14,4 +14,6 @@ in order to start the application, run `main.py`
 # Usage
 
 a hotkey is setup to trigger the clicker, default is `x`.
-the settings are stored in the file `config.ini` and can be saved and reloaded using the `Save Options To File` and `Refresh Options From File` buttons respectively
+the hotkey setting is stored in the file `config.ini` and can be saved and reloaded using the `Save Options To File` and `Refresh Options From File` buttons respectively
+
+options can be added by clicking on the drop-down menu and removed by clicking on the cross next to the option
