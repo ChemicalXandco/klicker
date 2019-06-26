@@ -9,7 +9,6 @@ class GUI:
         self.master = master
         master.title('Simple Clicker')
         master.iconbitmap('icon.ico')
-        master.geometry("200x200")
 
         self.hotkeyLabel = Label(master, text='Hotkey')
         vcmd = (master.register(self.limitChar), '%i')
