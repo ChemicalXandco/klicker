@@ -3,6 +3,7 @@ from time import sleep
 from tkinter import *
 
 import options
+from profile_manager import Profiles as profileManager
 
 class GUI:
     def __init__(self, master):
@@ -16,24 +17,37 @@ class GUI:
         self.hotkeyLabel.grid(row=0, column=0)
         self.hotkey.grid(row=0, column=1)
 
+        self.profileLabel = Label(master, text='Set Profile')
+        self.profileLabel.grid(row=1, column=0)
+
+        self.profile = StringVar(master)
+        self.profiles = list(profileManager.read().keys())
+        if self.profiles == []:
+            self.profiles = [None]
+        self.setProfile = OptionMenu(master, self.profile, *self.profiles)
+        self.setProfile.grid(row=1, column=1)
+
+        self.addOptionLabel = Label(master, text='Add Option')
+        self.addOptionLabel.grid(row=2, column=0)
+
         self.addOption = StringVar(master)
         self.addOption.set('➕')
         self.addOptions = OptionMenu(master, self.addOption, *options.optList, command=self.handleAddOption)
-        self.addOptions.grid(row=1, column=1)
+        self.addOptions.grid(row=2, column=1)
         
         self.options = LabelFrame(master, text='Options')
-        self.options.grid(row=2, column=0, columnspan=2)
+        self.options.grid(row=3, column=0, columnspan=2)
 
         self.optionWidgets = []
 
         self.refreshButton = Button(master, text='Refresh Options From File', command=self.readSetting)
-        self.refreshButton.grid(row=3, column=0, columnspan=2)
+        self.refreshButton.grid(row=4, column=0, columnspan=2)
 
         self.saveButton = Button(master, text='Save Options To File', command=self.writeSetting)
-        self.saveButton.grid(row=4, column=0, columnspan=2)
+        self.saveButton.grid(row=5, column=0, columnspan=2)
 
         self.error = Label(master, text='', fg='#ff0000', wraplengt=master.winfo_width())
-        self.error.grid(row=5, column=0, columnspan=2)
+        self.error.grid(row=6, column=0, columnspan=2)
 
         self.readSetting()
 

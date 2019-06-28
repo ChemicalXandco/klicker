@@ -36,3 +36,9 @@ class Widget:
         if timed >= self.period:
             pyautogui.scroll(self.amount)
             self.timer = time.time()
+
+    def returnSettings(self):
+        settings = {}
+        settings['time'] = self.seconds.get()
+        settings['clicks'] = self.clicks.get()
+        return settings

@@ -26,3 +26,8 @@ class Widget:
 
     def update(self):
         return
+
+    def returnSettings(self):
+        settings = {}
+        settings['mouseButton'] = self.choice.get()
+        return settings

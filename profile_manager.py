@@ -17,7 +17,7 @@ class Profiles:
                  
 
         file = open('profiles.json', 'w')
-        json.dump(changes, file)
+        json.dump(changes, file, indent=4)
         file.close()
 
     def read():
