@@ -31,3 +31,7 @@ class Widget:
         settings = {}
         settings['mouseButton'] = self.choice.get()
         return settings
+
+    def addSettings(self, settings):
+        self.choice.delete(0,END)
+        self.choice.insert(0, settings['mouseButton'])

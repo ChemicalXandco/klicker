@@ -3,7 +3,7 @@ from time import sleep
 from tkinter import *
 
 import options
-from profile_manager import Profiles as profileManager
+import profile_manager as profileManager
 
 class GUI:
     def __init__(self, master):
@@ -24,7 +24,7 @@ class GUI:
         self.profiles = list(profileManager.read().keys())
         if self.profiles == []:
             self.profiles = [None]
-        self.setProfile = OptionMenu(master, self.profile, *self.profiles)
+        self.setProfile = OptionMenu(master, self.profile, *self.profiles, command=self.handleSetProfile)
         self.setProfile.grid(row=1, column=1)
 
         self.addOptionLabel = Label(master, text='Add Option')
@@ -56,6 +56,13 @@ class GUI:
             return False
         else:
             return True
+
+    def handleSetProfile(self, *args):
+        profile = self.profile.get()
+        profiles = profileManager.read()
+        for option, attributes in profiles[profile].items():
+            self.optionWidgets.append(OptionWrapper(self.options, option))
+            self.optionWidgets[-1].widget.addSettings(attributes)
 
     def handleAddOption(self, *args):
         if len(self.optionWidgets) < 10:

@@ -42,3 +42,9 @@ class Widget:
         settings['time'] = self.seconds.get()
         settings['clicks'] = self.clicks.get()
         return settings
+
+    def addSettings(self, settings):
+        self.seconds.delete(0,END)
+        self.seconds.insert(0, settings['time'])
+        self.clicks.delete(0,END)
+        self.clicks.insert(0, settings['clicks'])
