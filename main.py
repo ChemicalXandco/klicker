@@ -11,43 +11,58 @@ class GUI:
         master.title('Simple Clicker')
         master.iconbitmap('icon.ico')
 
-        self.hotkeyLabel = Label(master, text='Hotkey')
-        vcmd = (master.register(self.limitChar), '%i')
-        self.hotkey = Entry(master, validate='key', validatecommand=vcmd, width=2)
-        self.hotkeyLabel.grid(row=0, column=0)
-        self.hotkey.grid(row=0, column=1)
+        self.status = Label(master, text='Inactive', fg='#ff0000')
+        self.status.grid(row=0, column=0, columnspan=2)
 
-        self.profileLabel = Label(master, text='Set Profile')
+        self.config = LabelFrame(master, text='Configuration')
+        self.config.grid(row=1, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+
+        self.hotkeyFrame = Frame(self.config)
+        self.hotkeyFrame.grid(row=0, column=0, sticky=W)
+
+        self.hotkeyLabel = Label(self.hotkeyFrame, text='Hotkey')
+        vcmd = (master.register(self.limitChar), '%i')
+        self.hotkey = Entry(self.hotkeyFrame, validate='key', validatecommand=vcmd, width=2)
+        self.hotkeyLabel.grid(row=0, column=0, sticky=E)
+        self.hotkey.grid(row=0, column=1, sticky=W)
+
+        self.profiles = LabelFrame(self.config, text='Profile')
+        self.profiles.grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+
+        self.profileLabel = Label(self.profiles, text='Set Profile')
         self.profileLabel.grid(row=1, column=0)
 
-        self.addProfile = Button(master, text='➕', command=self.handleAddProfile)
+        self.addProfile = Button(self.profiles, text='➕', command=self.handleAddProfile)
         self.addProfile.grid(row=1, column=3)
 
         self.profile = StringVar(master)
-        self.setProfile = OptionMenu(master, self.profile, *self.profileList(), command=self.handleSetProfile)
+        self.setProfile = OptionMenu(self.profiles, self.profile, *self.profileList(), command=self.handleSetProfile)
         self.setProfile.grid(row=1, column=1)
 
-        self.delProfile = Button(master, text='❌', command=self.handleDelProfile)
+        self.delProfile = Button(self.profiles, text='❌', command=self.handleDelProfile)
         self.delProfile.grid(row=1, column=2)
 
-        self.addOptionLabel = Label(master, text='Add Option')
-        self.addOptionLabel.grid(row=2, column=0)
+        self.refreshButton = Button(self.config, text='Refresh Configuration', command=self.readSetting)
+        self.refreshButton.grid(row=3, column=0)
+
+        self.saveButton = Button(self.config, text='Save Configuration', command=self.writeSetting)
+        self.saveButton.grid(row=3, column=1)
+
+        self.addOptionFrame = Frame(master)
+        self.addOptionFrame.grid(row=2, column=0, sticky=W)
+
+        self.addOptionLabel = Label(self.addOptionFrame, text='Add Option')
+        self.addOptionLabel.grid(row=0, column=0, sticky=E)
 
         self.addOption = StringVar(master)
         self.addOption.set('➕')
-        self.addOptions = OptionMenu(master, self.addOption, *options.optList, command=self.handleAddOption)
-        self.addOptions.grid(row=2, column=1)
+        self.addOptions = OptionMenu(self.addOptionFrame, self.addOption, *options.optList, command=self.handleAddOption)
+        self.addOptions.grid(row=0, column=1, sticky=W)
         
         self.options = LabelFrame(master, text='Options')
-        self.options.grid(row=3, column=0, columnspan=2)
+        self.options.grid(row=3, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.optionWidgets = []
-
-        self.refreshButton = Button(master, text='Refresh Options From File', command=self.readSetting)
-        self.refreshButton.grid(row=4, column=0, columnspan=2)
-
-        self.saveButton = Button(master, text='Save Options To File', command=self.writeSetting)
-        self.saveButton.grid(row=5, column=0, columnspan=2)
 
         self.error = Label(master, text='', fg='#ff0000', wraplengt=master.winfo_width())
         self.error.grid(row=6, column=0, columnspan=2)
@@ -101,6 +116,10 @@ class GUI:
             self.optionWidgets.append(OptionWrapper(self.options, option.split('-')[0]))
             self.optionWidgets[-1].widget.addSettings(attributes)
 
+    def menuCommand(self, value):
+        self.profile.set(value)
+        self.handleSetProfile()
+
     def refreshProfiles(self):
         profiles = self.profileList()
         
@@ -108,12 +127,12 @@ class GUI:
         menu.delete(0, END)
         for string in profiles:
             menu.add_command(label=string, 
-                             command=lambda value=string: self.profile.set(value))
-        self.profile.set('')
+                             command=lambda value=string: self.menuCommand(value))
 
     def handleDelProfile(self):
         profileManager.remove(self.profile.get())
         self.refreshProfiles()
+        self.profile.set('')
 
     def handleAddOption(self, *args):
         if len(self.optionWidgets) < 10:
@@ -127,6 +146,7 @@ class GUI:
         self.hotkey.delete(0, END)
         self.hotkey.insert(0, f.readline().strip())
         f.close
+        self.refreshProfiles()
 
     def writeSetting(self):
         f = open('config.ini', 'w')
@@ -143,7 +163,7 @@ class OptionWrapper:
         self.name = option
         self.widget = options.optDict.get(option).Widget(self.frame, 1)
         
-        self.frame.pack(anchor=W)
+        self.frame.pack(anchor=W, padx=5, pady=5)
 
     def findIdAndDestroy(self):
         for i in gui.optionWidgets:
@@ -173,9 +193,11 @@ while True:
                     if activated:
                         for o in gui.optionWidgets:
                             o.widget.stop()
+                        gui.status.config(text='Inactive', fg='#ff0000')
                         activated = False
                     else:
                         activated = True
+                        gui.status.config(text='Active', fg='#00ff00')
                         for o in gui.optionWidgets:
                             o.widget.start()
                     sleep(1)
