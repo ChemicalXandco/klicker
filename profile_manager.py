@@ -10,11 +10,11 @@ def write(profileName, profile):
     changes = read()
 
     changes[profileName] = {}
-    
-    for option, attributes in profile.items():
-        changes[profileName][option] = {}
+
+    for optionName, attributes in profile.items():
+        changes[profileName][optionName] = {}
         for attribute, value in attributes.items():
-            changes[profileName][option][attribute] = value
+            changes[profileName][optionName][attribute] = value
     
     file = open('profiles.json', 'w')
     json.dump(changes, file, indent=4)

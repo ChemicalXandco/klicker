@@ -20,12 +20,15 @@ class GUI:
         self.profileLabel = Label(master, text='Set Profile')
         self.profileLabel.grid(row=1, column=0)
 
+        self.addProfile = Button(master, text='➕', command=self.handleAddProfile)
+        self.addProfile.grid(row=1, column=3)
+
         self.profile = StringVar(master)
-        self.profiles = list(profileManager.read().keys())
-        if self.profiles == []:
-            self.profiles = [None]
-        self.setProfile = OptionMenu(master, self.profile, *self.profiles, command=self.handleSetProfile)
+        self.setProfile = OptionMenu(master, self.profile, *self.profileList(), command=self.handleSetProfile)
         self.setProfile.grid(row=1, column=1)
+
+        self.delProfile = Button(master, text='❌', command=self.handleDelProfile)
+        self.delProfile.grid(row=1, column=2)
 
         self.addOptionLabel = Label(master, text='Add Option')
         self.addOptionLabel.grid(row=2, column=0)
@@ -57,12 +60,60 @@ class GUI:
         else:
             return True
 
+    def profileList(self):
+        profiles = list(profileManager.read().keys())
+        if profiles == []:
+            profiles = [None]
+        return profiles
+
+    def handleAddProfile(self):
+        self.childWindow = Toplevel(self.master)
+        self.childWindow.title('Name Profile')
+        self.childWindow.iconbitmap('icon.ico')
+        self.childWindow.geometry('250x50')
+        self.newProfileName = Entry(self.childWindow)
+        self.newProfileName.pack(fill=X, expand=YES)
+        createButton = Button(self.childWindow, text="Create", command=self.handleCreateProfile)
+        createButton.pack(fill=X, expand=YES)
+
+    def handleCreateProfile(self):
+        profile = {}
+        occurrences = {}
+        for o in self.optionWidgets:
+            if not o.name in occurrences:
+                occurrences[o.name] = 0
+            else:
+                occurrences[o.name] += 1
+            optionName = '{}-{}'.format(o.name, occurrences[o.name])
+            profile[optionName] = o.widget.returnSettings()
+        profileManager.write(self.newProfileName.get(), profile)
+        self.childWindow.destroy()
+        self.refreshProfiles()
+
     def handleSetProfile(self, *args):
+        while self.optionWidgets != []:
+            for o in self.optionWidgets:
+                o.findIdAndDestroy()
+        
         profile = self.profile.get()
         profiles = profileManager.read()
         for option, attributes in profiles[profile].items():
-            self.optionWidgets.append(OptionWrapper(self.options, option))
+            self.optionWidgets.append(OptionWrapper(self.options, option.split('-')[0]))
             self.optionWidgets[-1].widget.addSettings(attributes)
+
+    def refreshProfiles(self):
+        profiles = self.profileList()
+        
+        menu = self.setProfile['menu']
+        menu.delete(0, END)
+        for string in profiles:
+            menu.add_command(label=string, 
+                             command=lambda value=string: self.profile.set(value))
+        self.profile.set('')
+
+    def handleDelProfile(self):
+        profileManager.remove(self.profile.get())
+        self.refreshProfiles()
 
     def handleAddOption(self, *args):
         if len(self.optionWidgets) < 10:
@@ -89,6 +140,7 @@ class OptionWrapper:
         self.deleteButton = Button(self.frame, text='❌', command=self.findIdAndDestroy)
         self.deleteButton.grid(row=0, column=0)
 
+        self.name = option
         self.widget = options.optDict.get(option).Widget(self.frame, 1)
         
         self.frame.pack(anchor=W)
