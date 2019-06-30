@@ -102,8 +102,10 @@ class GUI:
             optionName = '{}-{}'.format(o.name, occurrences[o.name])
             profile[optionName] = o.widget.returnSettings()
         profileManager.write(self.newProfileName.get(), profile)
-        self.childWindow.destroy()
         self.refreshProfiles()
+        self.profile.set(self.newProfileName.get())
+        self.childWindow.destroy()
+        self.handleSetProfile()
 
     def handleSetProfile(self, *args):
         while self.optionWidgets != []:
