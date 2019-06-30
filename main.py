@@ -33,14 +33,14 @@ class GUI:
         self.profileLabel.grid(row=1, column=0)
 
         self.addProfile = Button(self.profiles, text='➕', command=self.handleAddProfile)
-        self.addProfile.grid(row=1, column=3)
+        self.addProfile.grid(row=1, column=2)
 
         self.profile = StringVar(master)
         self.setProfile = OptionMenu(self.profiles, self.profile, *self.profileList(), command=self.handleSetProfile)
         self.setProfile.grid(row=1, column=1)
 
-        self.delProfile = Button(self.profiles, text='❌', command=self.handleDelProfile)
-        self.delProfile.grid(row=1, column=2)
+        self.delProfile = Button(self.profiles, text='❌', command=self.handleConfirmDelProfile)
+        self.delProfile.grid(row=1, column=3)
 
         self.refreshButton = Button(self.config, text='Refresh Configuration', command=self.readSetting)
         self.refreshButton.grid(row=3, column=0)
@@ -129,7 +129,18 @@ class GUI:
             menu.add_command(label=string, 
                              command=lambda value=string: self.menuCommand(value))
 
+    def handleConfirmDelProfile(self):
+        self.childWindow = Toplevel(self.master)
+        self.childWindow.title('Confirm Delete Profile')
+        self.childWindow.iconbitmap('icon.ico')
+        self.childWindow.geometry('300x50')
+        label = Label(self.childWindow, text='Delete Profile "{}"?'.format(self.profile.get()))
+        label.pack(fill=X, expand=YES)
+        createButton = Button(self.childWindow, text="Delete", command=self.handleDelProfile)
+        createButton.pack(fill=X, expand=YES)
+
     def handleDelProfile(self):
+        self.childWindow.destroy()
         profileManager.remove(self.profile.get())
         self.refreshProfiles()
         self.profile.set('')
