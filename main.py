@@ -145,12 +145,16 @@ class GUI:
         f = open('config.ini', 'r')
         self.hotkey.delete(0, END)
         self.hotkey.insert(0, f.readline().strip())
+        self.profile.set(f.readline().strip())
+        if self.profile.get() in self.profileList():
+            self.handleSetProfile()
         f.close
         self.refreshProfiles()
 
     def writeSetting(self):
         f = open('config.ini', 'w')
         f.write(self.hotkey.get()+'\n')
+        f.write(self.profile.get())
         f.close()
 
 class OptionWrapper:
