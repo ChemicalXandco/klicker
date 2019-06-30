@@ -29,12 +29,12 @@ if sys.platform == 'win32':
     bdist_msi_options = {'data': msi_data}
     
 opts = {'include_files':['config.ini', 'LICENSE', 'README.MD',
-                         'icon.ico',
+                         'icon.ico', 'profiles.json'
                          (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tcl86t.dll'), os.path.join('lib', 'tcl86t.dll')),
                          (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tk86t.dll'), os.path.join('lib', 'tk86t.dll'))]}
 
 setup(  name = 'Simple Clicker',
-        version = '0.3',
+        version = '0.4',
         description = 'a simple clicker tool to click quickly/constantly',
         options = {'build_exe': opts, "bdist_msi": bdist_msi_options},
         executables = [Executable('main.py', targetName=name,
