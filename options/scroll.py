@@ -15,13 +15,13 @@ class Widget:
         self.labelTwo.grid(row=0, column=spacing+2, sticky=W)
 
         self.labelThree = Label(parent, text='scroll mouse wheel')
-        self.labelThree.grid(row=1, column=spacing)
+        self.labelThree.grid(row=1, column=spacing, sticky=E)
 
         self.clicks = Entry(parent, width=5)
         self.clicks.grid(row=1, column=spacing+1)
     
         self.labelFour = Label(parent, text='"clicks" (negative number will scroll down)')
-        self.labelFour.grid(row=1, column=spacing+2)
+        self.labelFour.grid(row=1, column=spacing+2, sticky=W)
 
     def start(self):
         self.timer = time.time()
