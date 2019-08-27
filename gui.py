@@ -128,7 +128,7 @@ class GUI:
         profile = self.profile.get()
         profiles = profileManager.read()
         for option, attributes in profiles[profile].items():
-            self.optionWidgets.append(OptionWrapper(self.options, option.split('-')[0]))
+            self.optionWidgets.append(OptionWrapper(self.options, option.split('-')[0], self.optionWidgets))
             self.optionWidgets[-1].widget.addSettings(attributes)
 
     def menuCommand(self, value):
@@ -162,7 +162,7 @@ class GUI:
 
     def handleAddOption(self, *args):
         if len(self.optionWidgets) < 10:
-            self.optionWidgets.append(OptionWrapper(self.options, self.addOption.get()))
+            self.optionWidgets.append(OptionWrapper(self.options, self.addOption.get(), self.optionWidgets))
         else:
             self.error.config(text='Too many options')
         self.addOption.set('➕')
@@ -184,7 +184,9 @@ class GUI:
         f.close()
 
 class OptionWrapper:
-    def __init__(self, master, option):
+    def __init__(self, master, option, widgets):
+        self.widgets = widgets
+        
         self.frame = LabelFrame(master, text=option)
 
         self.deleteButton = Button(self.frame, text='❌', command=self.findIdAndDestroy)
@@ -196,7 +198,7 @@ class OptionWrapper:
         self.frame.pack(anchor=W, padx=5, pady=5)
 
     def findIdAndDestroy(self):
-        for i in gui.optionWidgets:
+        for i in self.widgets:
             if id(i) == id(self):
-                gui.optionWidgets.remove(i)
+                self.widgets.remove(i)
         self.frame.destroy()
