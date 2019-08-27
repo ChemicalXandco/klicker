@@ -35,15 +35,18 @@ class GUI:
         self.profileLabel = Label(self.profiles, text='Set Profile')
         self.profileLabel.grid(row=1, column=0)
 
-        self.addProfile = Button(self.profiles, text='➕', command=self.handleAddProfile)
-        self.addProfile.grid(row=1, column=2)
-
         self.profile = StringVar(master)
         self.setProfile = OptionMenu(self.profiles, self.profile, *self.profileList(), command=self.handleSetProfile)
         self.setProfile.grid(row=1, column=1)
 
+        self.saveProfile = Button(self.profiles, text='Save', command=self.handleSaveProfile)
+        self.saveProfile.grid(row=1, column=2)
+
+        self.addProfile = Button(self.profiles, text='➕', command=self.handleAddProfile)
+        self.addProfile.grid(row=1, column=3)
+
         self.delProfile = Button(self.profiles, text='❌', command=self.handleConfirmDelProfile)
-        self.delProfile.grid(row=1, column=3)
+        self.delProfile.grid(row=1, column=4)
 
         self.refreshButton = Button(self.config, text='Refresh Configuration', command=self.readSetting)
         self.refreshButton.grid(row=3, column=0)
@@ -84,6 +87,12 @@ class GUI:
             profiles = [None]
         return profiles
 
+    def handleSaveProfile(self):
+        self.newProfileName = Entry(self.master)
+        self.newProfileName.delete(0, END)
+        self.newProfileName.insert(0, self.profile.get())
+        self.handleCreateProfile()
+
     def handleAddProfile(self):
         self.childWindow = Toplevel(self.master)
         self.childWindow.title('Name Profile')
@@ -107,7 +116,10 @@ class GUI:
         profileManager.write(self.newProfileName.get(), profile)
         self.refreshProfiles()
         self.profile.set(self.newProfileName.get())
-        self.childWindow.destroy()
+        try:
+            self.childWindow.destroy()
+        except AttributeError:
+            pass
         self.handleSetProfile()
 
     def handleSetProfile(self, *args):
