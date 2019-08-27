@@ -1,7 +1,8 @@
 from tkinter import *
 
-import options.nonsequential
+import options.sequential, options.nonsequential
 import profile_manager as profileManager
+
 
 class GUI:
     def __init__(self, master):
@@ -54,19 +55,11 @@ class GUI:
 
         self.addOptionFrame = Frame(master)
         self.addOptionFrame.grid(row=2, column=0, sticky=W)
-
-        self.addOptionLabel = Label(self.addOptionFrame, text='Add Option')
-        self.addOptionLabel.grid(row=0, column=0, sticky=E)
-
-        self.addOption = StringVar(master)
-        self.addOption.set('➕')
-        self.addOptions = OptionMenu(self.addOptionFrame, self.addOption, *options.nonsequential.optList, command=self.handleAddOption)
-        self.addOptions.grid(row=0, column=1, sticky=W)
         
         self.options = LabelFrame(master, text='Options')
         self.options.grid(row=3, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
-        self.optionWidgets = []
+        self.optionManager = OptionManager(self.options, options.nonsequential.optList, 10) 
 
         self.error = Label(master, text='', fg='#ff0000', wraplengt=master.winfo_width())
         self.error.grid(row=6, column=0, columnspan=2)
@@ -104,7 +97,7 @@ class GUI:
     def handleCreateProfile(self):
         profile = {}
         occurrences = {}
-        for o in self.optionWidgets:
+        for o in self.optionManager.wrappers:
             if not o.name in occurrences:
                 occurrences[o.name] = 0
             else:
@@ -120,16 +113,14 @@ class GUI:
             pass
         self.handleSetProfile()
 
-    def handleSetProfile(self, *args):
-        while self.optionWidgets != []:
-            for o in self.optionWidgets:
-                o.findIdAndDestroy()
+    def handleSetProfile(self, *args): 
+        self.optionManager.destroyOptions()
         
         profile = self.profile.get()
         profiles = profileManager.read()
         for option, attributes in profiles[profile].items():
-            self.optionWidgets.append(OptionWrapper(self.options, option.split('-')[0], self.optionWidgets))
-            self.optionWidgets[-1].widget.addSettings(attributes)
+            self.optionManager.addOption(option.split('-')[0])
+            self.optionManager.wrappers[-1].widget.addSettings(attributes)
 
     def menuCommand(self, value):
         self.profile.set(value)
@@ -160,13 +151,6 @@ class GUI:
         self.refreshProfiles()
         self.profile.set('')
 
-    def handleAddOption(self, *args):
-        if len(self.optionWidgets) < 10:
-            self.optionWidgets.append(OptionWrapper(self.options, self.addOption.get(), self.optionWidgets))
-        else:
-            self.error.config(text='Too many options')
-        self.addOption.set('➕')
-
     def readSetting(self):
         f = open('config.ini', 'r')
         self.hotkey.delete(0, END)
@@ -183,8 +167,9 @@ class GUI:
         f.write(self.profile.get())
         f.close()
 
+
 class OptionWrapper:
-    def __init__(self, master, option, widgets):
+    def __init__(self, master, sequential, option, widgets):
         self.widgets = widgets
         
         self.frame = LabelFrame(master, text=option)
@@ -193,7 +178,12 @@ class OptionWrapper:
         self.deleteButton.grid(row=0, column=0)
 
         self.name = option
-        self.widget = options.nonsequential.optDict.get(option).Widget(self.frame, 1)
+        
+        if sequential:
+            optionObject = options.sequential.optDict.get(option)
+        else:
+            optionObject = options.nonsequential.optDict.get(option)
+        self.widget = optionObject.Widget(self.frame, 1)
         
         self.frame.pack(anchor=W, padx=5, pady=5)
 
@@ -202,3 +192,54 @@ class OptionWrapper:
             if id(i) == id(self):
                 self.widgets.remove(i)
         self.frame.destroy()
+
+
+class OptionManager:
+    def __init__(self, parent, availableOptions, maxOptions, sequential=False):
+        self.parent = parent
+        self.max = maxOptions
+        self.sequential = sequential
+
+        self.addOptionFrame = Frame(parent)
+        self.addOptionFrame.pack()
+        
+        self.addOptionLabel = Label(self.addOptionFrame, text='Add Option')
+        self.addOptionLabel.grid(row=0, column=0, sticky=E)
+
+        self.selectedOption = StringVar(parent)
+        self.selectedOption.set('➕')
+        self.addOptions = OptionMenu(self.addOptionFrame, self.selectedOption, *availableOptions, command=self.handleAddOption)
+        self.addOptions.grid(row=0, column=1, sticky=W)
+
+        self.wrappers = []
+
+    def handleAddOption(self, *args):
+        if len(self.wrappers) < self.max:
+            self.addOption(self.selectedOption.get())
+        else:
+            self.error.config(text='Too many options')
+        self.selectedOption.set('➕')
+
+    def addOption(self, option):
+        self.wrappers.append(OptionWrapper(self.parent, self.sequential, option, self.wrappers))
+
+    def startOptions(self):
+        for o in self.wrappers:
+            o.widget.start() 
+
+    def stopOptions(self):
+        for o in self.wrappers:
+            o.widget.stop()
+
+    def updateOptions(self):
+        for o in self.wrappers:
+            o.widget.update()
+
+    def runOptions(self):
+        for o in self.wrappers:
+            o.widget.run()
+
+    def destroyOptions(self):
+        while self.wrappers != []:
+            for o in self.wrappers:
+                o.findIdAndDestroy()

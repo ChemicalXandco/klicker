@@ -24,8 +24,7 @@ while True:
             if gui.hotkey.get() in keys:
                 if keyboard.is_pressed(gui.hotkey.get()):
                     if activated:
-                        for o in gui.optionWidgets:
-                            o.widget.stop()
+                        gui.optionManager.stopOptions()
                         gui.status.config(text='Inactive', fg='#ff0000')
                         activated = False
                         gui.uptime.config(fg='#ff0000')
@@ -34,13 +33,11 @@ while True:
                         sleep(1)
                         activated = True
                         gui.status.config(text='Active', fg='#00ff00')
-                        for o in gui.optionWidgets:
-                            o.widget.start()
+                        gui.optionManager.startOptions()
                         timer = time()
                         gui.uptime.config(fg='#00ff00')
         if activated:
-            for o in gui.optionWidgets:
-                o.widget.update()
+            gui.optionManager.updateOptions()
             gui.uptime.config(text=str(round(time()-timer, 2)))
         root.update_idletasks()
         root.update()
