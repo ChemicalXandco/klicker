@@ -216,8 +216,6 @@ class OptionManager:
     def handleAddOption(self, *args):
         if len(self.wrappers) < self.max:
             self.addOption(self.selectedOption.get())
-        else:
-            self.error.config(text='Too many options')
         self.selectedOption.set('➕')
 
     def addOption(self, option):

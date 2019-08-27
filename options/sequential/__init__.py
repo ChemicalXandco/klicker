@@ -1,10 +1,12 @@
 from options.sequential import (
 scroll,
-click
+click,
+wait
 )
 
 optDict = {'scroll': scroll,
-           'click': click
+           'click': click,
+           'wait': wait
            }
 
 optList = list(optDict.keys())
