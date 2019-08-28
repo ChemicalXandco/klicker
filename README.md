@@ -26,6 +26,4 @@ Profiles store options so that they can easily be used later.
 
 Profiles can be created by clicking on the plus symbol in the profile panel. A window will appear and you type the name of the profile and click `Create`, then all the options that are currently set will be written to a profile of that name.
 
-If you make changes to the options, you can update the profile by doing the same as above, but use the same name as the profile you want to update and it will update the profile with the new options.
-
 To delete a profile, select the one you want to delete and click the cross, then confirm deletion.
