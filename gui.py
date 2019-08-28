@@ -95,15 +95,7 @@ class GUI:
         createButton.pack(fill=X, expand=YES)
 
     def handleCreateProfile(self):
-        profile = {}
-        occurrences = {}
-        for o in self.optionManager.wrappers:
-            if not o.name in occurrences:
-                occurrences[o.name] = 0
-            else:
-                occurrences[o.name] += 1
-            optionName = '{}-{}'.format(o.name, occurrences[o.name])
-            profile[optionName] = o.widget.returnSettings()
+        profile = self.optionManager.getProfile()
         profileManager.write(self.newProfileName.get(), profile)
         self.refreshProfiles()
         self.profile.set(self.newProfileName.get())
@@ -115,12 +107,7 @@ class GUI:
 
     def handleSetProfile(self, *args): 
         self.optionManager.destroyOptions()
-        
-        profile = self.profile.get()
-        profiles = profileManager.read()
-        for option, attributes in profiles[profile].items():
-            self.optionManager.addOption(option.split('-')[0])
-            self.optionManager.wrappers[-1].widget.addSettings(attributes)
+        self.optionManager.setProfile(profileManager.read()[self.profile.get()])
 
     def menuCommand(self, value):
         self.profile.set(value)
@@ -241,3 +228,22 @@ class OptionManager:
         while self.wrappers != []:
             for o in self.wrappers:
                 o.findIdAndDestroy()
+
+    def getProfile(self):
+        profile = {}
+        occurrences = {}
+        
+        for o in self.wrappers:
+            if not o.name in occurrences:
+                occurrences[o.name] = 0
+            else:
+                occurrences[o.name] += 1
+            optionName = '{}-{}'.format(o.name, occurrences[o.name])
+            profile[optionName] = o.widget.returnSettings()
+            
+        return profile
+
+    def setProfile(self, profile):
+        for option, attributes in profile.items():
+            self.addOption(option.split('-')[0])
+            self.wrappers[-1].widget.addSettings(attributes)
