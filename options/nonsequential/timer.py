@@ -39,10 +39,12 @@ class Widget:
             self.timer = time.time()
 
     def returnSettings(self):
-        settings = {}
+        settings = self.optionManger.getProfile()
         settings['interval'] = self.seconds.get()
         return settings
 
     def addSettings(self, settings):
         self.seconds.delete(0,END)
-        self.seconds.insert(0, settings['interval'])
+        self.seconds.insert(0, settings.pop('interval'))
+        self.optionManger.destroyOptions()
+        self.optionManger.setProfile(settings)
