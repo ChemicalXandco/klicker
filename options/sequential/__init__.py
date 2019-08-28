@@ -1,11 +1,13 @@
 from options.sequential import (
 scroll,
-click,
+mouseDown,
+mouseUp,
 wait
 )
 
 optDict = {'scroll': scroll,
-           'click': click,
+           'mouseDown': mouseDown,
+           'mouseUp': mouseUp,
            'wait': wait
            }
 
