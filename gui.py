@@ -172,7 +172,7 @@ class OptionWrapper:
             optionObject = options.nonsequential.optDict.get(option)
         self.widget = optionObject.Widget(self.frame, 1)
         
-        self.frame.pack(anchor=W, padx=5, pady=5)
+        self.frame.pack(anchor=W, padx=5, pady=0)
 
     def findIdAndDestroy(self):
         for i in self.widgets:

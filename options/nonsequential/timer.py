@@ -23,7 +23,7 @@ class Widget:
         self.options = LabelFrame(parent, text='do')
         self.options.grid(row=1, column=spacing, sticky=E)
 
-        self.optionManger = gui.OptionManager(self.options, options.sequential.optList, 10, True)
+        self.optionManger = gui.OptionManager(self.options, options.sequential.optList, 12, True)
 
     def start(self):
         self.timer = time.time()
