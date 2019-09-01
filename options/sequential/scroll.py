@@ -15,7 +15,7 @@ class Widget:
         self.labelTwo.grid(row=0, column=spacing+2, sticky=W)
 
     def run(self):
-        pyautogui.scroll(self.amount)
+        pyautogui.scroll(self.clicks.get())
 
     def returnSettings(self):
         settings = {}
