@@ -3,14 +3,16 @@ scroll,
 mouseDown,
 mouseUp,
 wait,
-ping
+ping,
+find
 )
 
 optDict = {'scroll': scroll,
            'mouseDown': mouseDown,
            'mouseUp': mouseUp,
            'wait': wait,
-           'ping': ping
+           'ping': ping,
+           'find': find
            }
 
 optList = list(optDict.keys())
