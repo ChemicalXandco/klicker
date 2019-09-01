@@ -16,7 +16,6 @@ class Widget:
 
     def run(self):
         pyautogui.scroll(self.amount)
-        self.timer = time.time()
 
     def returnSettings(self):
         settings = {}
