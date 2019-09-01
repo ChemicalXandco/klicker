@@ -2,13 +2,15 @@ from options.sequential import (
 scroll,
 mouseDown,
 mouseUp,
-wait
+wait,
+ping
 )
 
 optDict = {'scroll': scroll,
            'mouseDown': mouseDown,
            'mouseUp': mouseUp,
-           'wait': wait
+           'wait': wait,
+           'ping': ping
            }
 
 optList = list(optDict.keys())
