@@ -34,7 +34,7 @@ opts = {'include_files':['config.ini', 'LICENSE', 'README.MD',
                          (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tk86t.dll'), os.path.join('lib', 'tk86t.dll'))]}
 
 setup(  name = 'Simple Clicker',
-        version = '2.0',
+        version = '2.1',
         description = 'Easily create complex macros.',
         options = {'build_exe': opts, "bdist_msi": bdist_msi_options},
         executables = [Executable('main.py', targetName=name,
