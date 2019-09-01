@@ -55,11 +55,14 @@ class GUI:
 
         self.addOptionFrame = Frame(master)
         self.addOptionFrame.grid(row=2, column=0, sticky=W)
-        
-        self.options = LabelFrame(master, text='Options')
-        self.options.grid(row=3, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
-        self.optionManager = OptionManager(self.options, options.nonsequential.optList, 10) 
+        self.scrollFrame = ScrollFrame(master)
+        self.scrollFrame.grid(row=3, column=0, columnspan=2, sticky=W)
+        
+        self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
+        self.options.grid(row=0, column=0)
+
+        self.optionManager = OptionManager(self.options, options.nonsequential.optList) 
 
         self.error = Label(master, text='', fg='#ff0000', wraplengt=master.winfo_width())
         self.error.grid(row=6, column=0, columnspan=2)
@@ -155,6 +158,28 @@ class GUI:
         f.close()
 
 
+class ScrollFrame(Frame):
+    # from https://gist.github.com/mp035/9f2027c3ef9172264532fcd6262f3b01
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0')          
+        self.viewPort = Frame(self.canvas, background='#F0F0F0')                    
+        self.vsb = Scrollbar(self, orient='vertical', command=self.canvas.yview)  
+        self.canvas.configure(yscrollcommand=self.vsb.set)                          
+
+        self.vsb.pack(side='right', fill='y')                                       
+        self.canvas.pack(side='left', fill='both', expand=True)                     
+        self.canvas.create_window((4,4), window=self.viewPort, anchor='nw',
+                                  tags='self.viewPort')
+
+        self.viewPort.bind('<Configure>', self.onFrameConfigure)
+
+    def onFrameConfigure(self, event):                                              
+        '''Reset the scroll region to encompass the inner frame'''
+        self.canvas.configure(scrollregion=self.canvas.bbox('all'))
+
+
 class OptionWrapper:
     def __init__(self, master, sequential, option, widgets):
         self.widgets = widgets
@@ -182,7 +207,7 @@ class OptionWrapper:
 
 
 class OptionManager:
-    def __init__(self, parent, availableOptions, maxOptions, sequential=False):
+    def __init__(self, parent, availableOptions, sequential=False,  maxOptions=None):
         self.parent = parent
         self.max = maxOptions
         self.sequential = sequential
@@ -201,7 +226,9 @@ class OptionManager:
         self.wrappers = []
 
     def handleAddOption(self, *args):
-        if len(self.wrappers) < self.max:
+        if self.max == None:
+            self.addOption(self.selectedOption.get())
+        elif len(self.wrappers) < self.max:
             self.addOption(self.selectedOption.get())
         self.selectedOption.set('➕')
 

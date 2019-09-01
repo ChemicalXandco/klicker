@@ -11,7 +11,7 @@ class Widget:
         self.clicks = Entry(parent, width=5)
         self.clicks.grid(row=0, column=spacing+1)
     
-        self.labelTwo = Label(parent, text='"clicks" (negative number will scroll down)')
+        self.labelTwo = Label(parent, text='"clicks"')
         self.labelTwo.grid(row=0, column=spacing+2, sticky=W)
 
     def run(self):
