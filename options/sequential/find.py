@@ -11,8 +11,11 @@ class Widget:
         self.img = Entry(parent, width=20)
         self.img.grid(row=0, column=spacing+1)
     
-        self.labelTwo = Label(parent, text='on screen and move cursor')
+        self.labelTwo = Label(parent, text='on screen')
         self.labelTwo.grid(row=0, column=spacing+2, sticky=W)
+
+        self.labelThree = Label(parent, text='and move cursor')
+        self.labelThree.grid(row=1, column=spacing, sticky=E)
 
     def run(self):
         location = pyautogui.locateCenterOnScreen(self.img.get())
