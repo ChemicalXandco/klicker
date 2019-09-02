@@ -1,6 +1,6 @@
 from tkinter import *
 from time import sleep
-import pyautogui
+import keyboard
 
 class Widget:
     def __init__(self, parent, spacing):
@@ -13,7 +13,7 @@ class Widget:
         self.labelOne.grid(row=0, column=spacing+1, sticky=W)
 
     def run(self):
-        pyautogui.keyUp(self.key.get())
+        keyboard.release(self.key.get())
 
     def returnSettings(self):
         settings = {}
