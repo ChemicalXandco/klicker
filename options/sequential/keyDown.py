@@ -21,4 +21,5 @@ class Widget:
         return settings
 
     def addSettings(self, settings):
-        self.key.set(settings['key'])
+        self.key.delete(0,END)
+        self.key.insert(0, settings['key'])
