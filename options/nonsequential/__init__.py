@@ -1,10 +1,12 @@
 from options.nonsequential import (
 holdClick,
-timer
+timer,
+holdKey
 )
 
 optDict = {'holdClick': holdClick,
-           'timer': timer
+           'timer': timer,
+           'holdKey': holdKey
            }
 
 optList = list(optDict.keys())

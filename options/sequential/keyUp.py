@@ -1,5 +1,4 @@
 from tkinter import *
-from time import sleep
 import keyboard
 
 class Widget:

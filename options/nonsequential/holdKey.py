@@ -5,14 +5,20 @@ class Widget:
     def __init__(self, parent, spacing):
         self.parent = parent
 
+        self.labelOne = Label(parent, text='Hold')
+        self.labelOne.grid(row=0, column=spacing)
+
         self.key = Entry(parent, width=2)
-        self.key.grid(row=0, column=spacing)
+        self.key.grid(row=0, column=spacing+1)
 
-        self.labelOne = Label(parent, text='key pressed')
-        self.labelOne.grid(row=0, column=spacing+1, sticky=W)
+    def start(self):
+        keyboard.press(self.key.get())
 
-    def run(self):
-        keyboard.press(self.key.get()) 
+    def stop(self):
+        keyboard.release(self.key.get())
+
+    def update(self):
+        return
 
     def returnSettings(self):
         settings = {}
