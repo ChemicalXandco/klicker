@@ -1,4 +1,5 @@
 from tkinter import *
+from options.utils import FileSelector
 import pyautogui
 
 class Widget:
@@ -6,19 +7,16 @@ class Widget:
         self.parent = parent
 
         self.labelOne = Label(parent, text='Locate image')
-        self.labelOne.grid(row=0, column=spacing, sticky=E)
+        self.labelOne.grid(row=0, column=spacing)
 
-        self.img = Entry(parent, width=20)
-        self.img.grid(row=0, column=spacing+1)
+        self.img = FileSelector(parent)
+        self.img.grid(row=1, column=spacing)
     
-        self.labelTwo = Label(parent, text='on screen')
-        self.labelTwo.grid(row=0, column=spacing+2, sticky=W)
-
-        self.labelThree = Label(parent, text='and move cursor')
-        self.labelThree.grid(row=1, column=spacing, sticky=E)
+        self.labelTwo = Label(parent, text='on screen and move cursor')
+        self.labelTwo.grid(row=2, column=spacing)
 
     def run(self):
-        location = pyautogui.locateCenterOnScreen(self.img.get())
+        location = pyautogui.locateCenterOnScreen(self.img.path.get())
         if location != None:
             pyautogui.moveTo(location[0], location[1])
         else:
@@ -26,9 +24,9 @@ class Widget:
 
     def returnSettings(self):
         settings = {}
-        settings['imgPath'] = self.img.get()
+        settings['imgPath'] = self.img.path.get()
         return settings
 
     def addSettings(self, settings):
-        self.img.delete(0,END)
-        self.img.insert(0, settings['imgPath'])
+        self.img.path.delete(0,END)
+        self.img.path.insert(0, settings['imgPath'])
