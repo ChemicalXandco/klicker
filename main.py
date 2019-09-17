@@ -15,12 +15,10 @@ while True:
     try:
         if root.focus_get() != None:
             if not focus:
-                gui.error.config(text=warning)
+                gui.logger.warning(warning)
             focus = True
         else:
             focus = False
-            if gui.error.cget('text') == warning:
-                gui.error.config(text='') 
             if gui.hotkey.get() in keys:
                 if keyboard.is_pressed(gui.hotkey.get()):
                     if activated:
@@ -44,7 +42,7 @@ while True:
         sleep(0.01)#minimise CPU usage
     except Exception as e:
         try:
-            gui.error.config(text=e)
+            gui.logger.error(e)
             root.update_idletasks()
             root.update()
         except TclError:

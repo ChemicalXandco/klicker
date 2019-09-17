@@ -1,6 +1,9 @@
 from tkinter import *
+from tkinter import scrolledtext
+import logging
 
 import options.sequential, options.nonsequential
+from options.utils import TextHandler
 import profile_manager as profileManager
 
 
@@ -62,10 +65,19 @@ class GUI:
         self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
         self.options.grid(row=0, column=0)
 
-        self.optionManager = OptionManager(self.options, options.nonsequential.optList) 
+        self.optionManager = OptionManager(self.options, options.nonsequential.optList)
 
-        self.error = Label(master, text='', fg='#ff0000', wraplengt=master.winfo_width())
-        self.error.grid(row=6, column=0, columnspan=2)
+        self.logFrame = LabelFrame(master, text='Log')
+        self.logFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+
+        self.log = scrolledtext.ScrolledText(self.logFrame, width=50, height=10, state='disabled')
+        self.log.grid(row=1, column=0)
+
+        self.textHandler = TextHandler(self.log)
+        self.formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
+        self.textHandler.setFormatter(self.formatter)
+        self.logger = logging.getLogger()
+        self.logger.addHandler(self.textHandler)
 
         self.readSetting()
 
