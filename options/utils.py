@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
-import logging
+import logging, uuid
 
 
 class FileSelector(Frame):
@@ -18,6 +18,15 @@ class FileSelector(Frame):
         self.path.insert(0, filename)
 
 
+def levelStrToColour(level):
+    if level == 'WARNING':
+        return 'orange'
+    if level == 'ERROR':
+        return 'red'
+    else:
+        return None
+
+
 class TextHandler(logging.Handler):
     # from https://gist.github.com/moshekaplan/c425f861de7bbf28ef06
     """This class allows you to log to a Tkinter Text or ScrolledText widget"""
@@ -31,7 +40,12 @@ class TextHandler(logging.Handler):
         msg = self.format(record)
         def append():
             self.text.configure(state='normal')
+            startIndex = self.text.index(INSERT)
             self.text.insert(END, msg + '\n')
+            level = (msg.split('['))[2].split(']')[0]
+            tempUuid = str(uuid.uuid4()) # Tempory uuid to avoid conflicts between tags
+            self.text.tag_add(tempUuid, startIndex, END)
+            self.text.tag_config(tempUuid, foreground=levelStrToColour(level))
             self.text.configure(state='disabled')
             # Autoscroll to the bottom
             self.text.yview(END)
