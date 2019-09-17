@@ -7,7 +7,8 @@ keyUp,
 wait,
 ping,
 find,
-moveMouseTo
+moveMouseTo,
+moveMouseRelative
 )
 
 optDict = {'scroll': scroll,
@@ -18,7 +19,8 @@ optDict = {'scroll': scroll,
            'wait': wait,
            'ping': ping,
            'find': find,
-           'moveMouseTo': moveMouseTo
+           'moveMouseTo': moveMouseTo,
+           'moveMouseRelative': moveMouseRelative
            }
 
 optList = list(optDict.keys())
