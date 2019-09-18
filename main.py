@@ -6,6 +6,7 @@ from gui import *
 
 root = Tk()
 gui = GUI(root)
+gui.clearLog()
 keys = [i[0] for i in keyboard._winkeyboard.official_virtual_keys.values()]
 activated = False
 currentButton = None

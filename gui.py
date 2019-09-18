@@ -70,14 +70,27 @@ class GUI:
         self.logFrame = LabelFrame(master, text='Log')
         self.logFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
+        self.clearLogButton = Button(self.logFrame, text='Clear Log', command=self.clearLog)
+        self.clearLogButton.grid(row=0, column=0)
+
         self.log = scrolledtext.ScrolledText(self.logFrame, width=50, height=10, state='disabled')
         self.log.grid(row=1, column=0)
 
         self.textHandler = TextHandler(self.log)
+        self.textHandler.setLevel(logging.DEBUG)
+        self.fileHandler = logging.FileHandler('log.txt')
+        self.fileHandler.setLevel(logging.DEBUG)
+        self.consoleHandler = logging.StreamHandler()
+        self.consoleHandler.setLevel(logging.ERROR)
         self.formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
         self.textHandler.setFormatter(self.formatter)
+        self.fileHandler.setFormatter(self.formatter)
+        self.consoleHandler.setFormatter(self.formatter)
         self.logger = logging.getLogger()
+        self.logger.setLevel(logging.DEBUG)
         self.logger.addHandler(self.textHandler)
+        self.logger.addHandler(self.fileHandler)
+        self.logger.addHandler(self.consoleHandler)
 
         self.readSetting()
 
@@ -168,6 +181,12 @@ class GUI:
         f.write(self.hotkey.get()+'\n')
         f.write(self.profile.get())
         f.close()
+
+    def clearLog(self):
+        f = open('log.txt', 'w').close()
+        self.log.configure(state='normal')
+        self.log.delete('1.0', END)
+        self.log.configure(state='disabled')
 
 
 class ScrollFrame(Frame):
