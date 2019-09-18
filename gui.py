@@ -70,11 +70,15 @@ class GUI:
         self.logFrame = LabelFrame(master, text='Log')
         self.logFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
+        self.level = StringVar(master)
+        self.setLevel = OptionMenu(self.logFrame, self.level, *list(logging._levelToName.values()), command=self.changeLevel)
+        self.setLevel.grid(row=0, column=0)
+
         self.clearLogButton = Button(self.logFrame, text='Clear Log', command=self.clearLog)
-        self.clearLogButton.grid(row=0, column=0)
+        self.clearLogButton.grid(row=0, column=1)
 
         self.log = scrolledtext.ScrolledText(self.logFrame, width=50, height=10, state='disabled')
-        self.log.grid(row=1, column=0)
+        self.log.grid(row=1, column=0, columnspan=2)
 
         self.textHandler = TextHandler(self.log)
         self.textHandler.setLevel(logging.DEBUG)
@@ -93,6 +97,8 @@ class GUI:
         self.logger.addHandler(self.consoleHandler)
 
         self.readSetting()
+        self.level.set('INFO')
+        self.changeLevel(self.level.get())
 
     def limitChar(self, i):
         if i == '1': #if the index is 1 it means the string will be 2 characters long
@@ -181,6 +187,10 @@ class GUI:
         f.write(self.hotkey.get()+'\n')
         f.write(self.profile.get())
         f.close()
+
+    def changeLevel(self, level):
+        print(str(level))
+        self.logger.setLevel({v: k for k, v in logging._levelToName.items()}[level])
 
     def clearLog(self):
         f = open('log.txt', 'w').close()
