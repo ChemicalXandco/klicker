@@ -24,7 +24,11 @@ def levelStrToColour(level):
     if level == 'ERROR':
         return 'red'
     else:
-        return None
+        return 'black'
+
+
+class DeactivateRequest(Exception):
+    pass
 
 
 class TextHandler(logging.Handler):

@@ -3,6 +3,7 @@ from time import time, sleep
 from tkinter import *
 
 from gui import *
+from options.utils import DeactivateRequest
 
 root = Tk()
 gui = GUI(root)
@@ -23,11 +24,7 @@ while True:
             if gui.hotkey.get() in keys:
                 if keyboard.is_pressed(gui.hotkey.get()):
                     if activated:
-                        gui.optionManager.stopOptions()
-                        gui.status.config(text='Inactive', fg='#ff0000')
-                        activated = False
-                        gui.uptime.config(fg='#ff0000')
-                        sleep(1)
+                        raise DeactivateRequest('Hotkey pressed - deactivated')
                     else:
                         sleep(1)
                         activated = True
@@ -41,6 +38,13 @@ while True:
         root.update_idletasks()
         root.update()
         sleep(0.01)#minimise CPU usage
+    except DeactivateRequest as e:
+        #gui.logger.info(e)
+        gui.optionManager.stopOptions()
+        gui.status.config(text='Inactive', fg='#ff0000')
+        activated = False
+        gui.uptime.config(fg='#ff0000')
+        sleep(1)
     except Exception as e:
         try:
             gui.logger.error(e)
