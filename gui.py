@@ -189,7 +189,6 @@ class GUI:
         f.close()
 
     def changeLevel(self, level):
-        print(str(level))
         self.logger.setLevel({v: k for k, v in logging._levelToName.items()}[level])
 
     def clearLog(self):

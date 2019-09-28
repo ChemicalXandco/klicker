@@ -39,7 +39,7 @@ while True:
         root.update()
         sleep(0.01)#minimise CPU usage
     except DeactivateRequest as e:
-        #gui.logger.info(e)
+        gui.logger.info(e)
         gui.optionManager.stopOptions()
         gui.status.config(text='Inactive', fg='#ff0000')
         activated = False
