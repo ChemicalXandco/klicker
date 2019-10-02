@@ -6,7 +6,7 @@ socket.setdefaulttimeout(0.1)  # timeout in seconds
 
 
 class Widget:
-    def __init__(self, parent, spacing):
+    def __init__(self, parent, spacing, logger):
         self.parent = parent
 
         self.labelOne = Label(parent, text='ping')

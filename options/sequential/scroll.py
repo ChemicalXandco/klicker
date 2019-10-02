@@ -2,7 +2,7 @@ from tkinter import *
 import pyautogui
 
 class Widget:
-    def __init__(self, parent, spacing):
+    def __init__(self, parent, spacing, logger):
         self.parent = parent
 
         self.labelOne = Label(parent, text='scroll mouse wheel')

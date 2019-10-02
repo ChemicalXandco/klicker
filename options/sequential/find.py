@@ -3,7 +3,7 @@ from options.utils import FileSelector
 import pyautogui
 
 class Widget:
-    def __init__(self, parent, spacing):
+    def __init__(self, parent, spacing, logger):
         self.parent = parent
 
         self.labelOne = Label(parent, text='Locate image')

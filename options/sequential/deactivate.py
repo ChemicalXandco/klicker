@@ -5,7 +5,7 @@ from options.utils import DeactivateRequest
 
 
 class Widget:
-    def __init__(self, parent, spacing):
+    def __init__(self, parent, spacing, logger):
         self.parent = parent
 
         self.labelOne = Label(parent, text='Stop execution of all options')

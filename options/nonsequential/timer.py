@@ -5,7 +5,7 @@ import gui
 import options.sequential
 
 class Widget:
-    def __init__(self, parent, spacing):
+    def __init__(self, parent, spacing, logger):
         self.parent = parent
 
         self.frameOne = Frame(parent)
@@ -23,7 +23,7 @@ class Widget:
         self.options = LabelFrame(parent, text='do')
         self.options.grid(row=1, column=spacing, sticky=E)
 
-        self.optionManger = gui.OptionManager(self.options, options.sequential.optList, True, 50)
+        self.optionManger = gui.OptionManager(self.options, options.sequential.optList, logger, True, 50)
 
     def start(self):
         self.timer = time.time()

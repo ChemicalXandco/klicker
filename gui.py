@@ -63,9 +63,7 @@ class GUI:
         self.scrollFrame.grid(row=3, column=0, columnspan=2, sticky=W)
         
         self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
-        self.options.grid(row=0, column=0)
-
-        self.optionManager = OptionManager(self.options, options.nonsequential.optList)
+        self.options.grid(row=0, column=0) 
 
         self.logFrame = LabelFrame(master, text='Log')
         self.logFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
@@ -95,6 +93,8 @@ class GUI:
         self.logger.addHandler(self.textHandler)
         self.logger.addHandler(self.fileHandler)
         self.logger.addHandler(self.consoleHandler)
+
+        self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger)
 
         self.readSetting()
         self.level.set('INFO')
@@ -221,7 +221,7 @@ class ScrollFrame(Frame):
 
 
 class OptionWrapper:
-    def __init__(self, master, sequential, option, widgets):
+    def __init__(self, master, sequential, option, widgets, logger):
         self.widgets = widgets
         
         self.frame = LabelFrame(master, text=option)
@@ -235,7 +235,7 @@ class OptionWrapper:
             optionObject = options.sequential.optDict.get(option)
         else:
             optionObject = options.nonsequential.optDict.get(option)
-        self.widget = optionObject.Widget(self.frame, 1)
+        self.widget = optionObject.Widget(self.frame, 1, logger)
         
         self.frame.pack(anchor=W, padx=5, pady=0)
 
@@ -247,7 +247,7 @@ class OptionWrapper:
 
 
 class OptionManager:
-    def __init__(self, parent, availableOptions, sequential=False,  maxOptions=None):
+    def __init__(self, parent, availableOptions, logger, sequential=False,  maxOptions=None):
         self.parent = parent
         self.max = maxOptions
         self.sequential = sequential
@@ -264,6 +264,8 @@ class OptionManager:
         self.addOptions.grid(row=0, column=1, sticky=W)
 
         self.wrappers = []
+        
+        self.logger = logger
 
     def handleAddOption(self, *args):
         if self.max == None:
@@ -273,7 +275,7 @@ class OptionManager:
         self.selectedOption.set('➕')
 
     def addOption(self, option):
-        self.wrappers.append(OptionWrapper(self.parent, self.sequential, option, self.wrappers))
+        self.wrappers.append(OptionWrapper(self.parent, self.sequential, option, self.wrappers, self.logger))
 
     def startOptions(self):
         for o in self.wrappers:
