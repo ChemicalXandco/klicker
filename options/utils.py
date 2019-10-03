@@ -42,8 +42,8 @@ class TextHandler(logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
-        self.text.configure(state='normal')
         def append():
+            self.text.configure(state='normal')
             startIndex = self.text.index(INSERT)
             self.text.insert(END, msg + '\n')
             level = (msg.split('['))[2].split(']')[0]
@@ -52,6 +52,5 @@ class TextHandler(logging.Handler):
             self.text.tag_config(tempUuid, foreground=levelStrToColour(level))
             # Autoscroll to the bottom
             self.text.yview(END)
-        self.text.configure(state='disabled')
-        # This is necessary because we can't modify the Text from other threads
-        self.text.after(0, append)
+            self.text.configure(state='disabled')
+        append()
