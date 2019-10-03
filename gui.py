@@ -97,7 +97,6 @@ class GUI:
         self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger)
 
         self.readSetting()
-        self.level.set('INFO')
         self.changeLevel(self.level.get())
 
     def limitChar(self, i):
@@ -179,13 +178,15 @@ class GUI:
         self.profile.set(f.readline().strip())
         if self.profile.get() in self.profileList():
             self.handleSetProfile()
+        self.level.set(f.readline().strip())
         f.close
         self.refreshProfiles()
 
     def writeSetting(self):
         f = open('config.ini', 'w')
         f.write(self.hotkey.get()+'\n')
-        f.write(self.profile.get())
+        f.write(self.profile.get()+'\n')
+        f.write(self.level.get())
         f.close()
 
     def changeLevel(self, level):

@@ -21,7 +21,7 @@ class Widget:
         imgPath = self.img.path.get()
         location = pyautogui.locateCenterOnScreen(imgPath)
         if location != None:
-            self.logger.debug('Found {} at ({}, {})'.format(imgPath, location[0], location[1])
+            self.logger.debug('Found {} at ({}, {})'.format(imgPath, location[0], location[1]))
             pyautogui.moveTo(location[0], location[1])
         else:
             raise RuntimeError('Could not locate the given image on the screen')
