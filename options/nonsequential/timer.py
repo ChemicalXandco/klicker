@@ -35,8 +35,8 @@ class Widget:
     def update(self):
         timed = time.time()-self.timer
         if timed >= self.interval:
-            self.optionManger.runOptions()
             self.timer = time.time()
+            self.optionManger.runOptions()
 
     def returnSettings(self):
         settings = self.optionManger.getProfile()
