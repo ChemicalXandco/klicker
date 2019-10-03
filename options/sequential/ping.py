@@ -1,4 +1,5 @@
 from tkinter import *
+import time
 import socket
 from urllib.request import urlopen
 
@@ -15,8 +16,13 @@ class Widget:
         self.url = Entry(parent, width=20)
         self.url.grid(row=0, column=spacing+1)
 
+        self.logger = logger
+
     def run(self):
-        response = urlopen(self.url.get())
+        url = self.url.get()
+        timer = time.time()
+        response = urlopen(url)
+        self.logger.debug('Time to ping {}: {} ms'.format(url, (time.time()-timer)*10))
 
     def returnSettings(self):
         settings = {}

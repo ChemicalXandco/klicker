@@ -15,9 +15,13 @@ class Widget:
         self.labelTwo = Label(parent, text='on screen and move cursor')
         self.labelTwo.grid(row=2, column=spacing)
 
+        self.logger = logger
+        
     def run(self):
-        location = pyautogui.locateCenterOnScreen(self.img.path.get())
+        imgPath = self.img.path.get()
+        location = pyautogui.locateCenterOnScreen(imgPath)
         if location != None:
+            self.logger.debug('Found {} at ({}, {})'.format(imgPath, location[0], location[1])
             pyautogui.moveTo(location[0], location[1])
         else:
             raise RuntimeError('Could not locate the given image on the screen')
