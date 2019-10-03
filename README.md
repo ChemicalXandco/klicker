@@ -16,9 +16,11 @@ In order to start the application, run `main.py`
 A hotkey is setup to trigger the clicker, default is `x`.
 A default profile is stored along with this that will be loaded at the start. It can be set by selecting the profile you want and then saving the configuration.
 
-The configuration is stored in the file `config.ini` and can be saved and reloaded using the `Save Configuration` and `Refresh Configuration` buttons respectively
+The configuration is stored in the file `config.ini` and can be saved and reloaded using the `Save Configuration` and `Refresh Configuration` buttons respectively. The file stores the hotkey, the name of the profile and the log level.
 
 Options can be added by clicking on the drop-down menu and removed by clicking on the cross next to the option
+
+The log file is cleared on every startup, it can also be cleared by pressing the `Clear Log` button. Only the messages higher or equal to the current log level will be logged.
 
 ### Profile Usage
 
