@@ -9,7 +9,8 @@ ping,
 find,
 moveMouseTo,
 moveMouseRelative,
-deactivate
+deactivate,
+logMousePosition
 )
 
 optDict = {'scroll': scroll,
@@ -22,7 +23,8 @@ optDict = {'scroll': scroll,
            'find': find,
            'moveMouseTo': moveMouseTo,
            'moveMouseRelative': moveMouseRelative,
-           'deactivate': deactivate
+           'deactivate': deactivate,
+           'logMousePosition': logMousePosition
            }
 
 optList = list(optDict.keys())
