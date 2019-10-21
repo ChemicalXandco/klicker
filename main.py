@@ -11,7 +11,7 @@ gui.clearLog()
 keys = [i[0] for i in keyboard._winkeyboard.official_virtual_keys.values()]
 activated = False
 currentButton = None
-warning = 'Cannot activate autoclick when this GUI is in focus'
+warning = 'Cannot activate when this GUI is in focus'
 focus = False
 while True:
     try:
@@ -32,6 +32,7 @@ while True:
                         gui.optionManager.startOptions()
                         timer = time()
                         gui.uptime.config(fg='#00ff00')
+                        gui.logger.info('Hotkey pressed - activated')
         if activated:
             gui.optionManager.updateOptions()
             gui.uptime.config(text=str(round(time()-timer, 2)))
