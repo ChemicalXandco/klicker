@@ -5,7 +5,7 @@ class Widget:
     def __init__(self, parent, spacing, logger):
         self.parent = parent
 
-        self.key = Entry(parent, width=2)
+        self.key = Entry(parent, width=5)
         self.key.grid(row=0, column=spacing)
 
         self.labelOne = Label(parent, text='key pressed')

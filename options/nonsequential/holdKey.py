@@ -8,7 +8,7 @@ class Widget:
         self.labelOne = Label(parent, text='Hold')
         self.labelOne.grid(row=0, column=spacing)
 
-        self.key = Entry(parent, width=2)
+        self.key = Entry(parent, width=5)
         self.key.grid(row=0, column=spacing+1)
 
     def start(self):
