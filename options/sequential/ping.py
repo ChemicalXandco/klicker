@@ -21,8 +21,11 @@ class Widget:
     def run(self):
         url = self.url.get()
         timer = time.time()
-        response = urlopen(url)
-        self.logger.debug('Time to ping {}: {} ms'.format(url, (time.time()-timer)*10))
+        try:
+            response = urlopen(url)
+            self.logger.debug('Time to ping {}: {} ms'.format(url, (time.time()-timer)*10))
+        except Exception as e:
+            self.logger.error(e)
 
     def returnSettings(self):
         settings = {}
