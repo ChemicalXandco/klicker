@@ -8,7 +8,12 @@ from options.utils import DeactivateRequest
 root = Tk()
 gui = GUI(root)
 gui.clearLog()
-keys = [i[0] for i in keyboard._winkeyboard.official_virtual_keys.values()]
+try:
+    keyboard._os_keyboard.init()
+    keys = list(dict.fromkeys([i[0] for i in keyboard._os_keyboard.to_name.values()]))
+except Exception as e:
+    keys = ['x']
+    gui.logger.warning('Keys failed to load, only x can be used as an activation hotkey: '+str(e))
 activated = False
 currentButton = None
 warning = 'Cannot activate when this GUI is in focus'
@@ -38,7 +43,7 @@ while True:
             gui.uptime.config(text=str(round(time()-timer, 2)))
         root.update_idletasks()
         root.update()
-        sleep(0.01)#minimise CPU usage
+        sleep(0.01) # minimise CPU usage
     except DeactivateRequest as e:
         gui.logger.info(e)
         gui.optionManager.stopOptions()

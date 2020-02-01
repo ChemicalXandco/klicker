@@ -1,15 +1,25 @@
-# <img src="icon.ico" width="32" height="32"> Simple Clicker
+# <img src="icon.png" width="32" height="32"> Simple Clicker
 
 # Download the latest binary [here](https://github.com/ChemicalXandco/simple-clicker/releases)
 
 or...
 
-# Install & set up:
+# Install & set up
 
 You must have python 3 installed
 To get the required modules run `pip3 install -r requirements.txt`
 
-In order to start the application, run `main.py`
+In order to start the application, run `python3 main.py`. 
+
+### Linux install
+
+Install the following:
+
+`sudo apt-get install scrot`,
+`sudo apt-get install python3-tk`,
+`sudo apt-get install python3-dev`
+
+then run `sudo python3 main.py`
 
 # Usage
 

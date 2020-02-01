@@ -11,8 +11,8 @@ class GUI:
     def __init__(self, master):
         self.master = master
         master.title('Simple Clicker')
-        master.iconbitmap('icon.ico')
-
+        self.setWindowIcon(master)
+        
         self.status = Label(master, text='Inactive', fg='#ff0000')
         self.status.grid(row=0, column=0)
 
@@ -99,6 +99,14 @@ class GUI:
         self.readSetting()
         self.changeLevel(self.level.get())
 
+    def setWindowIcon(self, window):
+        try:
+            window.iconbitmap('icon.ico')
+        except TclError:
+            # Linux compatibility
+            window.iconphoto(False, PhotoImage(file='icon.png'))
+
+
     def limitChar(self, i):
         if i == '1': #if the index is 1 it means the string will be 2 characters long
             return False
@@ -120,7 +128,7 @@ class GUI:
     def handleAddProfile(self):
         self.childWindow = Toplevel(self.master)
         self.childWindow.title('Name Profile')
-        self.childWindow.iconbitmap('icon.ico')
+        self.setWindowIcon(self.childWindow)
         self.childWindow.geometry('250x50')
         self.newProfileName = Entry(self.childWindow)
         self.newProfileName.pack(fill=X, expand=YES)
@@ -158,7 +166,7 @@ class GUI:
     def handleConfirmDelProfile(self):
         self.childWindow = Toplevel(self.master)
         self.childWindow.title('Confirm Delete Profile')
-        self.childWindow.iconbitmap('icon.ico')
+        self.setWindowIcon(self.childWindow)
         self.childWindow.geometry('300x50')
         label = Label(self.childWindow, text='Delete Profile "{}"?'.format(self.profile.get()))
         label.pack(fill=X, expand=YES)
