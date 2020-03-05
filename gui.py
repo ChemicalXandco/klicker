@@ -89,7 +89,7 @@ class GUI:
         self.logger.addHandler(self.fileHandler)
         self.logger.addHandler(self.consoleHandler)
 
-        self.scrollFrame = ScrollFrame(master, 500)
+        self.scrollFrame = ScrollFrame(master, (400, 500))
         self.scrollFrame.grid(row=0, column=3, rowspan=5, sticky=W)
         
         self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
@@ -138,6 +138,7 @@ class GUI:
 
     def handleCreateProfile(self):
         profile = self.optionManager.getProfile()
+        profile['numbers'] = self.numbers.get()
         profileManager.write(self.newProfileName.get(), profile)
         self.refreshProfiles()
         self.profile.set(self.newProfileName.get())
@@ -149,7 +150,10 @@ class GUI:
 
     def handleSetProfile(self, *args): 
         self.optionManager.destroyOptions()
-        self.optionManager.setProfile(profileManager.read()[self.profile.get()])
+        profiles = profileManager.read()
+        self.optionManager.setProfile(profiles[self.profile.get()])
+
+        self.numbers.set(profiles.get('numbers'))
 
     def menuCommand(self, value):
         self.profile.set(value)
@@ -210,10 +214,10 @@ class GUI:
 
 class ScrollFrame(Frame):
     # from https://gist.github.com/mp035/9f2027c3ef9172264532fcd6262f3b01
-    def __init__(self, parent, height):
+    def __init__(self, parent, dimensions):
         super().__init__(parent)
 
-        self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0', height=height)          
+        self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0', width=dimensions[0], height=dimensions[1])          
         self.viewPort = Frame(self.canvas, background='#F0F0F0')                    
         self.vsb = Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)                          
