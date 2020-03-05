@@ -5,18 +5,17 @@ from urllib.request import urlopen
 
 socket.setdefaulttimeout(0.1)  # timeout in seconds
 
+from options import Base
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
+class Widget(Base):
+    def __init__(self, *args):
+        super().__init__(*args)
 
-        self.labelOne = Label(parent, text='ping')
-        self.labelOne.grid(row=0, column=spacing, sticky=E)
+        self.labelOne = Label(self.parent, text='ping')
+        self.labelOne.grid(row=0, column=self.spacing, sticky=E)
 
-        self.url = Entry(parent, width=20)
-        self.url.grid(row=0, column=spacing+1)
-
-        self.logger = logger
+        self.url = Entry(self.parent, width=20)
+        self.url.grid(row=0, column=self.spacing+1)
 
     def run(self):
         url = self.url.get()

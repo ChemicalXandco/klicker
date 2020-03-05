@@ -95,7 +95,7 @@ class GUI:
         self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
         self.options.grid(row=0, column=0) 
 
-        self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger)
+        self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger, self.numbers)
 
         self.readSetting()
         self.changeLevel(self.level.get())
@@ -242,7 +242,7 @@ class ScrollFrame(Frame):
 
 
 class OptionWrapper:
-    def __init__(self, master, sequential, option, widgets, logger):
+    def __init__(self, master, sequential, option, widgets, logger, numbers):
         self.widgets = widgets
         
         self.frame = LabelFrame(master, text=option)
@@ -256,7 +256,7 @@ class OptionWrapper:
             optionObject = options.sequential.optDict.get(option)
         else:
             optionObject = options.nonsequential.optDict.get(option)
-        self.widget = optionObject.Widget(self.frame, 1, logger)
+        self.widget = optionObject.Widget(self.frame, 1, logger, numbers)
         
         self.frame.pack(anchor=W, padx=5, pady=0)
 
@@ -268,7 +268,7 @@ class OptionWrapper:
 
 
 class OptionManager:
-    def __init__(self, parent, availableOptions, logger, sequential=False,  maxOptions=None):
+    def __init__(self, parent, availableOptions, logger, numbers, sequential=False,  maxOptions=None):
         self.parent = parent
         self.max = maxOptions
         self.sequential = sequential
@@ -287,6 +287,7 @@ class OptionManager:
         self.wrappers = []
         
         self.logger = logger
+        self.numbers = numbers
 
     def handleAddOption(self, *args):
         if self.max == None:
@@ -296,7 +297,7 @@ class OptionManager:
         self.selectedOption.set('➕')
 
     def addOption(self, option):
-        self.wrappers.append(OptionWrapper(self.parent, self.sequential, option, self.wrappers, self.logger))
+        self.wrappers.append(OptionWrapper(self.parent, self.sequential, option, self.wrappers, self.logger, self.numbers))
 
     def startOptions(self):
         for o in self.wrappers:

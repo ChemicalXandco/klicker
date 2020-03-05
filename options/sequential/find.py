@@ -2,20 +2,21 @@ from tkinter import *
 from options.utils import FileSelector
 import pyautogui
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
+from options import Base
 
-        self.labelOne = Label(parent, text='Locate image')
-        self.labelOne.grid(row=0, column=spacing)
 
-        self.img = FileSelector(parent)
-        self.img.grid(row=1, column=spacing)
+class Widget(Base):
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.labelOne = Label(self.parent, text='Locate image')
+        self.labelOne.grid(row=0, column=self.spacing)
+
+        self.img = FileSelector(self.parent)
+        self.img.grid(row=1, column=self.spacing)
     
-        self.labelTwo = Label(parent, text='on screen and move cursor')
-        self.labelTwo.grid(row=2, column=spacing)
-
-        self.logger = logger
+        self.labelTwo = Label(self.parent, text='on screen and move cursor')
+        self.labelTwo.grid(row=2, column=self.spacing)
         
     def run(self):
         imgPath = self.img.path.get()

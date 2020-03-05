@@ -1,11 +1,12 @@
 from tkinter import *
 import pyautogui
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
+from options import Base
 
-        self.logger = logger
+
+class Widget(Base):
+    def __init__(self, *args):
+        super().__init__(*args)
         
     def run(self):
         pos = pyautogui.position()

@@ -3,13 +3,15 @@ import time
 
 import gui
 import options.sequential
+from options import Base
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
 
-        self.frameOne = Frame(parent)
-        self.frameOne.grid(row=0, column=spacing)
+class Widget(Base):
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.frameOne = Frame(self.parent)
+        self.frameOne.grid(row=0, column=self.spacing)
 
         self.labelOne = Label(self.frameOne, text='After')
         self.labelOne.grid(row=0, column=0, sticky=E)
@@ -20,10 +22,10 @@ class Widget:
         self.labelTwo = Label(self.frameOne, text='seconds')
         self.labelTwo.grid(row=0, column=2, sticky=W)
 
-        self.options = LabelFrame(parent, text='do')
-        self.options.grid(row=1, column=spacing, sticky=E)
+        self.options = LabelFrame(self.parent, text='do')
+        self.options.grid(row=1, column=self.spacing, sticky=E)
 
-        self.optionManger = gui.OptionManager(self.options, options.sequential.optList, logger, True, 50)
+        self.optionManger = gui.OptionManager(self.options, options.sequential.optList, self.logger, True, 50)
 
     def start(self):
         self.timer = time.time()

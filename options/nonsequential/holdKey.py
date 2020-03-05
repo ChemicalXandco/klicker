@@ -1,15 +1,18 @@
 from tkinter import *
 import keyboard
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
+from options import Base
 
-        self.labelOne = Label(parent, text='Hold')
-        self.labelOne.grid(row=0, column=spacing)
 
-        self.key = Entry(parent, width=5)
-        self.key.grid(row=0, column=spacing+1)
+class Widget(Base):
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.labelOne = Label(self.parent, text='Hold')
+        self.labelOne.grid(row=0, column=self.spacing)
+
+        self.key = Entry(self.parent, width=5)
+        self.key.grid(row=0, column=self.spacing+1)
 
     def start(self):
         keyboard.press(self.key.get())
