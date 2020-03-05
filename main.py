@@ -16,7 +16,7 @@ except Exception as e:
     gui.logger.warning('Keys failed to load, only x can be used as an activation hotkey: '+str(e))
 activated = False
 currentButton = None
-warning = 'Cannot activate when this GUI is in focus'
+warning = 'Cannot activate when this window is in focus'
 focus = False
 while True:
     try:

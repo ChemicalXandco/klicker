@@ -4,6 +4,7 @@ import logging
 
 import options.sequential, options.nonsequential
 from options.utils import TextHandler
+from options.numbers import Numbers
 import profile_manager as profileManager
 
 
@@ -56,14 +57,8 @@ class GUI:
         self.saveButton = Button(self.config, text='Save Configuration', command=self.writeSetting)
         self.saveButton.grid(row=3, column=1)
 
-        self.addOptionFrame = Frame(master)
-        self.addOptionFrame.grid(row=2, column=0, sticky=W)
-
-        self.scrollFrame = ScrollFrame(master)
-        self.scrollFrame.grid(row=3, column=0, columnspan=2, sticky=W)
-        
-        self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
-        self.options.grid(row=0, column=0) 
+        self.numbers = Numbers(master, text='Numbers')
+        self.numbers.grid(row=3, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.logFrame = LabelFrame(master, text='Log')
         self.logFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
@@ -93,6 +88,12 @@ class GUI:
         self.logger.addHandler(self.textHandler)
         self.logger.addHandler(self.fileHandler)
         self.logger.addHandler(self.consoleHandler)
+
+        self.scrollFrame = ScrollFrame(master, 500)
+        self.scrollFrame.grid(row=0, column=3, rowspan=5, sticky=W)
+        
+        self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
+        self.options.grid(row=0, column=0) 
 
         self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger)
 
@@ -209,24 +210,31 @@ class GUI:
 
 class ScrollFrame(Frame):
     # from https://gist.github.com/mp035/9f2027c3ef9172264532fcd6262f3b01
-    def __init__(self, parent):
+    def __init__(self, parent, height):
         super().__init__(parent)
 
-        self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0')          
+        self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0', height=height)          
         self.viewPort = Frame(self.canvas, background='#F0F0F0')                    
-        self.vsb = Scrollbar(self, orient='vertical', command=self.canvas.yview)  
+        self.vsb = Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)                          
 
-        self.vsb.pack(side='right', fill='y')                                       
-        self.canvas.pack(side='left', fill='both', expand=True)                     
-        self.canvas.create_window((4,4), window=self.viewPort, anchor='nw',
-                                  tags='self.viewPort')
+        self.vsb.pack(side="right", fill="y")                                       
+        self.canvas.pack(side="left", fill="both", expand=True)                     
+        self.canvas_window = self.canvas.create_window((4,4), window=self.viewPort, anchor="nw",           
+                                  tags="self.viewPort")
 
-        self.viewPort.bind('<Configure>', self.onFrameConfigure)
+        self.viewPort.bind("<Configure>", self.onFrameConfigure)                       
+        self.canvas.bind("<Configure>", self.onCanvasConfigure)                       
+        self.onFrameConfigure(None)                                                 
 
     def onFrameConfigure(self, event):                                              
         '''Reset the scroll region to encompass the inner frame'''
-        self.canvas.configure(scrollregion=self.canvas.bbox('all'))
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))                 
+
+    def onCanvasConfigure(self, event):
+        '''Reset the canvas window to encompass inner frame when required'''
+        canvas_width = event.width
+        self.canvas.itemconfig(self.canvas_window, width = canvas_width)
 
 
 class OptionWrapper:
