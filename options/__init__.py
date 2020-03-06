@@ -7,3 +7,10 @@ class Base:
         self.spacing = spacing
         self.logger = logger
         self.numbers = numbers
+
+    @property
+    def args(self):
+        return [
+            self.logger,
+            self.numbers
+        ]

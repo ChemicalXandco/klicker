@@ -5,6 +5,7 @@ import logging
 import options.sequential, options.nonsequential
 from options.utils import TextHandler
 from options.numbers import Numbers
+from options import Base as OptionBase
 import profile_manager as profileManager
 
 
@@ -150,10 +151,10 @@ class GUI:
 
     def handleSetProfile(self, *args): 
         self.optionManager.destroyOptions()
-        profiles = profileManager.read()
-        self.optionManager.setProfile(profiles[self.profile.get()])
+        profile = profileManager.read()[self.profile.get()]
 
-        self.numbers.set(profiles.get('numbers'))
+        self.numbers.set(profile.pop('numbers'))
+        self.optionManager.setProfile(profile)
 
     def menuCommand(self, value):
         self.profile.set(value)
@@ -241,11 +242,13 @@ class ScrollFrame(Frame):
         self.canvas.itemconfig(self.canvas_window, width = canvas_width)
 
 
-class OptionWrapper:
-    def __init__(self, master, sequential, option, widgets, logger, numbers):
+class OptionWrapper(OptionBase):
+    def __init__(self, parent, sequential, option, widgets, *args):
+        super().__init__(parent, None, *args)
+
         self.widgets = widgets
         
-        self.frame = LabelFrame(master, text=option)
+        self.frame = LabelFrame(parent, text=option)
 
         self.deleteButton = Button(self.frame, text='❌', command=self.findIdAndDestroy)
         self.deleteButton.grid(row=0, column=0)
@@ -256,7 +259,7 @@ class OptionWrapper:
             optionObject = options.sequential.optDict.get(option)
         else:
             optionObject = options.nonsequential.optDict.get(option)
-        self.widget = optionObject.Widget(self.frame, 1, logger, numbers)
+        self.widget = optionObject.Widget(self.frame, 1, *args)
         
         self.frame.pack(anchor=W, padx=5, pady=0)
 
@@ -267,10 +270,10 @@ class OptionWrapper:
         self.frame.destroy()
 
 
-class OptionManager:
-    def __init__(self, parent, availableOptions, logger, numbers, sequential=False,  maxOptions=None):
-        self.parent = parent
-        self.max = maxOptions
+class OptionManager(OptionBase):
+    def __init__(self, parent, availableOptions, *args, sequential=False):
+        super().__init__(parent, None, *args)
+
         self.sequential = sequential
 
         self.addOptionFrame = Frame(parent)
@@ -285,19 +288,14 @@ class OptionManager:
         self.addOptions.grid(row=0, column=1, sticky=W)
 
         self.wrappers = []
-        
-        self.logger = logger
-        self.numbers = numbers
 
     def handleAddOption(self, *args):
-        if self.max == None:
-            self.addOption(self.selectedOption.get())
-        elif len(self.wrappers) < self.max:
-            self.addOption(self.selectedOption.get())
+        self.addOption(self.selectedOption.get())
+        
         self.selectedOption.set('➕')
 
     def addOption(self, option):
-        self.wrappers.append(OptionWrapper(self.parent, self.sequential, option, self.wrappers, self.logger, self.numbers))
+        self.wrappers.append(OptionWrapper(self.parent, self.sequential, option, self.wrappers, *self.args))
 
     def startOptions(self):
         for o in self.wrappers:
