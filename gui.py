@@ -101,13 +101,13 @@ class GUI:
         self.readSetting()
         self.changeLevel(self.level.get())
 
-    def setWindowIcon(self, window):
+    @staticmethod
+    def setWindowIcon(window):
         try:
             window.iconbitmap('icon.ico')
         except TclError:
             # Linux compatibility
             window.iconphoto(False, PhotoImage(file='icon.png'))
-
 
     def limitChar(self, i):
         if i == '1': #if the index is 1 it means the string will be 2 characters long

@@ -1,6 +1,31 @@
 from tkinter import *
 
+from random import *
+from random import uniform as randfloat
+from math import *
+
 import gui
+
+
+class Number(Entry):
+    def __init__(self, parent, numbers, **kwargs):
+        if kwargs.get('width', 0) < 25:
+            kwargs['width'] = 25
+        super().__init__(parent, **kwargs)
+
+        self.numbers = numbers
+
+    def parse(self):
+        string = self.get()
+
+        for name,number in self.numbers.get().items():
+            exec(name+'='+str(number))
+        # using exec and eval allows math and random functions to be used, we are trusting the user not to input anything that would jeopardise the normal function of the software
+        return eval(string)
+
+    def set(self, value):
+        self.delete(0, END)
+        self.insert(0, value)
 
 
 class Numbers(LabelFrame):
@@ -20,7 +45,7 @@ class Numbers(LabelFrame):
     def add(self):
         self.childWindow = Toplevel(self.master)
         self.childWindow.title('Name Number')
-        gui.GUI.setWindowIcon(self, self.childWindow)
+        gui.GUI.setWindowIcon(self.childWindow)
         self.childWindow.geometry('250x50')
         vcmd = (self.register(self.limitChar), '%i', '%S')
         self.newNumberName = Entry(self.childWindow, validate='key', validatecommand=vcmd)
@@ -38,7 +63,7 @@ class Numbers(LabelFrame):
                 return False
 
     def assign(self):
-        self.assigned[self.newNumberName.get()] = 0
+        self.assigned[self.newNumberName.get().lower()] = 0
         self.update()
 
     def get(self):

@@ -2,6 +2,7 @@ from tkinter import *
 import pyautogui
 
 from options import Base
+from options.numbers import Number
 
 
 class Widget(Base):
@@ -11,14 +12,14 @@ class Widget(Base):
         self.labelOne = Label(self.parent, text='scroll mouse wheel')
         self.labelOne.grid(row=0, column=self.spacing, sticky=E)
 
-        self.clicks = Entry(self.parent, width=5)
+        self.clicks = Number(self.parent, self.numbers)
         self.clicks.grid(row=0, column=self.spacing+1)
     
         self.labelTwo = Label(self.parent, text='"clicks"')
         self.labelTwo.grid(row=0, column=self.spacing+2, sticky=W)
 
     def run(self):
-        pyautogui.scroll(self.clicks.get())
+        pyautogui.scroll(self.clicks.parse())
 
     def returnSettings(self):
         settings = {}
@@ -26,5 +27,4 @@ class Widget(Base):
         return settings
 
     def addSettings(self, settings):
-        self.clicks.delete(0,END)
-        self.clicks.insert(0, settings['clicks'])
+        self.clicks.set(settings['clicks'])

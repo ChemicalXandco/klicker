@@ -13,7 +13,7 @@ class Widget(Base):
         self.frameOne = Frame(self.parent)
         self.frameOne.grid(row=0, column=self.spacing)
 
-        self.optionManger = gui.OptionManager(self.frameOne, options.sequential.optList, self.logger, True, 50)
+        self.optionManger = gui.OptionManager(self.frameOne, options.sequential.optList, *self.args, sequential=True)
 
     def start(self):
         self.optionManger.runOptions()

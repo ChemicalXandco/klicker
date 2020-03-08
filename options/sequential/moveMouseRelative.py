@@ -2,6 +2,7 @@ from tkinter import *
 import pyautogui
 
 from options import Base
+from options.numbers import Number
 
 
 class Widget(Base):
@@ -14,17 +15,17 @@ class Widget(Base):
         self.labelTwo = Label(self.parent, text='x:')
         self.labelTwo.grid(row=1, column=self.spacing, sticky=E)
 
-        self.x = Entry(self.parent, width=5)
+        self.x = Number(self.parent, self.numbers)
         self.x.grid(row=1, column=self.spacing+1)
     
         self.labelThree = Label(self.parent, text='y:')
         self.labelThree.grid(row=2, column=self.spacing, sticky=E)
 
-        self.y = Entry(self.parent, width=5)
+        self.y = Number(self.parent, self.numbers)
         self.y.grid(row=2, column=self.spacing+1)
 
     def run(self):
-        pyautogui.moveRel(int(self.x.get()), int(self.y.get()))
+        pyautogui.moveRel(int(self.x.parse()), int(self.y.parse()))
 
     def returnSettings(self):
         settings = {}
@@ -33,7 +34,5 @@ class Widget(Base):
         return settings
 
     def addSettings(self, settings):
-        self.x.delete(0,END)
-        self.x.insert(0, settings['x'])
-        self.y.delete(0,END)
-        self.y.insert(0, settings['y'])
+        self.x.set(settings['x'])
+        self.y.set(settings['y'])
