@@ -1,30 +1,9 @@
-from options.sequential import (
-scroll,
-mouseDown,
-mouseUp,
-keyDown,
-keyUp,
-wait,
-ping,
-find,
-moveMouseTo,
-moveMouseRelative,
-deactivate,
-logMousePosition
-)
+import pkgutil
+import importlib
 
-optDict = {'scroll': scroll,
-           'mouseDown': mouseDown,
-           'mouseUp': mouseUp,
-           'keyDown': keyDown,
-           'keyUp': keyUp,
-           'wait': wait,
-           'ping': ping,
-           'find': find,
-           'moveMouseTo': moveMouseTo,
-           'moveMouseRelative': moveMouseRelative,
-           'deactivate': deactivate,
-           'logMousePosition': logMousePosition
-           }
+optDict = {}
 
+for importer, package, ispkg in pkgutil.walk_packages(__path__):  
+    optDict[package] = importlib.import_module('options.sequential.'+package)
+    
 optList = list(optDict.keys())

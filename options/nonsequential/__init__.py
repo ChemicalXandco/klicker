@@ -1,18 +1,10 @@
-from options.nonsequential import (
-holdClick,
-timer,
-holdKey,
-doOnce,
-onStart,
-onEnd
-)
+import pkgutil
+import importlib
 
-optDict = {'holdClick': holdClick,
-           'timer': timer,
-           'holdKey': holdKey,
-           'doOnce': doOnce,
-           'onStart': onStart,
-           'onEnd': onEnd
-           }
+optDict = {}
 
+for importer, package, ispkg in pkgutil.walk_packages(__path__):  
+    optDict[package] = importlib.import_module('options.nonsequential.'+package)
+    
 optList = list(optDict.keys())
+
