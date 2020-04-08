@@ -37,6 +37,8 @@ while True:
                         gui.logger.info('Hotkey pressed - activated')
                         timer = time()
                         gui.optionManager.startOptions()
+                        if gui.overlay.get() == 1:
+                            gui.enableOverlay()
             elif not released:
                 released = True
         if activated:
@@ -47,6 +49,7 @@ while True:
         sleep(0.01) # minimise CPU usage
     except DeactivateRequest as e:
         gui.logger.info(e)
+        gui.disableOverlay()
         gui.optionManager.stopOptions()
         gui.status.config(text='Inactive', fg='#ff0000')
         activated = False

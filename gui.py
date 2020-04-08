@@ -3,7 +3,7 @@ from tkinter import scrolledtext
 import logging
 
 import options.sequential, options.nonsequential
-from options.utils import TextHandler
+from options.utils import OverlayWindow, TextHandler
 from options.numbers import Numbers
 from options import Base as OptionBase
 import profile_manager as profileManager
@@ -58,11 +58,16 @@ class GUI:
         self.saveButton = Button(self.config, text='Save Configuration', command=self.writeSetting)
         self.saveButton.grid(row=3, column=1)
 
+        self.overlayFrame = LabelFrame(master, text='Overlay')
+        self.overlayFrame.grid(row=3, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+        self.overlay = IntVar()
+        self.overlayButton = Checkbutton(self.overlayFrame, text="enabled", variable=self.overlay).grid(row=0, column=0, sticky=W)
+
         self.numbers = Numbers(master, text='Numbers')
-        self.numbers.grid(row=3, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+        self.numbers.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.logFrame = LabelFrame(master, text='Log')
-        self.logFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+        self.logFrame.grid(row=5, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.level = StringVar(master)
         self.setLevel = OptionMenu(self.logFrame, self.level, *list(logging._levelToName.values()), command=self.changeLevel)
@@ -91,7 +96,7 @@ class GUI:
         self.logger.addHandler(self.consoleHandler)
 
         self.scrollFrame = ScrollFrame(master, (400, 500))
-        self.scrollFrame.grid(row=0, column=3, rowspan=5, sticky=W)
+        self.scrollFrame.grid(row=0, column=3, rowspan=6, sticky=W)
         
         self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
         self.options.grid(row=0, column=0) 
@@ -211,6 +216,23 @@ class GUI:
         self.log.configure(state='normal')
         self.log.delete('1.0', END)
         self.log.configure(state='disabled')
+
+    def enableOverlay(self):
+        self.overlayWindow = OverlayWindow(self.master)
+
+        self.overlayWindow.log = scrolledtext.ScrolledText(self.overlayWindow, width=100, height=10, state='disabled')
+        self.overlayWindow.log.grid(row=0, column=0)
+
+        self.overlayWindow.textHandler = TextHandler(self.overlayWindow.log)
+        self.overlayWindow.textHandler.setLevel(logging.DEBUG)
+        self.overlayWindow.textHandler.setFormatter(self.formatter)
+        self.logger.addHandler(self.overlayWindow.textHandler)
+
+    def disableOverlay(self):
+        try:
+            self.overlayWindow.destroy()
+        except AttributeError:
+            pass
 
 
 class ScrollFrame(Frame):

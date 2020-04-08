@@ -18,6 +18,15 @@ class FileSelector(Frame):
         self.path.insert(0, filename)
 
 
+class OverlayWindow(Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.wm_attributes("-topmost", 1)
+        self.wm_attributes('-alpha',0.5)
+        self.overrideredirect(1)
+
+
 def levelStrToColour(level):
     if level == 'WARNING':
         return 'orange'
