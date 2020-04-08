@@ -15,26 +15,30 @@ except Exception as e:
     keys = ['x']
     gui.logger.warning('Keys failed to load, only x can be used as an activation hotkey: '+str(e))
 activated = False
+released = False
 currentButton = None
-timer = time()+1
+timer = time()
 
 while True:
     try:
         if gui.hotkey.get() in keys:
-            if keyboard.is_pressed(gui.hotkey.get()) and time()-timer > 1:
-                if activated:
+            if keyboard.is_pressed(gui.hotkey.get()):
+                if activated and released:
                     raise DeactivateRequest('Hotkey pressed - deactivated')
                 else:
                     if root.focus_get() != None:
                         gui.logger.warning('Cannot activate while this window is in focus')
                         timer = time()
-                    else:
+                    elif not activated:
                         activated = True
+                        released = False
                         gui.status.config(text='Active', fg='#00ff00')
                         gui.uptime.config(fg='#00ff00')
                         gui.logger.info('Hotkey pressed - activated')
                         timer = time()
                         gui.optionManager.startOptions()
+            elif not released:
+                released = True
         if activated:
             gui.optionManager.updateOptions()
             gui.uptime.config(text=str(round(time()-timer, 2)))
