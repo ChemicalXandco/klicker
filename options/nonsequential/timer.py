@@ -31,15 +31,15 @@ class Widget(Base):
     def start(self):
         self.timer = time.time()
         self.interval = self.seconds.parse()
+        self.addTime = 0
 
     def stop(self):
         return
 
     def update(self):
-        timed = time.time()-self.timer
-        if timed >= self.interval:
-            self.timer = time.time()
+        if time.time() >= self.timer + self.addTime:
             self.optionManger.runOptions()
+            self.addTime += self.interval
 
     def returnSettings(self):
         settings = self.optionManger.getProfile()
