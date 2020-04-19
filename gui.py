@@ -9,6 +9,13 @@ from options.numbers import Numbers
 from options import Base as OptionBase
 import profile_manager as profileManager
 
+systemLogLevel = 25
+logging.addLevelName(systemLogLevel, 'SYSTEM')
+def system(self, message, *args, **kws):
+    if self.isEnabledFor(systemLogLevel):
+        self._log(systemLogLevel, message, args, **kws) 
+logging.Logger.system = system
+
 
 class GUI:
     def __init__(self, master):
@@ -101,6 +108,7 @@ class GUI:
         self.textHandler.setFormatter(self.formatter)
         self.fileHandler.setFormatter(self.formatter)
         self.consoleHandler.setFormatter(self.formatter)
+
         self.logger = logging.getLogger()
         self.logger.setLevel(logging.DEBUG)
         self.logger.addHandler(self.textHandler)
@@ -217,7 +225,7 @@ class GUI:
         if self.overlayGeneral.get() == 1:
             self.enableOverlay()
 
-        self.logger.info('Change current profile to ' + new)
+        self.logger.system('Change current profile to ' + new)
 
     def checkToDisableOverlay(self):
         try:
@@ -275,6 +283,7 @@ class GUI:
         try:
             self.overlayWindow.destroy()
             self.logger.handlers = [ h for h in self.logger.handlers if not isinstance(h, TextHandler) ]
+            self.logger.addHandler(self.textHandler)
         except AttributeError:
             pass
 

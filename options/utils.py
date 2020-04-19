@@ -30,8 +30,10 @@ class OverlayWindow(Toplevel):
 def levelStrToColour(level):
     if level == 'WARNING':
         return 'orange'
-    if level == 'ERROR':
+    elif level == 'ERROR':
         return 'red'
+    elif level == 'SYSTEM':
+        return 'blue'
     else:
         return 'black'
 

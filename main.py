@@ -34,11 +34,11 @@ while True:
                         released = False
                         gui.status.config(text='Active', fg='#00ff00')
                         gui.uptime.config(fg='#00ff00')
-                        gui.logger.info('Hotkey pressed - activated')
-                        timer = time.time()
-                        gui.optionManager.startOptions()
                         if gui.overlay.get() == 1:
                             gui.enableOverlay()
+                        gui.logger.system('Hotkey pressed - activated')
+                        timer = time.time()
+                        gui.optionManager.startOptions()
             elif not released:
                 released = True
         if gui.profileHotkey.get() in keys:
@@ -55,7 +55,7 @@ while True:
         root.update()
         time.sleep(0.01) # minimise CPU usage
     except DeactivateRequest as e:
-        gui.logger.info(e)
+        gui.logger.system(e)
         gui.timeSinceOverlayOpened = time.time()
         gui.optionManager.stopOptions()
         gui.status.config(text='Inactive', fg='#ff0000')
