@@ -164,8 +164,9 @@ class GUI:
 
     def handleCreateProfile(self):
         profile = self.optionManager.getProfile()
-        profile['overlay'] = { 'enabled': self.overlay.get()}
-        profile['numbers'] = self.numbers.get()
+        profile['settings']['overlay'] = self.overlay.get()
+        profile['settings']['numbers'] = self.numbers.get()
+        profile['settings']['level'] = self.level.get()
         profileManager.write(self.newProfileName.get(), profile)
         self.refreshProfiles()
         self.profile.set(self.newProfileName.get())
@@ -179,8 +180,10 @@ class GUI:
         self.optionManager.destroyOptions()
         profile = profileManager.read()[self.profile.get()]
 
-        self.overlay.set(profile.pop('overlay')['enabled'])
-        self.numbers.set(profile.pop('numbers'))
+        settings = profile.pop('settings')
+        self.overlay.set(settings['overlay'])
+        self.numbers.set(settings['numbers'])
+        self.level.set(settings['level'])
         self.optionManager.setProfile(profile)
 
     def menuCommand(self, value):
@@ -239,18 +242,21 @@ class GUI:
         f = open('config.ini', 'r')
         self.hotkey.delete(0, END)
         self.hotkey.insert(0, f.readline().strip())
+        self.profileHotkey.delete(0, END)
+        self.profileHotkey.insert(0, f.readline().strip())
+        self.overlayGeneral.set(int(f.readline().strip()))
         self.profile.set(f.readline().strip())
         if self.profile.get() in self.profileList():
             self.handleSetProfile()
-        self.level.set(f.readline().strip())
         f.close
         self.refreshProfiles()
 
     def writeSetting(self):
         f = open('config.ini', 'w')
         f.write(self.hotkey.get()+'\n')
-        f.write(self.profile.get()+'\n')
-        f.write(self.level.get())
+        f.write(self.profileHotkey.get()+'\n')
+        f.write(self.overlayGeneral.get()+'\n')
+        f.write(self.profile.get())
         f.close()
 
     def changeLevel(self, level):
