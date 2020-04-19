@@ -1,1 +1,25 @@
-{}
+{
+    "test": {
+        "options": [
+            {
+                "name": "timer",
+                "settings": {
+                    "options": [
+                        {
+                            "name": "ping",
+                            "settings": {
+                                "url": "sdfsdf"
+                            }
+                        }
+                    ],
+                    "interval": "4"
+                }
+            }
+        ],
+        "settings": {
+            "overlay": 0,
+            "numbers": {},
+            "level": "INFO"
+        }
+    }
+}

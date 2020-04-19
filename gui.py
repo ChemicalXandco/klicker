@@ -165,9 +165,12 @@ class GUI:
 
     def handleCreateProfile(self):
         profile = self.optionManager.getProfile()
+        if not 'settings' in profile:
+            profile['settings'] = {}
         profile['settings']['overlay'] = self.overlay.get()
         profile['settings']['numbers'] = self.numbers.get()
         profile['settings']['level'] = self.level.get()
+        print(str(profile))
         profileManager.write(self.newProfileName.get(), profile)
         self.refreshProfiles()
         self.profile.set(self.newProfileName.get())
@@ -401,20 +404,17 @@ class OptionManager(OptionBase):
                 o.findIdAndDestroy()
 
     def getProfile(self):
-        profile = {}
-        occurrences = {}
+        profile = { 'options': [] }
         
         for o in self.wrappers:
-            if not o.name in occurrences:
-                occurrences[o.name] = 0
-            else:
-                occurrences[o.name] += 1
-            optionName = '{}-{}'.format(o.name, occurrences[o.name])
-            profile[optionName] = o.widget.returnSettings()
-            
+            store = {}
+            store['name'] = o.name
+            store['settings'] = o.widget.returnSettings()
+            profile['options'].append(store)
+
         return profile
 
     def setProfile(self, profile):
-        for option, attributes in profile.items():
-            self.addOption(option.split('-')[0])
-            self.wrappers[-1].widget.addSettings(attributes)
+        for store in profile['options']:
+            self.addOption(store['name'])
+            self.wrappers[-1].widget.addSettings(store['settings'])
