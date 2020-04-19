@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import scrolledtext
 import logging
+import time
 
 import options.sequential, options.nonsequential
 from options.utils import OverlayWindow, TextHandler
@@ -24,14 +25,25 @@ class GUI:
         self.config = LabelFrame(master, text='Configuration')
         self.config.grid(row=1, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
-        self.hotkeyFrame = Frame(self.config)
-        self.hotkeyFrame.grid(row=0, column=0, sticky=W)
+        self.settingsFrame = Frame(self.config)
+        self.settingsFrame.grid(row=0, column=0, sticky=W)
 
-        self.hotkeyLabel = Label(self.hotkeyFrame, text='Hotkey')
+        self.hotkeyLabel = Label(self.settingsFrame, text='Hotkey')
         vcmd = (master.register(self.limitChar), '%i')
-        self.hotkey = Entry(self.hotkeyFrame, validate='key', validatecommand=vcmd, width=2)
+        self.hotkey = Entry(self.settingsFrame, validate='key', validatecommand=vcmd, width=2)
         self.hotkeyLabel.grid(row=0, column=0, sticky=E)
         self.hotkey.grid(row=0, column=1, sticky=W)
+
+        self.profileHotkeyLabel = Label(self.settingsFrame, text='Profile switch hotkey')
+        self.profileHotkey = Entry(self.settingsFrame, validate='key', validatecommand=vcmd, width=2)
+        self.profileHotkeyLabel.grid(row=1, column=0, sticky=E)
+        self.profileHotkey.grid(row=1, column=1, sticky=W)
+
+        self.overlayGeneral = IntVar()
+        self.overlayGeneralButton = Checkbutton(self.settingsFrame, text="Enable overlay when switching profiles", variable=self.overlayGeneral)
+        self.overlayGeneralButton.grid(row=2, column=0, columnspan=2, sticky=W)
+
+        self.timeSinceOverlayOpened = time.time()
 
         self.profiles = LabelFrame(self.config, text='Profile')
         self.profiles.grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=5)
@@ -61,7 +73,7 @@ class GUI:
         self.overlayFrame = LabelFrame(master, text='Overlay')
         self.overlayFrame.grid(row=3, column=0, columnspan=2, sticky=W, padx=5, pady=5)
         self.overlay = IntVar()
-        self.overlayButton = Checkbutton(self.overlayFrame, text="enabled", variable=self.overlay).grid(row=0, column=0, sticky=W)
+        self.overlayButton = Checkbutton(self.overlayFrame, text="Enabled", variable=self.overlay).grid(row=0, column=0, sticky=W)
 
         self.numbers = Numbers(master, text='Numbers')
         self.numbers.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
@@ -144,6 +156,7 @@ class GUI:
 
     def handleCreateProfile(self):
         profile = self.optionManager.getProfile()
+        profile['overlay'] = { 'enabled': self.overlay.get()}
         profile['numbers'] = self.numbers.get()
         profileManager.write(self.newProfileName.get(), profile)
         self.refreshProfiles()
@@ -158,6 +171,7 @@ class GUI:
         self.optionManager.destroyOptions()
         profile = profileManager.read()[self.profile.get()]
 
+        self.overlay.set(profile.pop('overlay')['enabled'])
         self.numbers.set(profile.pop('numbers'))
         self.optionManager.setProfile(profile)
 
@@ -190,6 +204,29 @@ class GUI:
         self.refreshProfiles()
         self.profile.set('')
 
+    def nextProfile(self):
+        profiles = self.profileList()
+        current = profiles.index(self.profile.get())
+        try:
+            new = profiles[current+1]
+        except IndexError:
+            new = profiles[0]
+        self.profile.set(new)
+
+        self.timeSinceOverlayOpened = time.time()
+        if self.overlayGeneral.get() == 1:
+            self.enableOverlay()
+
+        self.logger.info('Change current profile to ' + new)
+
+    def checkToDisableOverlay(self):
+        try:
+            if self.overlayWindow.winfo_exists() == 1:
+                if time.time() - self.timeSinceOverlayOpened > 1:
+                    self.disableOverlay()
+        except AttributeError:
+            pass
+
     def readSetting(self):
         f = open('config.ini', 'r')
         self.hotkey.delete(0, END)
@@ -218,6 +255,12 @@ class GUI:
         self.log.configure(state='disabled')
 
     def enableOverlay(self):
+        try:
+            if self.overlayWindow.winfo_exists() == 1:
+                return
+        except AttributeError:
+            pass
+
         self.overlayWindow = OverlayWindow(self.master)
 
         self.overlayWindow.log = scrolledtext.ScrolledText(self.overlayWindow, width=100, height=10, state='disabled')
@@ -231,6 +274,7 @@ class GUI:
     def disableOverlay(self):
         try:
             self.overlayWindow.destroy()
+            self.logger.handlers = [ h for h in self.logger.handlers if not isinstance(h, TextHandler) ]
         except AttributeError:
             pass
 

@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
-import logging, uuid
+import logging
+import uuid
 
 
 class FileSelector(Frame):
@@ -23,7 +24,6 @@ class OverlayWindow(Toplevel):
         super().__init__(parent)
 
         self.wm_attributes("-topmost", 1)
-        self.wm_attributes('-alpha',0.5)
         self.overrideredirect(1)
 
 

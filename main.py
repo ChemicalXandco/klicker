@@ -1,5 +1,5 @@
 import sys, keyboard
-from time import time, sleep
+import time
 from tkinter import *
 
 from gui import *
@@ -16,8 +16,8 @@ except Exception as e:
     gui.logger.warning('Keys failed to load, only x can be used as an activation hotkey: '+str(e))
 activated = False
 released = False
-currentButton = None
-timer = time()
+lastProfileSwap = time.time()
+timer = time.time()
 
 while True:
     try:
@@ -28,33 +28,40 @@ while True:
                 else:
                     if root.focus_get() != None:
                         gui.logger.warning('Cannot activate while this window is in focus')
-                        timer = time()
+                        timer = time.time()
                     elif not activated:
                         activated = True
                         released = False
                         gui.status.config(text='Active', fg='#00ff00')
                         gui.uptime.config(fg='#00ff00')
                         gui.logger.info('Hotkey pressed - activated')
-                        timer = time()
+                        timer = time.time()
                         gui.optionManager.startOptions()
                         if gui.overlay.get() == 1:
                             gui.enableOverlay()
             elif not released:
                 released = True
+        if gui.profileHotkey.get() in keys:
+            if keyboard.is_pressed(gui.profileHotkey.get()):
+                if time.time()-lastProfileSwap > 0.1:
+                    lastProfileSwap = time.time()
+                    gui.nextProfile()
         if activated:
             gui.optionManager.updateOptions()
-            gui.uptime.config(text=str(round(time()-timer, 2)))
+            gui.uptime.config(text=str(round(time.time()-timer, 2)))
+        else:
+            gui.checkToDisableOverlay()
         root.update_idletasks()
         root.update()
-        sleep(0.01) # minimise CPU usage
+        time.sleep(0.01) # minimise CPU usage
     except DeactivateRequest as e:
         gui.logger.info(e)
-        gui.disableOverlay()
+        gui.timeSinceOverlayOpened = time.time()
         gui.optionManager.stopOptions()
         gui.status.config(text='Inactive', fg='#ff0000')
         activated = False
         gui.uptime.config(fg='#ff0000')
-        sleep(1)
+        time.sleep(1)
     except Exception as e:
         try:
             gui.logger.error(e)
