@@ -110,7 +110,7 @@ class GUI:
         self.consoleHandler.setFormatter(self.formatter)
 
         self.logger = logging.getLogger()
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
         self.logger.addHandler(self.textHandler)
         self.logger.addHandler(self.fileHandler)
         self.logger.addHandler(self.consoleHandler)
@@ -123,6 +123,7 @@ class GUI:
 
         self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger, self.numbers)
 
+        self.level.set("INFO")
         self.readSetting()
         self.changeLevel(self.level.get())
 

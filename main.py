@@ -24,8 +24,9 @@ while True:
         if gui.hotkey.get() in keys:
             if keyboard.is_pressed(gui.hotkey.get()):
                 if activated and released:
+                    released = False
                     raise DeactivateRequest('Hotkey pressed - deactivated')
-                else:
+                elif released:
                     if root.focus_get() != None:
                         gui.logger.warning('Cannot activate while this window is in focus')
                         timer = time.time()
@@ -61,7 +62,6 @@ while True:
         gui.status.config(text='Inactive', fg='#ff0000')
         activated = False
         gui.uptime.config(fg='#ff0000')
-        time.sleep(1)
     except Exception as e:
         try:
             gui.logger.error(e)
