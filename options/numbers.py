@@ -64,6 +64,7 @@ class Numbers(LabelFrame):
 
     def assign(self):
         self.assigned[self.newNumberName.get().lower()] = 0
+        self.childWindow.destroy()
         self.update()
 
     def get(self):
@@ -73,18 +74,30 @@ class Numbers(LabelFrame):
         self.assigned = assigned
         self.update()
 
+    def remove(self, letter):
+        del self.assigned[letter]
+        self.update()
+
     def update(self):
-        for l,e in self.widgets:
+        for b,l,e in self.widgets:
+            b.destroy()
             l.destroy()
             e.destroy()
         self.widgets = []
         
         row = 0
         for k,v in self.assigned.items():
-            self.widgets.append([Label(self.numbersGrid, text=k), Entry(self.numbersGrid)])
+            self.widgets.append(
+                (   
+                    Button(self.numbersGrid, text='❌', command=lambda: self.remove(k)),
+                    Label(self.numbersGrid, text=k), 
+                    Entry(self.numbersGrid)
+                )
+            )
             self.widgets[row][0].grid(row=row, column=0)
             self.widgets[row][1].grid(row=row, column=1)
+            self.widgets[row][2].grid(row=row, column=2)
 
-            self.widgets[row][1].insert(0, v)
+            self.widgets[row][2].insert(0, v)
             row += 1
             
