@@ -220,11 +220,17 @@ class GUI:
 
     def nextProfile(self):
         profiles = self.profileList()
-        current = profiles.index(self.profile.get())
+        try:
+            current = profiles.index(self.profile.get())
+        except ValueError:
+            current = 0
         try:
             new = profiles[current+1]
         except IndexError:
             new = profiles[0]
+        if new == None:
+            self.logger.warning('Could not change profile because there are no profiles to change to.')
+            return
         self.profile.set(new)
 
         self.timeSinceOverlayOpened = time.time()

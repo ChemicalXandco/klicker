@@ -46,7 +46,12 @@ while True:
             if keyboard.is_pressed(gui.profileHotkey.get()):
                 if time.time()-lastProfileSwap > 0.1:
                     lastProfileSwap = time.time()
-                    gui.nextProfile()
+                    if activated:
+                        gui.logger.warning('Could not switch profile because the system is activated.')
+                    elif root.focus_get() != None:
+                        gui.logger.warning('Could not switch profile because this window is in focus.')
+                    else:
+                        gui.nextProfile()
         if activated:
             gui.optionManager.updateOptions()
             gui.uptime.config(text=str(round(time.time()-timer, 2)))
