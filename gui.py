@@ -170,7 +170,6 @@ class GUI:
         profile['settings']['overlay'] = self.overlay.get()
         profile['settings']['numbers'] = self.numbers.get()
         profile['settings']['level'] = self.level.get()
-        print(str(profile))
         profileManager.write(self.newProfileName.get(), profile)
         self.refreshProfiles()
         self.profile.set(self.newProfileName.get())

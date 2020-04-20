@@ -1,9 +1,13 @@
 import json
 
 def read():
-    file = open('profiles.json', 'r')
-    parsed = json.load(file)
-    file.close()
+    try:
+        file = open('profiles.json', 'r')
+        parsed = json.load(file)
+        file.close()
+    except FileNotFoundError:
+        parsed = {}
+
     return parsed
 
 def write(profileName, profile):
