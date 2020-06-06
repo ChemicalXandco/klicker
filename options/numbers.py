@@ -20,7 +20,7 @@ class Number(Entry):
 
         for name,number in self.numbers.get().items():
             exec(name+'='+str(number))
-        # using exec and eval allows math and random functions to be used, we are trusting the user not to input anything that would jeopardise the normal function of the software
+        # using eval allows math and random functions to be used, we are trusting the user not to input anything that would jeopardise the normal function of the software
         return eval(string)
 
     def set(self, value):

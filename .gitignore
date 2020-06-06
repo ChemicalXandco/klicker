@@ -1,6 +1,7 @@
 # Simple Clicker files
 log.txt
 profiles.json
+recordings/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

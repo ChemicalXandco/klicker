@@ -6,6 +6,7 @@ import time
 import options.sequential, options.nonsequential
 from options.utils import OverlayWindow, TextHandler
 from options.numbers import Numbers
+from options.recordings import Recordings
 from options import Base as OptionBase
 import profile_manager as profileManager
 
@@ -86,7 +87,7 @@ class GUI:
         self.numbers.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.logFrame = LabelFrame(master, text='Log')
-        self.logFrame.grid(row=5, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+        self.logFrame.grid(row=6, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.level = StringVar(master)
         self.setLevel = OptionMenu(self.logFrame, self.level, *list(logging._levelToName.values()), command=self.changeLevel)
@@ -114,6 +115,9 @@ class GUI:
         self.logger.addHandler(self.textHandler)
         self.logger.addHandler(self.fileHandler)
         self.logger.addHandler(self.consoleHandler)
+
+        self.recordings = Recordings(master, text='Recordings', logger=self.logger, root=self.master)
+        self.recordings.grid(row=5, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.scrollFrame = ScrollFrame(master, (400, 500))
         self.scrollFrame.grid(row=0, column=3, rowspan=6, sticky=W)

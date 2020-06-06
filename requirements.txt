@@ -1,3 +1,4 @@
 setuptools
 pyautogui
 keyboard
+pynput
