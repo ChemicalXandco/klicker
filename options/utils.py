@@ -27,6 +27,26 @@ class OverlayWindow(Toplevel):
         self.overrideredirect(1)
 
 
+class CheckList(Frame):
+    def __init__(self, parent, items, default=1):
+        super().__init__(parent)
+
+        self.items = items
+        self.buttons = []
+
+        for i in range(len(items)):
+            self.buttons.append(IntVar())
+            self.buttons[i].set(default)
+            Checkbutton(self, text=items[i], variable=self.buttons[i]).pack()
+
+    def get(self):
+        checked = []
+        for i in range(len(self.items)):
+            if self.buttons[i].get() == 1:
+                checked.append(self.items[i])
+        return checked
+
+
 def levelStrToColour(level):
     if level == 'WARNING':
         return 'orange'
