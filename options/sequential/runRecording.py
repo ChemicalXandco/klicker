@@ -13,8 +13,19 @@ class Widget(Base):
         self.labelOne = Label(self.parent, text='Name of recording file:')
         self.labelOne.grid(row=0, column=self.spacing, sticky=E)
 
-        self.recordingFilename = Entry(self.parent, width=20)
-        self.recordingFilename.grid(row=0, column=self.spacing+1)
+        self.recordingFilename = StringVar(self.parent)
+
+        self.optionMenu = OptionMenu(self.parent, self.recordingFilename, '')
+        self.optionMenu.grid(row=0, column=self.spacing+1)
+
+        self.recordings.addUpdate(self.update)
+
+    def update(self, optionList):
+        menu = self.optionMenu["menu"]
+        menu.delete(0, "end")
+        for string in optionList:
+            menu.add_command(label=string, 
+                             command=lambda value=string: self.recordingFilename.set(value))
 
     def run(self):
         replayRecording(self.recordingFilename.get(), self.logger)
@@ -25,5 +36,4 @@ class Widget(Base):
         return settings
 
     def addSettings(self, settings):
-        self.recordingFilename.delete(0,END)
-        self.recordingFilename.insert(0, settings['recordingFilename'])
+        self.recordingFilename.set(settings['recordingFilename'])

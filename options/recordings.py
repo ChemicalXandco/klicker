@@ -129,10 +129,15 @@ class Recordings(LabelFrame):
         self.addButton = Button(self, text='➕', command=self.add)
         self.addButton.grid(row=0, column=0)
 
+        self.refreshButton = Button(self, text='Refresh', command=self.update)
+        self.refreshButton.grid(row=0, column=1)
+
         self.recordingsGrid = Frame(self)
-        self.recordingsGrid.grid(row=1, column=0)
+        self.recordingsGrid.grid(row=1, column=0, columnspan=2)
 
         self.recordingsFile = RecordingsFile()
+
+        self.updates = []
 
         self.update()
 
@@ -197,7 +202,8 @@ class Recordings(LabelFrame):
         self.widgets = []
         
         row = 0
-        for i in self.recordingsFile.listItems():
+        fileList = self.recordingsFile.listItems()
+        for i in fileList:
             self.widgets.append(
                 (   
                     Button(self.recordingsGrid, text='❌', command=lambda: self.remove(i)),
@@ -208,6 +214,13 @@ class Recordings(LabelFrame):
             self.widgets[row][1].grid(row=row, column=1)
 
             row += 1
+
+        for f in self.updates:
+            f(fileList)
+
+    def addUpdate(self, f):
+        self.updates.append(f)
+        self.update()
 
     def remove(self, item):
         self.recordingsFile.remove(item)

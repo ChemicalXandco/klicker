@@ -125,7 +125,7 @@ class GUI:
         self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
         self.options.grid(row=0, column=0) 
 
-        self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger, self.numbers)
+        self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger, self.numbers, self.recordings)
 
         self.level.set("INFO")
         self.readSetting()
