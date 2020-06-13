@@ -1,5 +1,6 @@
 import pynput
 import os
+import time
 from tkinter import *
 
 import gui
@@ -11,11 +12,15 @@ class RecordingsFile:
         self.killKey = None
         self.path = None
         self.allowed = []
+        self.startTime = None
 
     def listItems(self):
         return os.listdir('recordings')
 
     def write(self, string):
+        if 'Store Timings' in self.allowed:
+            timeString = '[{}] '.format(time.time()-self.startTime)
+            string = timeString + string
         with open(self.path, 'a') as f:
             f.write(string + '\n')
 
@@ -54,20 +59,25 @@ def replayRecording(file, logger):
     path = 'recordings/' + file
     if os.path.isfile(path):
         logger.debug('Replaying recording ' + path)
+        startTime = time.time()
         keyboard = pynput.keyboard.Controller()
         mouse = pynput.mouse.Controller()
         with open(path, 'r') as f:
             lines = f.readlines()
             for i in range(len(lines)):
-                line = lines[i]
+                line = lines[i].replace(' ', '')
+                testSplit = line.split('[')
+                if len(testSplit) != 1:
+                    timeStr, line = testSplit[1].split(']')
+                    while time.time()-startTime < float(timeStr):
+                        time.sleep(0.001)
                 cmd = line[:2]
                 try:
                     if cmd[0] == 'K':
                         try:
                             key = line.split("'")[1]
                         except IndexError:
-                            a = line.replace(' ', '')
-                            key = eval('pynput.keyboard.' + a[2:])
+                            key = eval('pynput.keyboard.' + line[2:])
                         if cmd == 'KP':
                             keyboard.press(key)
                         elif cmd == 'KR':
@@ -78,10 +88,10 @@ def replayRecording(file, logger):
                         a = line.split('(') 
                         b = a[1].split(')') 
                         c = b[0].split(',')
-                        d = [int(v.replace(' ', '')) for v in c]
+                        d = [int(v) for v in c]
                         mouse.position = tuple(d)
                         if cmd == 'MP' or cmd == 'MR':
-                            arg2 = b[1].replace(' ', '')
+                            arg2 = b[1]
                             button = None
                             if arg2 == 'Button.left\n':
                                 button = pynput.mouse.Button.left
@@ -97,7 +107,7 @@ def replayRecording(file, logger):
                         elif cmd == 'MS':
                             e = a[2].split(')')
                             f = e[0].split(',')
-                            g = [int(v.replace(' ', '')) for v in f]
+                            g = [int(v) for v in f]
                             mouse.scroll(g[0], g[1])
                     else:
                         logger.warning("'{}' on line {} of {} is not a valid command, skipping.".format(cmd, i+1, path))
@@ -145,7 +155,7 @@ class Recordings(LabelFrame):
         vcmd = (self.register(self.limitChar), '%i')
         self.killKey = Entry(self.childWindow, validate='key', validatecommand=vcmd)
         self.killKey.pack(fill=X, expand=YES)
-        self.types = CheckList(self.childWindow, ['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll'])
+        self.types = CheckList(self.childWindow, ['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll', 'Store Timings'])
         self.types.pack(fill=X, expand=YES)
         createButton = Button(self.childWindow, text="Record", command=self.record)
         createButton.pack(fill=X, expand=YES)
@@ -161,6 +171,7 @@ class Recordings(LabelFrame):
                 os.makedirs('recordings')
             self.recordingsFile.path = 'recordings/{}.txt'.format(self.newRecordingName.get())
             self.recordingsFile.allowed = self.types.get()
+            self.recordingsFile.startTime = time.time()
             self.childWindow.destroy()
             self.logger.system('Recording Started.')
             self.root.update() # root needs to be updated for log message to show
