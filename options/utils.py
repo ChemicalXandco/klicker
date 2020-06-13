@@ -58,7 +58,7 @@ class CheckList(Frame):
             self.vars.append(IntVar())
             self.vars[index].set(v)
             self.buttons.append(Checkbutton(self, text=k, variable=self.vars[index]))
-            self.buttons[index].pack()
+            self.buttons[index].pack(anchor=W)
 
     def get(self):
         checked = []

@@ -189,7 +189,7 @@ class Recordings(LabelFrame):
             self.recordingsFile.allowed = self.types.get()
             self.recordingsFile.startTime = time.time()
             self.childWindow.destroy()
-            self.logger.system('Recording Started.')
+            self.logger.system('Recording started with kill key {}.'.format(self.recordingsFile.killKey))
             self.root.update() # root needs to be updated for log message to show
 
             keyboardListener = pynput.keyboard.Listener(on_press=self.recordingsFile.on_press, 
@@ -203,7 +203,7 @@ class Recordings(LabelFrame):
             keyboardListener.join()
             mouseListener.stop()
             mouseListener.join()
-            self.logger.system('Recording Stopped.')
+            self.logger.system("Recording stopped and saved as '{}'.".format(self.recordingsFile.path))
             self.update()
 
     def update(self):

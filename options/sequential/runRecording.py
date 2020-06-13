@@ -1,6 +1,5 @@
 from tkinter import *
 from time import sleep
-import pyautogui
 
 from options import Base
 from options.recordings import replayRecording
