@@ -132,8 +132,9 @@ class Recordings(LabelFrame):
         self.refreshButton = Button(self, text='Refresh', command=self.update)
         self.refreshButton.grid(row=0, column=1)
 
-        self.recordingsGrid = Frame(self)
-        self.recordingsGrid.grid(row=1, column=0, columnspan=2)
+        self.recordingsFrame = gui.ScrollFrame(self, (400, 100))
+        self.recordingsFrame.grid(row=1, column=0, columnspan=2)
+        self.recordingsGrid = self.recordingsFrame.viewPort
 
         self.recordingsFile = RecordingsFile()
 

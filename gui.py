@@ -34,17 +34,13 @@ class GUI:
         self.config.grid(row=1, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.settingsFrame = Frame(self.config)
-        self.settingsFrame.grid(row=0, column=0, sticky=W)
+        self.settingsFrame.grid(row=0, column=0, columnspan=2, sticky=W)
 
         self.hotkeyLabel = Label(self.settingsFrame, text='Hotkey')
         vcmd = (master.register(self.limitChar), '%i')
         self.hotkey = Entry(self.settingsFrame, validate='key', validatecommand=vcmd, width=2)
         self.hotkeyLabel.grid(row=0, column=0, sticky=E)
         self.hotkey.grid(row=0, column=1, sticky=W)
-
-        self.overlayGeneral = IntVar()
-        self.overlayGeneralButton = Checkbutton(self.settingsFrame, text="Enable overlay when switching profiles", variable=self.overlayGeneral)
-        self.overlayGeneralButton.grid(row=1, column=0, columnspan=2, sticky=W)
 
         self.timeSinceOverlayOpened = time.time()
 
@@ -53,14 +49,22 @@ class GUI:
         self.profileHotkeyLabel.grid(row=2, column=0, sticky=E)
         self.profileHotkey.grid(row=2, column=1, sticky=W)
 
-        self.profilesScrollFrame = ScrollFrame(self.settingsFrame, (400, 500))
+        self.profilesScrollFrame = ScrollFrame(self.settingsFrame, (400, 100))
         self.profilesScrollFrame.grid(row=3, column=0, columnspan=2)
         
         self.profilesSelectFrame = LabelFrame(self.profilesScrollFrame.viewPort, text='Profiles to switch between')
-        self.profilesSelectFrame.grid(row=0, column=0) 
+        self.profilesSelectFrame.grid(row=0, column=0, sticky=W, padx=5, pady=5)
 
         self.profilesSelect = CheckList(self.profilesSelectFrame, default=0)
         self.profilesSelect.grid(row=0, column=0)
+
+        self.overlayFrame = LabelFrame(self.settingsFrame, text='Overlay')
+        self.overlayFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+        self.overlayGeneral = IntVar()
+        self.overlayGeneralButton = Checkbutton(self.overlayFrame, text="Enable overlay when switching profiles", variable=self.overlayGeneral)
+        self.overlayGeneralButton.grid(row=1, column=0, columnspan=2, sticky=W)
+        self.overlay = IntVar()
+        self.overlayButton = Checkbutton(self.overlayFrame, text="Enabled", variable=self.overlay).grid(row=0, column=0, sticky=W)
 
         self.profiles = LabelFrame(self.config, text='Profile')
         self.profiles.grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=5)
@@ -86,11 +90,6 @@ class GUI:
 
         self.saveButton = Button(self.config, text='Save Configuration', command=self.writeSetting)
         self.saveButton.grid(row=3, column=1)
-
-        self.overlayFrame = LabelFrame(master, text='Overlay')
-        self.overlayFrame.grid(row=3, column=0, columnspan=2, sticky=W, padx=5, pady=5)
-        self.overlay = IntVar()
-        self.overlayButton = Checkbutton(self.overlayFrame, text="Enabled", variable=self.overlay).grid(row=0, column=0, sticky=W)
 
         self.numbers = Numbers(master, text='Numbers')
         self.numbers.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
@@ -127,14 +126,14 @@ class GUI:
 
         self.recordings = Recordings(master, text='Recordings', logger=self.logger, root=self.master)
         self.recordings.grid(row=5, column=0, columnspan=2, sticky=W, padx=5, pady=5)
-
-        self.scrollFrame = ScrollFrame(master, (400, 500))
-        self.scrollFrame.grid(row=0, column=3, rowspan=6, sticky=W)
         
-        self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
-        self.options.grid(row=0, column=0) 
+        self.options = LabelFrame(master, text='Options')
+        self.options.grid(row=0, column=3, rowspan=7, sticky=W, padx=5)
 
-        self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger, self.numbers, self.recordings)
+        self.optionsScrollFrame = ScrollFrame(self.options, (400, 870))
+        self.optionsScrollFrame.grid(row=0, column=0)
+
+        self.optionManager = OptionManager(self.optionsScrollFrame.viewPort, options.nonsequential.optList, self.logger, self.numbers, self.recordings)
 
         self.level.set("INFO")
         self.readSetting()

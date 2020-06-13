@@ -39,8 +39,9 @@ class Numbers(LabelFrame):
         self.addButton = Button(self, text='➕', command=self.add)
         self.addButton.grid(row=0, column=0)
 
-        self.numbersGrid = Frame(self)
-        self.numbersGrid.grid(row=1, column=0)
+        self.numbersFrame = gui.ScrollFrame(self, (400, 100))
+        self.numbersFrame.grid(row=1, column=0)
+        self.numbersGrid = self.numbersFrame.viewPort
 
     def add(self):
         self.childWindow = Toplevel(self.master)
