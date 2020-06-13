@@ -38,11 +38,14 @@ class CheckList(Frame):
 
         self.update(items)
 
-    def update(self, items):
+    def update(self, items, updateTo=-1):
         newItems = {}
         for i in items:
             if i in self.items:
-                newItems[i] = self.vars[self.items.index(i)].get()
+                if updateTo >= 0:
+                    newItems[i] = updateTo
+                else:
+                    newItems[i] = self.vars[self.items.index(i)].get()
             else:
                 newItems[i] = self.default
         self.items = items

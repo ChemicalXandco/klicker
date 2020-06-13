@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import scrolledtext
 import logging
 import time
+import json
 
 import options.sequential, options.nonsequential
 from options.utils import OverlayWindow, TextHandler, CheckList
@@ -61,10 +62,10 @@ class GUI:
         self.overlayFrame = LabelFrame(self.settingsFrame, text='Overlay')
         self.overlayFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
         self.overlayGeneral = IntVar()
-        self.overlayGeneralButton = Checkbutton(self.overlayFrame, text="Enable overlay when switching profiles", variable=self.overlayGeneral)
-        self.overlayGeneralButton.grid(row=1, column=0, columnspan=2, sticky=W)
+        self.overlayGeneralButton = Checkbutton(self.overlayFrame, text="Enable overlay when switching profiles (configuration)", variable=self.overlayGeneral)
+        self.overlayGeneralButton.grid(row=0, column=0, sticky=W)
         self.overlay = IntVar()
-        self.overlayButton = Checkbutton(self.overlayFrame, text="Enabled", variable=self.overlay).grid(row=0, column=0, sticky=W)
+        self.overlayButton = Checkbutton(self.overlayFrame, text="Enabled (profile)", variable=self.overlay).grid(row=1, column=0, sticky=W)
 
         self.profiles = LabelFrame(self.config, text='Profile')
         self.profiles.grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=5)
@@ -157,6 +158,7 @@ class GUI:
         profiles = list(profileManager.read().keys())
         if profiles == []:
             profiles = [None]
+        self.profilesSelect.update(profiles)
         return profiles
 
     def handleSaveProfile(self):
@@ -213,8 +215,6 @@ class GUI:
         for string in profiles:
             menu.add_command(label=string, 
                              command=lambda value=string: self.menuCommand(value))
-
-        self.profilesSelect.update(profiles)
 
     def handleConfirmDelProfile(self):
         self.childWindow = Toplevel(self.master)
@@ -274,6 +274,7 @@ class GUI:
         self.profile.set(f.readline().strip())
         if self.profile.get() in self.profileList():
             self.handleSetProfile()
+        self.profilesSelect.update(json.loads(f.readline()), updateTo=1)
         f.close
         self.refreshProfiles()
 
@@ -281,8 +282,9 @@ class GUI:
         f = open('config.ini', 'w')
         f.write(self.hotkey.get()+'\n')
         f.write(self.profileHotkey.get()+'\n')
-        f.write(self.overlayGeneral.get()+'\n')
-        f.write(self.profile.get())
+        f.write(str(self.overlayGeneral.get())+'\n')
+        f.write(self.profile.get()+'\n')
+        f.write(json.dumps(self.profilesSelect.get()))
         f.close()
 
     def changeLevel(self, level):
