@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import scrolledtext
+from tkinter import scrolledtext, font
 import logging
 import time
 import json
@@ -134,7 +134,11 @@ class GUI:
         self.optionsScrollFrame = ScrollFrame(self.options, (400, 870))
         self.optionsScrollFrame.grid(row=0, column=0)
 
-        self.optionManager = OptionManager(self.optionsScrollFrame.viewPort, options.nonsequential.optList, self.logger, self.numbers, self.recordings)
+        self.optionManager = OptionManager(self.optionsScrollFrame.viewPort, options.nonsequential.optList, 
+                                            self.handleSaveProfile, 
+                                            self.logger, 
+                                            self.numbers, 
+                                            self.recordings)
 
         self.level.set("INFO")
         self.readSetting()
@@ -359,24 +363,50 @@ class OptionWrapper(OptionBase):
         
         self.frame = LabelFrame(parent, text=option)
 
-        self.deleteButton = Button(self.frame, text='❌', command=self.findIdAndDestroy)
+        self.deleteButton = Button(self.frame, text='❌', command=self.findId)
         self.deleteButton.grid(row=0, column=0)
 
         self.name = option
         
         if sequential:
+            self.upDownFrame = Frame(self.frame)
+            self.upDownFrame.grid(row=0, column=1)
+
+            fontSize = 9
+            self.upButton = Button(self.upDownFrame, text='↑', font=font.Font(size=fontSize), command=lambda: self.swap(-1))
+            self.upButton.grid(row=0, column=0)
+            self.downButton = Button(self.upDownFrame, text='↓', font=font.Font(size=fontSize), command=lambda: self.swap(1))
+            self.downButton.grid(row=0, column=1)
+            columnSpace = 3
             optionObject = options.sequential.optDict.get(option)
         else:
+            columnSpace = 1
             optionObject = options.nonsequential.optDict.get(option)
-        self.widget = optionObject.Widget(self.frame, 1, *args)
+        self.widget = optionObject.Widget(self.frame, columnSpace, *args)
         
         self.frame.pack(anchor=W, padx=5, pady=0)
 
-    def findIdAndDestroy(self):
+    def findId(self, destroy=True):
+        idx = 0
         for i in self.widgets:
             if id(i) == id(self):
-                self.widgets.remove(i)
+                if destroy:
+                    self.widgets.remove(i)
+                else:
+                    return idx
+            idx += 1
         self.frame.destroy()
+
+    def swap(self, to):
+        index = self.findId(False)
+        toIndex = index + to
+        try:
+            if toIndex < 0:
+                raise IndexError()
+            self.widgets[toIndex], self.widgets[index] = self.widgets[index], self.widgets[toIndex]
+            self.save()
+        except IndexError:
+            self.logger.warning('Could not move option.')
 
 
 class OptionManager(OptionBase):
@@ -425,7 +455,7 @@ class OptionManager(OptionBase):
     def destroyOptions(self):
         while self.wrappers != []:
             for o in self.wrappers:
-                o.findIdAndDestroy()
+                o.findId()
 
     def getProfile(self):
         profile = { 'options': [] }
