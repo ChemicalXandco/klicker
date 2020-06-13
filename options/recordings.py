@@ -1,6 +1,7 @@
 import pynput
 import os
 import time
+from datetime import datetime
 from tkinter import *
 
 import gui
@@ -207,21 +208,28 @@ class Recordings(LabelFrame):
             self.update()
 
     def update(self):
-        for b,l in self.widgets:
+        for b,l,s,d in self.widgets:
             b.destroy()
             l.destroy()
+            s.destroy()
+            d.destroy()
         self.widgets = []
         
         fileList = self.recordingsFile.listItems()
         for i in range(len(fileList)):
+            stats = os.stat('recordings/' + fileList[i])
             self.widgets.append(
                 (   
                     Button(self.recordingsGrid, text='❌', command=lambda file=fileList[i]: self.confirmRemove(file)),
-                    Label(self.recordingsGrid, text=fileList[i]), 
+                    Label(self.recordingsGrid, text=fileList[i], width=30, anchor=W), 
+                    Label(self.recordingsGrid, text=str(stats.st_size)+'B'), 
+                    Label(self.recordingsGrid, text=datetime.fromtimestamp(stats.st_mtime).strftime("%d %B %Y %I:%M:%S"))
                 )
             )
             self.widgets[i][0].grid(row=i, column=0)
             self.widgets[i][1].grid(row=i, column=1)
+            self.widgets[i][2].grid(row=i, column=2)
+            self.widgets[i][3].grid(row=i, column=3)
 
         for f in self.updates:
             f(fileList)
