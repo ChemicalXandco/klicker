@@ -201,19 +201,16 @@ class Recordings(LabelFrame):
             l.destroy()
         self.widgets = []
         
-        row = 0
         fileList = self.recordingsFile.listItems()
-        for i in fileList:
+        for i in range(len(fileList)):
             self.widgets.append(
                 (   
-                    Button(self.recordingsGrid, text='❌', command=lambda: self.remove(i)),
-                    Label(self.recordingsGrid, text=i), 
+                    Button(self.recordingsGrid, text='❌', command=lambda file=fileList[i]: self.remove(file)),
+                    Label(self.recordingsGrid, text=fileList[i]), 
                 )
             )
-            self.widgets[row][0].grid(row=row, column=0)
-            self.widgets[row][1].grid(row=row, column=1)
-
-            row += 1
+            self.widgets[i][0].grid(row=i, column=0)
+            self.widgets[i][1].grid(row=i, column=1)
 
         for f in self.updates:
             f(fileList)

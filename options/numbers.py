@@ -89,7 +89,7 @@ class Numbers(LabelFrame):
         for k,v in self.assigned.items():
             self.widgets.append(
                 (   
-                    Button(self.numbersGrid, text='❌', command=lambda: self.remove(k)),
+                    Button(self.numbersGrid, text='❌', command=lambda k=k: self.remove(k)),
                     Label(self.numbersGrid, text=k), 
                     Entry(self.numbersGrid)
                 )
