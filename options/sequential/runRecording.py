@@ -22,10 +22,13 @@ class Widget(Base):
 
     def update(self, optionList):
         menu = self.optionMenu["menu"]
-        menu.delete(0, "end")
-        for string in optionList:
-            menu.add_command(label=string, 
-                             command=lambda value=string: self.recordingFilename.set(value))
+        try:
+            menu.delete(0, "end")
+            for string in optionList:
+                menu.add_command(label=string, 
+                                command=lambda value=string: self.recordingFilename.set(value))
+        except AttributeError:
+            return
 
     def run(self):
         replayRecording(self.recordingFilename.get(), self.logger)

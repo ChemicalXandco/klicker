@@ -4,7 +4,7 @@ import logging
 import time
 
 import options.sequential, options.nonsequential
-from options.utils import OverlayWindow, TextHandler
+from options.utils import OverlayWindow, TextHandler, CheckList
 from options.numbers import Numbers
 from options.recordings import Recordings
 from options import Base as OptionBase
@@ -42,16 +42,25 @@ class GUI:
         self.hotkeyLabel.grid(row=0, column=0, sticky=E)
         self.hotkey.grid(row=0, column=1, sticky=W)
 
-        self.profileHotkeyLabel = Label(self.settingsFrame, text='Profile switch hotkey')
-        self.profileHotkey = Entry(self.settingsFrame, validate='key', validatecommand=vcmd, width=2)
-        self.profileHotkeyLabel.grid(row=1, column=0, sticky=E)
-        self.profileHotkey.grid(row=1, column=1, sticky=W)
-
         self.overlayGeneral = IntVar()
         self.overlayGeneralButton = Checkbutton(self.settingsFrame, text="Enable overlay when switching profiles", variable=self.overlayGeneral)
-        self.overlayGeneralButton.grid(row=2, column=0, columnspan=2, sticky=W)
+        self.overlayGeneralButton.grid(row=1, column=0, columnspan=2, sticky=W)
 
         self.timeSinceOverlayOpened = time.time()
+
+        self.profileHotkeyLabel = Label(self.settingsFrame, text='Profile switch hotkey')
+        self.profileHotkey = Entry(self.settingsFrame, validate='key', validatecommand=vcmd, width=2)
+        self.profileHotkeyLabel.grid(row=2, column=0, sticky=E)
+        self.profileHotkey.grid(row=2, column=1, sticky=W)
+
+        self.profilesScrollFrame = ScrollFrame(self.settingsFrame, (400, 500))
+        self.profilesScrollFrame.grid(row=3, column=0, columnspan=2)
+        
+        self.profilesSelectFrame = LabelFrame(self.profilesScrollFrame.viewPort, text='Profiles to switch between')
+        self.profilesSelectFrame.grid(row=0, column=0) 
+
+        self.profilesSelect = CheckList(self.profilesSelectFrame, default=0)
+        self.profilesSelect.grid(row=0, column=0)
 
         self.profiles = LabelFrame(self.config, text='Profile')
         self.profiles.grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=5)
@@ -206,6 +215,8 @@ class GUI:
             menu.add_command(label=string, 
                              command=lambda value=string: self.menuCommand(value))
 
+        self.profilesSelect.update(profiles)
+
     def handleConfirmDelProfile(self):
         self.childWindow = Toplevel(self.master)
         self.childWindow.title('Confirm Delete Profile')
@@ -223,11 +234,14 @@ class GUI:
         self.profile.set('')
 
     def nextProfile(self):
-        profiles = self.profileList()
+        profiles = self.profilesSelect.get()
+        if len(profiles) == 0:
+            self.logger.warning('Could not change profile because no profiles are marked as switchable.')
+            return
         try:
             current = profiles.index(self.profile.get())
         except ValueError:
-            current = 0
+            current = -1
         try:
             new = profiles[current+1]
         except IndexError:

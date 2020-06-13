@@ -28,21 +28,39 @@ class OverlayWindow(Toplevel):
 
 
 class CheckList(Frame):
-    def __init__(self, parent, items, default=1):
+    def __init__(self, parent, items=[], default=1):
         super().__init__(parent)
 
-        self.items = items
+        self.items = []
+        self.default = default
+        self.vars = []
         self.buttons = []
 
-        for i in range(len(items)):
-            self.buttons.append(IntVar())
-            self.buttons[i].set(default)
-            Checkbutton(self, text=items[i], variable=self.buttons[i]).pack()
+        self.update(items)
+
+    def update(self, items):
+        newItems = {}
+        for i in items:
+            if i in self.items:
+                newItems[i] = self.vars[self.items.index(i)].get()
+            else:
+                newItems[i] = self.default
+        self.items = items
+        self.vars = []
+        for b in self.buttons:
+            b.destroy()
+        self.buttons = []
+        for k, v in newItems.items():
+            index = len(self.vars)
+            self.vars.append(IntVar())
+            self.vars[index].set(v)
+            self.buttons.append(Checkbutton(self, text=k, variable=self.vars[index]))
+            self.buttons[index].pack()
 
     def get(self):
         checked = []
         for i in range(len(self.items)):
-            if self.buttons[i].get() == 1:
+            if self.vars[i].get() == 1:
                 checked.append(self.items[i])
         return checked
 
