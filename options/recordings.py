@@ -166,6 +166,16 @@ class Recordings(LabelFrame):
         createButton = Button(self.childWindow, text="Record", command=self.record)
         createButton.pack(fill=X, expand=YES)
 
+    def confirmRemove(self, item):
+        self.childWindow = Toplevel(self.master)
+        self.childWindow.title('Confirm Remove')
+        gui.GUI.setWindowIcon(self.childWindow)
+        self.childWindow.geometry('250x60')
+        createButton = Button(self.childWindow, text="Remove "+item, command=lambda: self.remove(item))
+        createButton.pack(fill=X, expand=YES)
+        cancelButton = Button(self.childWindow, text="Cancel", command=self.childWindow.destroy)
+        cancelButton.pack(fill=X, expand=YES)
+
     def record(self):
         if self.killKey.get() == '':
             self.logger.error('Must set kill key for recording.')
@@ -206,7 +216,7 @@ class Recordings(LabelFrame):
         for i in range(len(fileList)):
             self.widgets.append(
                 (   
-                    Button(self.recordingsGrid, text='❌', command=lambda file=fileList[i]: self.remove(file)),
+                    Button(self.recordingsGrid, text='❌', command=lambda file=fileList[i]: self.confirmRemove(file)),
                     Label(self.recordingsGrid, text=fileList[i]), 
                 )
             )
@@ -221,5 +231,6 @@ class Recordings(LabelFrame):
         self.update()
 
     def remove(self, item):
+        self.childWindow.destroy()
         self.recordingsFile.remove(item)
         self.update()
