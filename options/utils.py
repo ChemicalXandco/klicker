@@ -2,6 +2,9 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 import logging
 import uuid
+import queue
+
+from pynput import keyboard
 
 
 class FileSelector(Frame):
@@ -17,6 +20,47 @@ class FileSelector(Frame):
         filename = askopenfilename()
         self.path.delete(0,END)
         self.path.insert(0, filename)
+
+
+class KeySelector(Button):
+    def __init__(self, parent, root, *args, **kwargs):
+        kwargs['command'] = self.listen
+        super().__init__(parent, *args, **kwargs)
+
+        self.root = root
+        self.key = None
+
+        self.configure(text='Click to set a key')
+
+    def listen(self):
+        with keyboard.Events() as events:
+            event = None
+            self.configure(text='Press a key')
+            while not event:
+                try:
+                    event = events.get(0.001)
+                except queue.Empty:
+                    pass
+                self.root.update()
+        self.set(event.key)
+
+    def get(self):
+        if self.key == None:
+            return ''
+        if isinstance(self.key, keyboard.KeyCode):
+            return self.key.char
+        else:
+            return str(self.key)
+
+    def set(self, v):
+        if isinstance(v, str):
+            try:
+                self.key = eval('keyboard.' + v)
+            except AttributeError:
+                self.key = keyboard.KeyCode(char=v)
+        else:
+            self.key = v
+        self.configure(text=self.get())
 
 
 class OverlayWindow(Toplevel):

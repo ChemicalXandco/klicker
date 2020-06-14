@@ -5,7 +5,7 @@ from datetime import datetime
 from tkinter import *
 
 import gui
-from options.utils import CheckList
+from options.utils import KeySelector, CheckList
 
 
 class RecordingsFile:
@@ -143,24 +143,18 @@ class Recordings(LabelFrame):
 
         self.update()
 
-    def limitChar(self, i):
-        if i == '1': # if the index is 1 it means the string will be 2 characters long
-            return False
-        return True
-
     def add(self):
         self.childWindow = Toplevel(self.master)
         self.childWindow.title('Name Recording')
         gui.GUI.setWindowIcon(self.childWindow)
-        self.childWindow.geometry('250x250')
+        self.childWindow.geometry('250x263')
         label1 = Label(self.childWindow, text='Name')
         label1.pack()
         self.newRecordingName = Entry(self.childWindow)
         self.newRecordingName.pack(fill=X, expand=YES)
         label2 = Label(self.childWindow, text='Kill key')
         label2.pack()
-        vcmd = (self.register(self.limitChar), '%i')
-        self.killKey = Entry(self.childWindow, validate='key', validatecommand=vcmd)
+        self.killKey = KeySelector(self.childWindow, self.root)
         self.killKey.pack(fill=X, expand=YES)
         self.types = CheckList(self.childWindow, ['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll', 'Store Timings'])
         self.types.pack(fill=X, expand=YES)
@@ -183,14 +177,14 @@ class Recordings(LabelFrame):
         elif self.newRecordingName.get() == '':
             self.logger.error('Must set name for recording.')
         else:
-            self.recordingsFile.killKey = pynput.keyboard.KeyCode(char=self.killKey.get())
+            self.recordingsFile.killKey = self.killKey.key
             if not os.path.exists('recordings'):
                 os.makedirs('recordings')
             self.recordingsFile.path = 'recordings/{}.txt'.format(self.newRecordingName.get())
             self.recordingsFile.allowed = self.types.get()
             self.recordingsFile.startTime = time.time()
             self.childWindow.destroy()
-            self.logger.system('Recording started with kill key {}.'.format(self.recordingsFile.killKey))
+            self.logger.system('Recording started with kill key {}.'.format(self.killKey.get()))
             self.root.update() # root needs to be updated for log message to show
 
             keyboardListener = pynput.keyboard.Listener(on_press=self.recordingsFile.on_press, 
