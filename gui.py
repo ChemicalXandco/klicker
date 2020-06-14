@@ -5,10 +5,10 @@ import time
 import json
 
 import options.sequential, options.nonsequential
-from options.utils import OverlayWindow, TextHandler, CheckList
+from options.utils import KeySelector, OverlayWindow, TextHandler, CheckList
 from options.numbers import Numbers
 from options.recordings import Recordings
-from options import Base as OptionBase
+from options import OptionBase
 import profile_manager as profileManager
 
 systemLogLevel = 25
@@ -38,15 +38,14 @@ class GUI:
         self.settingsFrame.grid(row=0, column=0, columnspan=2, sticky=W)
 
         self.hotkeyLabel = Label(self.settingsFrame, text='Hotkey')
-        vcmd = (master.register(self.limitChar), '%i')
-        self.hotkey = Entry(self.settingsFrame, validate='key', validatecommand=vcmd, width=2)
+        self.hotkey = KeySelector(self.settingsFrame, master)
         self.hotkeyLabel.grid(row=0, column=0, sticky=E)
         self.hotkey.grid(row=0, column=1, sticky=W)
 
         self.timeSinceOverlayOpened = time.time()
 
         self.profileHotkeyLabel = Label(self.settingsFrame, text='Profile switch hotkey')
-        self.profileHotkey = Entry(self.settingsFrame, validate='key', validatecommand=vcmd, width=2)
+        self.profileHotkey = KeySelector(self.settingsFrame, master)
         self.profileHotkeyLabel.grid(row=2, column=0, sticky=E)
         self.profileHotkey.grid(row=2, column=1, sticky=W)
 
@@ -135,6 +134,7 @@ class GUI:
         self.optionsScrollFrame.grid(row=0, column=0)
 
         self.optionManager = OptionManager(self.optionsScrollFrame.viewPort, options.nonsequential.optList, 
+                                            master,
                                             self.handleSaveProfile, 
                                             self.logger, 
                                             self.numbers, 
@@ -151,12 +151,6 @@ class GUI:
         except TclError:
             # Linux compatibility
             window.iconphoto(False, PhotoImage(file='icon.png'))
-
-    def limitChar(self, i):
-        if i == '1': #if the index is 1 it means the string will be 2 characters long
-            return False
-        else:
-            return True
 
     def profileList(self):
         profiles = list(profileManager.read().keys())
@@ -270,10 +264,8 @@ class GUI:
 
     def readSetting(self):
         f = open('config.ini', 'r')
-        self.hotkey.delete(0, END)
-        self.hotkey.insert(0, f.readline().strip())
-        self.profileHotkey.delete(0, END)
-        self.profileHotkey.insert(0, f.readline().strip())
+        self.hotkey.set(f.readline().strip())
+        self.profileHotkey.set(f.readline().strip())
         self.overlayGeneral.set(int(f.readline().strip()))
         self.profile.set(f.readline().strip())
         if self.profile.get() in self.profileList():
@@ -357,7 +349,7 @@ class ScrollFrame(Frame):
 
 class OptionWrapper(OptionBase):
     def __init__(self, parent, sequential, option, widgets, *args):
-        super().__init__(parent, None, *args)
+        super().__init__(parent, *args)
 
         self.widgets = widgets
         
@@ -411,7 +403,7 @@ class OptionWrapper(OptionBase):
 
 class OptionManager(OptionBase):
     def __init__(self, parent, availableOptions, *args, sequential=False):
-        super().__init__(parent, None, *args)
+        super().__init__(parent, *args)
 
         self.sequential = sequential
 

@@ -1,11 +1,11 @@
 from tkinter import *
 from time import sleep
 
-from options import Base
+from options.sequential import SequentialBase
 from options.recordings import replayRecording
 
 
-class Widget(Base):
+class Widget(SequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 

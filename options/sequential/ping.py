@@ -5,9 +5,9 @@ from urllib.request import urlopen
 
 socket.setdefaulttimeout(0.1)  # timeout in seconds
 
-from options import Base
+from options.sequential import SequentialBase
 
-class Widget(Base):
+class Widget(SequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 

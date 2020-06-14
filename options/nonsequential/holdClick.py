@@ -1,10 +1,10 @@
 from tkinter import *
 import pyautogui
 
-from options import Base
+from options.nonsequential import NonsequentialBase
 
 
-class Widget(Base):
+class Widget(NonsequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -26,9 +26,6 @@ class Widget(Base):
 
     def stop(self):
         pyautogui.mouseUp(button=self.currentButton)
-
-    def update(self):
-        return
 
     def returnSettings(self):
         settings = {}

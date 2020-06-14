@@ -2,10 +2,10 @@ from tkinter import *
 from options.utils import FileSelector
 import pyautogui
 
-from options import Base
+from options.sequential import SequentialBase
 
 
-class Widget(Base):
+class Widget(SequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 

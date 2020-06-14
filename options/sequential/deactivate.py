@@ -2,10 +2,10 @@ from tkinter import *
 from time import sleep
 
 from options.utils import DeactivateRequest
-from options import Base
+from options.sequential import SequentialBase
 
 
-class Widget(Base):
+class Widget(SequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -14,9 +14,3 @@ class Widget(Base):
 
     def run(self):
         raise DeactivateRequest('Deactivated')
-
-    def returnSettings(self):
-        return {}
-
-    def addSettings(self, settings):
-        pass

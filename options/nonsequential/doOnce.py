@@ -3,11 +3,11 @@ import time
 
 import gui
 import options.sequential
-from options import Base
+from options.nonsequential import NonsequentialBase
 from options.numbers import Number
 
 
-class Widget(Base):
+class Widget(NonsequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -32,9 +32,6 @@ class Widget(Base):
         self.timer = time.time()
         self.waitTime = self.seconds.parse()
         self.hasRan = False
-
-    def stop(self):
-        return
 
     def update(self):
         if not self.hasRan:

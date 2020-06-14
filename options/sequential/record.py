@@ -3,7 +3,7 @@ from time import sleep
 import uuid
 import json
 
-from options import Base
+from options.sequential import SequentialBase
 from options.utils import CheckList
 
 
@@ -18,7 +18,7 @@ class FakeWidget:
         pass
 
 
-class Widget(Base):
+class Widget(SequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 

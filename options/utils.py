@@ -30,12 +30,17 @@ class KeySelector(Button):
         self.root = root
         self.key = None
 
-        self.configure(text='Click to set a key')
+        self.setText()
+
+    def setText(self, text=''):
+        if not text:
+            text = 'Click to set a key'
+        self.configure(text=text)
 
     def listen(self):
         with keyboard.Events() as events:
             event = None
-            self.configure(text='Press a key')
+            self.setText('Press a key')
             while not event:
                 try:
                     event = events.get(0.001)
@@ -58,9 +63,11 @@ class KeySelector(Button):
                 self.key = eval('keyboard.' + v)
             except AttributeError:
                 self.key = keyboard.KeyCode(char=v)
+            except SyntaxError:
+                self.key = None
         else:
             self.key = v
-        self.configure(text=self.get())
+        self.setText(self.get())
 
 
 class OverlayWindow(Toplevel):
