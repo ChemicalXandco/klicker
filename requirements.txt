@@ -1,4 +1,3 @@
 setuptools
 pyautogui
-keyboard
-pynput
+pynput>=1.6.9

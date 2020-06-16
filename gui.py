@@ -130,7 +130,7 @@ class GUI:
         self.options = LabelFrame(master, text='Options')
         self.options.grid(row=0, column=3, rowspan=7, sticky=W, padx=5)
 
-        self.optionsScrollFrame = ScrollFrame(self.options, (400, 870))
+        self.optionsScrollFrame = ScrollFrame(self.options, (400, 880))
         self.optionsScrollFrame.grid(row=0, column=0)
 
         self.optionManager = OptionManager(self.optionsScrollFrame.viewPort, options.nonsequential.optList, 

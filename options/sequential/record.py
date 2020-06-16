@@ -4,7 +4,7 @@ import uuid
 import json
 
 from options.sequential import SequentialBase
-from options.utils import CheckList
+from options.utils import KeySelector, CheckList
 
 
 class FakeWidget:
@@ -24,8 +24,7 @@ class Widget(SequentialBase):
 
         label1 = Label(self.parent, text='Kill key')
         label1.grid(row=0, column=self.spacing, sticky=E)
-        vcmd = (self.parent.register(self.limitChar), '%i')
-        self.killKey = Entry(self.parent, validate='key', validatecommand=vcmd)
+        self.killKey = KeySelector(self.parent, self.root)
         self.killKey.grid(row=0, column=self.spacing+1, sticky=W)
 
         label2 = Label(self.parent, text='Name (optional)')
@@ -35,11 +34,6 @@ class Widget(SequentialBase):
 
         self.types = CheckList(self.parent, ['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll', 'Store Timings'], default=0)
         self.types.grid(row=2, column=self.spacing, columnspan=2, sticky=W)
-
-    def limitChar(self, i):
-        if i == '1': # if the index is 1 it means the string will be 2 characters long
-            return False
-        return True
 
     def run(self):
         self.recordings.killKey = self.killKey
@@ -59,8 +53,7 @@ class Widget(SequentialBase):
         return settings
 
     def addSettings(self, settings):
-        self.killKey.delete(0,END)
-        self.killKey.insert(0, settings['killKey'])
+        self.killKey.set(settings['killKey'])
         self.newRecordingName.delete(0,END)
         self.newRecordingName.insert(0, settings['name'])
         self.types.update(json.loads(settings['types']), updateTo=1)

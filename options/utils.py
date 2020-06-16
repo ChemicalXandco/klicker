@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 import logging
 import uuid
-import queue
 
 from pynput import keyboard
 
@@ -42,10 +41,7 @@ class KeySelector(Button):
             event = None
             self.setText('Press a key')
             while not event:
-                try:
-                    event = events.get(0.001)
-                except queue.Empty:
-                    pass
+                event = events.get(0.01)
                 self.root.update()
         self.set(event.key)
 
