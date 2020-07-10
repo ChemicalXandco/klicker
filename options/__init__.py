@@ -1,3 +1,15 @@
+import pkgutil
+import importlib
+import os
+
+def getOptions(path):
+    optDict = {}
+    for importer, package, ispkg in pkgutil.walk_packages(path):  
+        optDict[package] = importlib.import_module('options.'+os.path.split(path[0])[1]+'.'+package)
+    del optDict['abstract']
+    return optDict, list(optDict.keys())
+
+
 class OptionBase:
     '''
     Basic construct for all option widgets

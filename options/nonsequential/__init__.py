@@ -1,7 +1,4 @@
-import pkgutil
-import importlib
-
-from options import Base
+from options import getOptions, Base
 
 
 class NonsequentialBase(Base):
@@ -21,12 +18,4 @@ class NonsequentialBase(Base):
         return
 
 
-optDict = {}
-
-for importer, package, ispkg in pkgutil.walk_packages(__path__):  
-    optDict[package] = importlib.import_module('options.nonsequential.'+package)
-
-del optDict['abstract']
-    
-optList = list(optDict.keys())
-
+optDict, optList = getOptions(__path__)

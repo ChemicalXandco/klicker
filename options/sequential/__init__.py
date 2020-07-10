@@ -1,7 +1,4 @@
-import pkgutil
-import importlib
-
-from options import Base
+from options import getOptions, Base
 
 
 class SequentialBase(Base):
@@ -15,11 +12,4 @@ class SequentialBase(Base):
         raise NotImplementedError()
 
 
-optDict = {}
-
-for importer, package, ispkg in pkgutil.walk_packages(__path__):  
-    optDict[package] = importlib.import_module('options.sequential.'+package)
-
-del optDict['abstract']
-    
-optList = list(optDict.keys())
+optDict, optList = getOptions(__path__)
