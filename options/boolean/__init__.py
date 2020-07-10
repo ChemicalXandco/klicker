@@ -12,4 +12,5 @@ class BooleanBase(Base):
         raise NotImplementedError()
 
 
+movable = False
 optDict, optList = getOptions(__path__)

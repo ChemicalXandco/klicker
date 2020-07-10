@@ -12,4 +12,5 @@ class SequentialBase(Base):
         raise NotImplementedError()
 
 
+movable = True
 optDict, optList = getOptions(__path__)

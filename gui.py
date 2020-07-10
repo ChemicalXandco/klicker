@@ -4,11 +4,11 @@ import logging
 import time
 import json
 
-import options.sequential, options.nonsequential
+import options.nonsequential
 from options.utils import KeySelector, OverlayWindow, TextHandler, CheckList
 from options.numbers import Numbers
 from options.recordings import Recordings
-from options import OptionBase
+from options.optionSelectors import OptionList
 import profile_manager as profileManager
 
 systemLogLevel = 25
@@ -133,12 +133,13 @@ class GUI:
         self.optionsScrollFrame = ScrollFrame(self.options, (400, 880))
         self.optionsScrollFrame.grid(row=0, column=0)
 
-        self.optionManager = OptionManager(self.optionsScrollFrame.viewPort, options.nonsequential.optList, 
-                                            master,
-                                            self.handleSaveProfile, 
-                                            self.logger, 
-                                            self.numbers, 
-                                            self.recordings)
+        self.optionManager = OptionList(self.optionsScrollFrame.viewPort, 
+                                        options.nonsequential, 
+                                        master,
+                                        self.handleSaveProfile, 
+                                        self.logger, 
+                                        self.numbers, 
+                                        self.recordings)
 
         self.level.set("INFO")
         self.readSetting()
@@ -345,122 +346,3 @@ class ScrollFrame(Frame):
         '''Reset the canvas window to encompass inner frame when required'''
         canvas_width = event.width
         self.canvas.itemconfig(self.canvas_window, width = canvas_width)
-
-
-class OptionWrapper(OptionBase):
-    def __init__(self, parent, sequential, option, widgets, *args):
-        super().__init__(parent, *args)
-
-        self.widgets = widgets
-        
-        self.frame = LabelFrame(parent, text=option)
-
-        self.deleteButton = Button(self.frame, text='❌', command=self.findId)
-        self.deleteButton.grid(row=0, column=0)
-
-        self.name = option
-        
-        if sequential:
-            self.upDownFrame = Frame(self.frame)
-            self.upDownFrame.grid(row=0, column=1)
-
-            fontSize = 9
-            self.upButton = Button(self.upDownFrame, text='↑', font=font.Font(size=fontSize), command=lambda: self.swap(-1))
-            self.upButton.grid(row=0, column=0)
-            self.downButton = Button(self.upDownFrame, text='↓', font=font.Font(size=fontSize), command=lambda: self.swap(1))
-            self.downButton.grid(row=0, column=1)
-            columnSpace = 3
-            optionObject = options.sequential.optDict.get(option)
-        else:
-            columnSpace = 1
-            optionObject = options.nonsequential.optDict.get(option)
-        self.widget = optionObject.Widget(self.frame, columnSpace, *args)
-        
-        self.frame.pack(anchor=W, padx=5, pady=0)
-
-    def findId(self, destroy=True):
-        idx = 0
-        for i in self.widgets:
-            if id(i) == id(self):
-                if destroy:
-                    self.widgets.remove(i)
-                else:
-                    return idx
-            idx += 1
-        self.frame.destroy()
-
-    def swap(self, to):
-        index = self.findId(False)
-        toIndex = index + to
-        try:
-            if toIndex < 0:
-                raise IndexError()
-            self.widgets[toIndex], self.widgets[index] = self.widgets[index], self.widgets[toIndex]
-            self.save()
-        except IndexError:
-            self.logger.warning('Could not move option.')
-
-
-class OptionManager(OptionBase):
-    def __init__(self, parent, availableOptions, *args, sequential=False):
-        super().__init__(parent, *args)
-
-        self.sequential = sequential
-
-        self.addOptionFrame = Frame(parent)
-        self.addOptionFrame.pack()
-        
-        self.addOptionLabel = Label(self.addOptionFrame, text='Add Option')
-        self.addOptionLabel.grid(row=0, column=0, sticky=E)
-
-        self.selectedOption = StringVar(parent)
-        self.selectedOption.set('➕')
-        self.addOptions = OptionMenu(self.addOptionFrame, self.selectedOption, *availableOptions, command=self.handleAddOption)
-        self.addOptions.grid(row=0, column=1, sticky=W)
-
-        self.wrappers = []
-
-    def handleAddOption(self, *args):
-        self.addOption(self.selectedOption.get())
-        
-        self.selectedOption.set('➕')
-
-    def addOption(self, option):
-        self.wrappers.append(OptionWrapper(self.parent, self.sequential, option, self.wrappers, *self.args))
-
-    def startOptions(self):
-        for o in self.wrappers:
-            o.widget.start() 
-
-    def stopOptions(self):
-        for o in self.wrappers:
-            o.widget.stop()
-
-    def updateOptions(self):
-        for o in self.wrappers:
-            o.widget.update()
-
-    def runOptions(self):
-        for o in self.wrappers:
-            o.widget.run()
-
-    def destroyOptions(self):
-        while self.wrappers != []:
-            for o in self.wrappers:
-                o.findId()
-
-    def getProfile(self):
-        profile = { 'options': [] }
-        
-        for o in self.wrappers:
-            store = {}
-            store['name'] = o.name
-            store['settings'] = o.widget.returnSettings()
-            profile['options'].append(store)
-
-        return profile
-
-    def setProfile(self, profile):
-        for store in profile['options']:
-            self.addOption(store['name'])
-            self.wrappers[-1].widget.addSettings(store['settings'])

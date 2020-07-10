@@ -18,4 +18,5 @@ class NonsequentialBase(Base):
         return
 
 
+movable = False
 optDict, optList = getOptions(__path__)

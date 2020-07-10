@@ -1,8 +1,8 @@
 from tkinter import *
 
-import gui
 import options.sequential
 from options.nonsequential import NonsequentialBase
+from options.optionSelectors import OptionList
 
 
 class OnEvent(NonsequentialBase):
@@ -12,7 +12,7 @@ class OnEvent(NonsequentialBase):
         self.frameOne = Frame(self.parent)
         self.frameOne.grid(row=0, column=self.spacing)
 
-        self.optionManger = gui.OptionManager(self.frameOne, options.sequential.optList, *self.args, sequential=True)
+        self.optionManger = OptionList(self.frameOne, options.sequential, *self.args)
 
     def returnSettings(self):
         settings = self.optionManger.getProfile()

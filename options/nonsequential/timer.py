@@ -1,9 +1,9 @@
 from tkinter import *
 import time
 
-import gui
 import options.sequential
 from options.nonsequential import NonsequentialBase
+from options.optionSelectors import OptionList
 from options.numbers import Number
 
 
@@ -26,7 +26,7 @@ class Widget(NonsequentialBase):
         self.options = LabelFrame(self.parent, text='do')
         self.options.grid(row=1, column=self.spacing, sticky=W)
 
-        self.optionManger = gui.OptionManager(self.options, options.sequential.optList, *self.args, sequential=True)
+        self.optionManger = OptionList(self.options, options.sequential, *self.args)
 
     def start(self):
         self.timer = time.time()
