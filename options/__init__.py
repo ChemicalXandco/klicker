@@ -6,7 +6,10 @@ def getOptions(path):
     optDict = {}
     for importer, package, ispkg in pkgutil.walk_packages(path):  
         optDict[package] = importlib.import_module('options.'+os.path.split(path[0])[1]+'.'+package)
-    del optDict['abstract']
+    try:
+        del optDict['abstract']
+    except KeyError:
+        pass
     return optDict, list(optDict.keys())
 
 
