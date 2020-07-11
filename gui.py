@@ -177,7 +177,8 @@ class GUI:
         createButton.pack(fill=X, expand=YES)
 
     def handleCreateProfile(self):
-        profile = self.optionManager.getProfile()
+        profile = {}
+        profile['options'] = self.optionManager.getProfile()
         if not 'settings' in profile:
             profile['settings'] = {}
         profile['settings']['overlay'] = self.overlay.get()
@@ -200,7 +201,7 @@ class GUI:
         self.overlay.set(settings['overlay'])
         self.numbers.set(settings['numbers'])
         self.level.set(settings['level'])
-        self.optionManager.setProfile(profile)
+        self.optionManager.setProfile(profile['options'])
 
     def menuCommand(self, value):
         self.profile.set(value)

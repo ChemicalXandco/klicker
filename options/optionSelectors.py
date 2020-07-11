@@ -108,20 +108,27 @@ class OptionList(OptionBase):
                 o.findId()
 
     def getProfile(self):
-        profile = { 'options': [] }
+        profile = []
         
         for o in self.wrappers:
             store = {}
             store['name'] = o.name
             store['settings'] = o.widget.returnSettings()
-            profile['options'].append(store)
+            profile.append(store)
 
         return profile
 
     def setProfile(self, profile):
-        for store in profile['options']:
-            self.addOption(store['name'])
-            self.wrappers[-1].widget.addSettings(store['settings'])
+        for store in profile:
+            try:
+                self.addOption(store['name'])
+                self.wrappers[-1].widget.addSettings(store['settings'])
+            except KeyError as e:
+                if 'name' in store:
+                    name = store['name']
+                else:
+                    name = '<unknown>'
+                self.logger.error('Key error at {}: {}'.format(name, e))
 
 
 class SingleOption(OptionBase):
@@ -144,7 +151,33 @@ class SingleOption(OptionBase):
         self.selectedOption.set('Click to select')
         self.addOptions = OptionMenu(self.frame, self.selectedOption, *self.optionType.optList, command=self.showOption)
         self.addOptions.pack()
+        self.optionAvailable = False
 
     def showOption(self, option):
         self.addOptions.destroy()
         self.option = OptionWrapper(self.frame, self.optionType, option, *self.args, destroyCommand=self.showList)
+        self.optionAvailable = True
+
+    def evaluateOption(self):
+        return self.option.widget.evaluate()
+
+    def getProfile(self):
+        if not self.optionAvailable:
+            self.logger.warning("Could not save '{}'".format(self.optionType))
+            return {}
+        profile = {
+            'name': self.option.name,
+            'settings': self.option.widget.returnSettings()
+        }
+        return profile
+
+    def setProfile(self, profile):
+        try:
+            self.showOption(profile['name'])
+            self.option.widget.addSettings(profile['settings'])
+        except KeyError as e:
+            if 'name' in profile:
+                name = profile['name']
+            else:
+                name = '<unknown>'
+            self.logger.error('Key error at {}: {}'.format(name, e))

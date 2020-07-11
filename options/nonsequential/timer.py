@@ -39,11 +39,12 @@ class Widget(NonsequentialBase):
             self.addTime += self.interval
 
     def returnSettings(self):
-        settings = self.optionManger.getProfile()
+        settings = {}
+        settings['options'] = self.optionManger.getProfile()
         settings['interval'] = self.seconds.get()
         return settings
 
     def addSettings(self, settings):
         self.seconds.set(settings.pop('interval'))
         self.optionManger.destroyOptions()
-        self.optionManger.setProfile(settings)
+        self.optionManger.setProfile(settings['options'])

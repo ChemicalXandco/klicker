@@ -15,9 +15,10 @@ class OnEvent(NonsequentialBase):
         self.optionManger = OptionList(self.frameOne, options.sequential, *self.args)
 
     def returnSettings(self):
-        settings = self.optionManger.getProfile()
+        settings = {}
+        settings['options'] = self.optionManger.getProfile()
         return settings
 
     def addSettings(self, settings):
         self.optionManger.destroyOptions()
-        self.optionManger.setProfile(settings)
+        self.optionManger.setProfile(settings['options'])
