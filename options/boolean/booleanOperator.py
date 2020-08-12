@@ -16,5 +16,8 @@ class Widget(BooleanOperatorBase):
         return {
             'AND': a and b,
             'OR': a or b,
+            'NAND': not a and b,
+            'NOR': not a or b,
             'XOR': a != b,
+            'XNOR': not a != b,
         }
