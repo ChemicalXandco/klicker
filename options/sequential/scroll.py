@@ -14,7 +14,7 @@ class Widget(SequentialBase):
 
         self.clicks = Number(self.parent, self.numbers)
         self.clicks.grid(row=0, column=self.spacing+1)
-    
+
         self.labelTwo = Label(self.parent, text='"clicks"')
         self.labelTwo.grid(row=0, column=self.spacing+2, sticky=W)
 
@@ -22,9 +22,7 @@ class Widget(SequentialBase):
         pyautogui.scroll(self.clicks.parse())
 
     def returnSettings(self):
-        settings = {}
-        settings['clicks'] = self.clicks.get()
-        return settings
+        return { 'clicks': self.clicks.get() }
 
     def addSettings(self, settings):
         self.clicks.set(settings['clicks'])

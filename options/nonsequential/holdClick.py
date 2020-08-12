@@ -28,9 +28,7 @@ class Widget(NonsequentialBase):
         pyautogui.mouseUp(button=self.currentButton)
 
     def returnSettings(self):
-        settings = {}
-        settings['mouseButton'] = self.choice.get()
-        return settings
+        return { 'mouseButton': self.choice.get() }
 
     def addSettings(self, settings):
         self.choice.set(settings['mouseButton'])

@@ -14,7 +14,7 @@ class Widget(SequentialBase):
 
         self.period = Number(self.parent, self.numbers)
         self.period.grid(row=0, column=self.spacing+1)
-    
+
         self.labelTwo = Label(self.parent, text='seconds')
         self.labelTwo.grid(row=0, column=self.spacing+2, sticky=W)
 
@@ -22,9 +22,7 @@ class Widget(SequentialBase):
         sleep(self.period.parse())
 
     def returnSettings(self):
-        settings = {}
-        settings['period'] = self.period.get()
-        return settings
+        return { 'period': self.period.get() }
 
     def addSettings(self, settings):
         self.period.set(settings['period'])

@@ -37,11 +37,11 @@ class Widget(SequentialBase):
             self.elseOptionManger.runOptions()
 
     def returnSettings(self):
-        settings = {}
-        settings['if'] = self.ifOptionManger.getProfile()
-        settings['else'] = self.elseOptionManger.getProfile()
-        settings['condition'] = self.condition.getProfile()
-        return settings
+        return {
+            'if': self.ifOptionManger.getProfile(),
+            'else': self.elseOptionManger.getProfile(),
+            'condition': self.condition.getProfile(),
+        }
 
     def addSettings(self, settings):
         self.ifOptionManger.setProfile(settings['if'])

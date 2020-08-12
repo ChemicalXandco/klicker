@@ -1,7 +1,7 @@
-from options.nonsequential.abstract.onEvent import OnEvent
+from options.nonsequential.abstract.onEvent import OnEventBase
 
 
-class Widget(OnEvent):
+class Widget(OnEventBase):
     def __init__(self, *args):
         super().__init__(*args)
 

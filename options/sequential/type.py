@@ -14,12 +14,10 @@ class Widget(SequentialBase):
         self.text.grid(row=0, column=self.spacing)
 
     def run(self):
-        keyboard.type(self.text.get()) 
+        keyboard.type(self.text.get())
 
     def returnSettings(self):
-        settings = {}
-        settings['text'] = self.text.get()
-        return settings
+        return { 'text': self.text.get() }
 
     def addSettings(self, settings):
         self.text.delete(0,END)

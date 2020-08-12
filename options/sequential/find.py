@@ -14,10 +14,10 @@ class Widget(SequentialBase):
 
         self.img = FileSelector(self.parent)
         self.img.grid(row=1, column=self.spacing)
-    
+
         self.labelTwo = Label(self.parent, text='on screen and move cursor')
         self.labelTwo.grid(row=2, column=self.spacing)
-        
+
     def run(self):
         imgPath = self.img.path.get()
         location = pyautogui.locateCenterOnScreen(imgPath)
@@ -28,9 +28,7 @@ class Widget(SequentialBase):
             raise RuntimeError('Could not locate the given image on the screen')
 
     def returnSettings(self):
-        settings = {}
-        settings['imgPath'] = self.img.path.get()
-        return settings
+        return { 'imgPath': self.img.path.get() }
 
     def addSettings(self, settings):
         self.img.path.delete(0,END)

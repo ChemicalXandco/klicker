@@ -27,9 +27,7 @@ class Widget(SequentialBase):
             self.logger.error(e)
 
     def returnSettings(self):
-        settings = {}
-        settings['url'] = self.url.get()
-        return settings
+        return { 'url': self.url.get() }
 
     def addSettings(self, settings):
         self.url.delete(0,END)

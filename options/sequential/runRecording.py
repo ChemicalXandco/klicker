@@ -24,7 +24,7 @@ class Widget(SequentialBase):
         try:
             menu.delete(0, "end")
             for string in optionList:
-                menu.add_command(label=string, 
+                menu.add_command(label=string,
                                 command=lambda value=string: self.recordingFilename.set(value))
         except AttributeError:
             return
@@ -33,9 +33,7 @@ class Widget(SequentialBase):
         replayRecording(self.recordingFilename.get(), self.logger)
 
     def returnSettings(self):
-        settings = {}
-        settings['recordingFilename'] = self.recordingFilename.get()
-        return settings
+        return { 'recordingFilename': self.recordingFilename.get() }
 
     def addSettings(self, settings):
         self.recordingFilename.set(settings['recordingFilename'])

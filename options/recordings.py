@@ -7,6 +7,8 @@ from tkinter import *
 import gui
 from options.utils import KeySelector, CheckList
 
+availableTypes = ['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll', 'Store Timings']
+
 
 class RecordingsFile:
     def __init__(self):
@@ -86,8 +88,8 @@ def replayRecording(file, logger):
                         else:
                             logger.warning("'{}' on line {} of {} is not a valid command, skipping.".format(cmd, i+1, path))
                     elif cmd[0] == 'M':
-                        a = line.split('(') 
-                        b = a[1].split(')') 
+                        a = line.split('(')
+                        b = a[1].split(')')
                         c = b[0].split(',')
                         d = [int(v) for v in c]
                         mouse.position = tuple(d)
@@ -156,7 +158,7 @@ class Recordings(LabelFrame):
         label2.pack()
         self.killKey = KeySelector(self.childWindow, self.root)
         self.killKey.pack(fill=X, expand=YES)
-        self.types = CheckList(self.childWindow, ['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll', 'Store Timings'])
+        self.types = CheckList(self.childWindow, availableTypes)
         self.types.pack(fill=X, expand=YES)
         createButton = Button(self.childWindow, text="Record", command=self.record)
         createButton.pack(fill=X, expand=YES)
@@ -209,15 +211,15 @@ class Recordings(LabelFrame):
             s.destroy()
             d.destroy()
         self.widgets = []
-        
+
         fileList = self.recordingsFile.listItems()
         for i in range(len(fileList)):
             stats = os.stat('recordings/' + fileList[i])
             self.widgets.append(
-                (   
+                (
                     Button(self.recordingsGrid, text='❌', command=lambda file=fileList[i]: self.confirmRemove(file)),
-                    Label(self.recordingsGrid, text=fileList[i], width=30, anchor=W), 
-                    Label(self.recordingsGrid, text=str(stats.st_size)+'B'), 
+                    Label(self.recordingsGrid, text=fileList[i], width=30, anchor=W),
+                    Label(self.recordingsGrid, text=str(stats.st_size)+'B'),
                     Label(self.recordingsGrid, text=datetime.fromtimestamp(stats.st_mtime).strftime("%d %B %Y %I:%M:%S"))
                 )
             )

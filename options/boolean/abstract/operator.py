@@ -31,11 +31,11 @@ class BooleanOperatorBase(BooleanBase):
         return results[self.selectedOperator.get()]
 
     def returnSettings(self):
-        settings = {}
-        settings['a'] = self.a.getProfile()
-        settings['b'] = self.b.getProfile()
-        settings['operator'] = self.selectedOperator.get()
-        return settings
+        return {
+            'a': self.a.getProfile(),
+            'b': self.b.getProfile(),
+            'operator': self.selectedOperator.get(),
+        }
 
     def addSettings(self, settings):
         self.a.setProfile(settings['a'])

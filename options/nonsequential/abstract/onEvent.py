@@ -5,7 +5,7 @@ from options.nonsequential import NonsequentialBase
 from options.optionSelectors import OptionList
 
 
-class OnEvent(NonsequentialBase):
+class OnEventBase(NonsequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -15,9 +15,7 @@ class OnEvent(NonsequentialBase):
         self.optionManger = OptionList(self.frameOne, options.sequential, *self.args)
 
     def returnSettings(self):
-        settings = {}
-        settings['options'] = self.optionManger.getProfile()
-        return settings
+        return { 'options': self.optionManger.getProfile() }
 
     def addSettings(self, settings):
         self.optionManger.destroyOptions()

@@ -5,6 +5,7 @@ import json
 
 from options.sequential import SequentialBase
 from options.utils import KeySelector, CheckList
+import options.recordings
 
 
 class FakeWidget:
@@ -32,7 +33,7 @@ class Widget(SequentialBase):
         self.newRecordingName = Entry(self.parent)
         self.newRecordingName.grid(row=1, column=self.spacing+1, sticky=W)
 
-        self.types = CheckList(self.parent, ['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll', 'Store Timings'], default=0)
+        self.types = CheckList(self.parent, options.recordings.availableTypes, default=0)
         self.types.grid(row=2, column=self.spacing, columnspan=2, sticky=W)
 
     def run(self):
@@ -46,15 +47,15 @@ class Widget(SequentialBase):
         self.recordings.record()
 
     def returnSettings(self):
-        settings = {}
-        settings['killKey'] = self.killKey.get()
-        settings['name'] = self.newRecordingName.get()
-        settings['types'] = json.dumps(self.types.get())
-        return settings
+        return {
+            'killKey': self.killKey.get(),
+            'name': self.newRecordingName.get(),
+            'types': json.dumps(self.types.get()),
+        }
 
     def addSettings(self, settings):
         self.killKey.set(settings['killKey'])
         self.newRecordingName.delete(0,END)
         self.newRecordingName.insert(0, settings['name'])
         self.types.update(json.loads(settings['types']), updateTo=1)
-        self.types.update(['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll', 'Store Timings'])
+        self.types.update(options.recordings.availableTypes)

@@ -1,9 +1,9 @@
 import pyautogui
 
-from options.sequential.abstract.mouseButton import MouseButton
+from options.sequential.abstract.mouseButton import MouseButtonBase
 
 
-class Widget(MouseButton):
+class Widget(MouseButtonBase):
     def __init__(self, *args):
         super().__init__(*args)
 

@@ -3,7 +3,7 @@ from tkinter import *
 from options.sequential import SequentialBase
 
 
-class MouseButton(SequentialBase):
+class MouseButtonBase(SequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -14,9 +14,7 @@ class MouseButton(SequentialBase):
         self.mouseClick.grid(row=0, column=self.spacing)
 
     def returnSettings(self):
-        settings = {}
-        settings['mouseButton'] = self.choice.get()
-        return settings
+        return { 'mouseButton': self.choice.get() }
 
     def addSettings(self, settings):
         self.choice.set(settings['mouseButton'])

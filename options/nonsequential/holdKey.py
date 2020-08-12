@@ -25,9 +25,7 @@ class Widget(NonsequentialBase):
         keyboard.release(self.keyCache)
 
     def returnSettings(self):
-        settings = {}
-        settings['key'] = self.key.get()
-        return settings
+        return { 'key': self.key.get() }
 
     def addSettings(self, settings):
         self.key.set(settings['key'])
