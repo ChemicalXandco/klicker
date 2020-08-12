@@ -38,4 +38,3 @@ class Widget(BooleanBase):
         self.bool1.setProfile(settings['a'])
         self.bool2.setProfile(settings['b'])
         self.selectedOption.set(settings['operator'])
-        

@@ -15,7 +15,7 @@ systemLogLevel = 25
 logging.addLevelName(systemLogLevel, 'SYSTEM')
 def system(self, message, *args, **kws):
     if self.isEnabledFor(systemLogLevel):
-        self._log(systemLogLevel, message, args, **kws) 
+        self._log(systemLogLevel, message, args, **kws)
 logging.Logger.system = system
 
 
@@ -24,7 +24,7 @@ class GUI:
         self.master = master
         master.title('Simple Clicker')
         self.setWindowIcon(master)
-        
+
         self.status = Label(master, text='Inactive', fg='#ff0000')
         self.status.grid(row=0, column=0)
 
@@ -51,7 +51,7 @@ class GUI:
 
         self.profilesScrollFrame = ScrollFrame(self.settingsFrame, (400, 100))
         self.profilesScrollFrame.grid(row=3, column=0, columnspan=2)
-        
+
         self.profilesSelectFrame = LabelFrame(self.profilesScrollFrame.viewPort, text='Profiles to switch between')
         self.profilesSelectFrame.grid(row=0, column=0, sticky=W, padx=5, pady=5)
 
@@ -126,19 +126,19 @@ class GUI:
 
         self.recordings = Recordings(master, text='Recordings', logger=self.logger, root=self.master)
         self.recordings.grid(row=5, column=0, columnspan=2, sticky=W, padx=5, pady=5)
-        
+
         self.options = LabelFrame(master, text='Options')
         self.options.grid(row=0, column=3, rowspan=7, sticky=W, padx=5)
 
         self.optionsScrollFrame = ScrollFrame(self.options, (400, 880))
         self.optionsScrollFrame.grid(row=0, column=0)
 
-        self.optionManager = OptionList(self.optionsScrollFrame.viewPort, 
-                                        options.nonsequential, 
+        self.optionManager = OptionList(self.optionsScrollFrame.viewPort,
+                                        options.nonsequential,
                                         master,
-                                        self.handleSaveProfile, 
-                                        self.logger, 
-                                        self.numbers, 
+                                        self.handleSaveProfile,
+                                        self.logger,
+                                        self.numbers,
                                         self.recordings)
 
         self.level.set("INFO")
@@ -193,7 +193,7 @@ class GUI:
             pass
         self.handleSetProfile()
 
-    def handleSetProfile(self, *args): 
+    def handleSetProfile(self, *args):
         self.optionManager.destroyOptions()
         profile = profileManager.read()[self.profile.get()]
 
@@ -209,11 +209,10 @@ class GUI:
 
     def refreshProfiles(self):
         profiles = self.profileList()
-        
         menu = self.setProfile['menu']
         menu.delete(0, END)
         for string in profiles:
-            menu.add_command(label=string, 
+            menu.add_command(label=string,
                              command=lambda value=string: self.menuCommand(value))
 
     def handleConfirmDelProfile(self):
@@ -325,25 +324,27 @@ class ScrollFrame(Frame):
     def __init__(self, parent, dimensions):
         super().__init__(parent)
 
-        self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0', width=dimensions[0], height=dimensions[1])          
-        self.viewPort = Frame(self.canvas, background='#F0F0F0')                    
+        self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0', width=dimensions[0], height=dimensions[1])
+        self.viewPort = Frame(self.canvas, background='#F0F0F0')
+        self.hsb = Scrollbar(self, orient='horizontal', command=self.canvas.xview)
+        self.canvas.configure(xscrollcommand=self.hsb.set)
         self.vsb = Scrollbar(self, orient='vertical', command=self.canvas.yview)
-        self.canvas.configure(yscrollcommand=self.vsb.set)                          
+        self.canvas.configure(yscrollcommand=self.vsb.set)
 
-        self.vsb.pack(side="right", fill="y")                                       
-        self.canvas.pack(side="left", fill="both", expand=True)                     
-        self.canvas_window = self.canvas.create_window((4,4), window=self.viewPort, anchor="nw",           
+        self.hsb.pack(side="bottom", fill="x")
+        self.vsb.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.canvas_window = self.canvas.create_window((4,4), window=self.viewPort, anchor="nw",
                                   tags="self.viewPort")
 
-        self.viewPort.bind("<Configure>", self.onFrameConfigure)                       
-        self.canvas.bind("<Configure>", self.onCanvasConfigure)                       
-        self.onFrameConfigure(None)                                                 
+        self.viewPort.bind("<Configure>", self.onFrameConfigure)
+        self.canvas.bind("<Configure>", self.onCanvasConfigure)
+        self.onFrameConfigure(None)
 
-    def onFrameConfigure(self, event):                                              
+    def onFrameConfigure(self, event):
         '''Reset the scroll region to encompass the inner frame'''
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))                 
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def onCanvasConfigure(self, event):
         '''Reset the canvas window to encompass inner frame when required'''
-        canvas_width = event.width
-        self.canvas.itemconfig(self.canvas_window, width = canvas_width)
+        self.canvas.itemconfig(self.canvas_window)
