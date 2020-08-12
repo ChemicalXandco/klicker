@@ -30,14 +30,16 @@ class BooleanOperatorBase(BooleanBase):
         results = self.getResults(self.a.evaluateOption(), self.b.evaluateOption())
         return results[self.selectedOperator.get()]
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return {
-            'a': self.a.getProfile(),
-            'b': self.b.getProfile(),
+            'a': self.a.settings,
+            'b': self.b.settings,
             'operator': self.selectedOperator.get(),
         }
 
-    def addSettings(self, settings):
-        self.a.setProfile(settings['a'])
-        self.b.setProfile(settings['b'])
+    @settings.setter
+    def settings(self, settings):
+        self.a.settings = settings['a']
+        self.b.settings = settings['b']
         self.selectedOperator.set(settings['operator'])

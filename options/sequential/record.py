@@ -46,14 +46,16 @@ class Widget(SequentialBase):
         self.recordings.childWindow = FakeWidget()
         self.recordings.record()
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return {
             'killKey': self.killKey.get(),
             'name': self.newRecordingName.get(),
             'types': json.dumps(self.types.get()),
         }
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         self.killKey.set(settings['killKey'])
         self.newRecordingName.delete(0,END)
         self.newRecordingName.insert(0, settings['name'])

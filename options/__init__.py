@@ -44,8 +44,10 @@ class Base(OptionBase):
         super().__init__(parent, *args)
         self.spacing = spacing
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return {}
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         return

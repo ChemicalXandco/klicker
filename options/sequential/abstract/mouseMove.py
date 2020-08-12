@@ -26,12 +26,14 @@ class MouseMoveBase(SequentialBase):
     def run(self):
         self.move(int(self.x.parse()), int(self.y.parse()))
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return {
             'x': self.x.get(),
             'y': self.y.get(),
         }
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         self.x.set(settings['x'])
         self.y.set(settings['y'])

@@ -30,11 +30,13 @@ class Number(Entry):
         self.delete(0, END)
         self.insert(0, value)
 
-    def getProfile(self):
+    @property
+    def settings(self):
         return { 'text': self.get() }
 
-    def setProfile(self, profile):
-        self.set(profile['text'])
+    @settings.setter
+    def settings(self, settings):
+        self.set(settings['text'])
 
 
 class Numbers(LabelFrame):

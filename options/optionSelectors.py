@@ -107,22 +107,19 @@ class OptionList(OptionBase):
             for o in self.wrappers:
                 o.findId()
 
-    def getProfile(self):
-        profile = []
+    @property
+    def settings(self):
+        return [ {
+            'name': o.name,
+            'settings': o.widget.settings,
+        } for o in self.wrappers ]
 
-        for o in self.wrappers:
-            store = {}
-            store['name'] = o.name
-            store['settings'] = o.widget.returnSettings()
-            profile.append(store)
-
-        return profile
-
-    def setProfile(self, profile):
-        for store in profile:
+    @settings.setter
+    def settings(self, settings):
+        for store in settings:
             try:
                 self.addOption(store['name'])
-                self.wrappers[-1].widget.addSettings(store['settings'])
+                self.wrappers[-1].widget.settings = store['settings']
             except KeyError as e:
                 if 'name' in store:
                     name = store['name']
@@ -161,23 +158,24 @@ class SingleOption(OptionBase):
     def evaluateOption(self):
         return self.option.widget.evaluate()
 
-    def getProfile(self):
+    @property
+    def settings(self):
         if not self.optionAvailable:
             self.logger.warning("Could not save '{}'".format(self.optionType))
             return {}
-        profile = {
+        return {
             'name': self.option.name,
-            'settings': self.option.widget.returnSettings()
+            'settings': self.option.widget.settings,
         }
-        return profile
 
-    def setProfile(self, profile):
+    @settings.setter
+    def settings(self, settings):
         try:
-            self.showOption(profile['name'])
-            self.option.widget.addSettings(profile['settings'])
+            self.showOption(settings['name'])
+            self.option.widget.settings = settings['settings']
         except KeyError as e:
-            if 'name' in profile:
-                name = profile['name']
+            if 'name' in settings:
+                name = settings['name']
             else:
                 name = '<unknown>'
             self.logger.error('Key error at {}: {}'.format(name, e))

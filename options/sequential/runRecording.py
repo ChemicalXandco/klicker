@@ -32,8 +32,10 @@ class Widget(SequentialBase):
     def run(self):
         replayRecording(self.recordingFilename.get(), self.logger)
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return { 'recordingFilename': self.recordingFilename.get() }
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         self.recordingFilename.set(settings['recordingFilename'])

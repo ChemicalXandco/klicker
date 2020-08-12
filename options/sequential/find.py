@@ -27,9 +27,11 @@ class Widget(SequentialBase):
         else:
             raise RuntimeError('Could not locate the given image on the screen')
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return { 'imgPath': self.img.path.get() }
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         self.img.path.delete(0,END)
         self.img.path.insert(0, settings['imgPath'])

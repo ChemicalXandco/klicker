@@ -21,8 +21,10 @@ class Widget(SequentialBase):
     def run(self):
         sleep(self.period.parse())
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return { 'period': self.period.get() }
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         self.period.set(settings['period'])

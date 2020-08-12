@@ -21,8 +21,10 @@ class Widget(SequentialBase):
     def run(self):
         pyautogui.scroll(self.clicks.parse())
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return { 'clicks': self.clicks.get() }
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         self.clicks.set(settings['clicks'])

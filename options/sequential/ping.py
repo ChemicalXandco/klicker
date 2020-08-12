@@ -26,9 +26,11 @@ class Widget(SequentialBase):
         except Exception as e:
             self.logger.error(e)
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return { 'url': self.url.get() }
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         self.url.delete(0,END)
         self.url.insert(0, settings['url'])

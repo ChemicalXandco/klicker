@@ -16,9 +16,11 @@ class Widget(SequentialBase):
     def run(self):
         keyboard.type(self.text.get())
 
-    def returnSettings(self):
+    @property
+    def settings(self):
         return { 'text': self.text.get() }
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         self.text.delete(0,END)
         self.text.insert(0, settings['text'])
