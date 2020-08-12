@@ -9,7 +9,7 @@ class OptionWrapper(OptionBase):
         super().__init__(parent, *args)
 
         self.widgets = wrappersList
-        
+
         self.frame = LabelFrame(parent, text=option)
 
         if not destroyCommand:
@@ -18,7 +18,7 @@ class OptionWrapper(OptionBase):
         self.deleteButton.grid(row=0, column=0)
 
         self.name = option
-        
+
         if optionType.movable:
             self.upDownFrame = Frame(self.frame)
             self.upDownFrame.grid(row=0, column=1)
@@ -33,7 +33,7 @@ class OptionWrapper(OptionBase):
             columnSpace = 1
         optionObject = optionType.optDict.get(option)
         self.widget = optionObject.Widget(self.frame, columnSpace, *args)
-        
+
         self.frame.pack(anchor=W, padx=5, pady=0)
 
     def findId(self, destroy=True):
@@ -67,7 +67,7 @@ class OptionList(OptionBase):
 
         self.addOptionFrame = Frame(parent)
         self.addOptionFrame.pack()
-        
+
         self.addOptionLabel = Label(self.addOptionFrame, text='Add Option')
         self.addOptionLabel.grid(row=0, column=0, sticky=E)
 
@@ -80,7 +80,7 @@ class OptionList(OptionBase):
 
     def handleAddOption(self, *args):
         self.addOption(self.selectedOption.get())
-        
+
         self.selectedOption.set('➕')
 
     def addOption(self, option):
@@ -88,7 +88,7 @@ class OptionList(OptionBase):
 
     def startOptions(self):
         for o in self.wrappers:
-            o.widget.start() 
+            o.widget.start()
 
     def stopOptions(self):
         for o in self.wrappers:
@@ -109,7 +109,7 @@ class OptionList(OptionBase):
 
     def getProfile(self):
         profile = []
-        
+
         for o in self.wrappers:
             store = {}
             store['name'] = o.name
@@ -143,7 +143,7 @@ class SingleOption(OptionBase):
         self.showList()
 
     def showList(self):
-        try: 
+        try:
             self.option.frame.destroy()
         except AttributeError:
             pass

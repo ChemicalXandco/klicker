@@ -23,9 +23,18 @@ class Number(Entry):
         # using eval allows math and random functions to be used, we are trusting the user not to input anything that would jeopardise the normal function of the software
         return eval(string)
 
+    def evaluateOption(self): # alternative name for parse function used by options.boolean.operator.BooleanOperatorBase
+        return self.parse()
+
     def set(self, value):
         self.delete(0, END)
         self.insert(0, value)
+
+    def getProfile(self):
+        return { 'text': self.get() }
+
+    def setProfile(self, profile):
+        self.set(profile['text'])
 
 
 class Numbers(LabelFrame):
@@ -53,7 +62,7 @@ class Numbers(LabelFrame):
         self.newNumberName.pack(fill=X, expand=YES)
         createButton = Button(self.childWindow, text="Create", command=self.assign)
         createButton.pack(fill=X, expand=YES)
-    
+
     def limitChar(self, i, S):
         if i == '1': # if the index is 1 it means the string will be 2 characters long
             return False
@@ -85,13 +94,13 @@ class Numbers(LabelFrame):
             l.destroy()
             e.destroy()
         self.widgets = []
-        
+
         row = 0
         for k,v in self.assigned.items():
             self.widgets.append(
-                (   
+                (
                     Button(self.numbersGrid, text='❌', command=lambda k=k: self.remove(k)),
-                    Label(self.numbersGrid, text=k), 
+                    Label(self.numbersGrid, text=k),
                     Entry(self.numbersGrid)
                 )
             )
@@ -101,4 +110,3 @@ class Numbers(LabelFrame):
 
             self.widgets[row][2].insert(0, v)
             row += 1
-            
