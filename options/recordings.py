@@ -129,14 +129,17 @@ class Recordings(LabelFrame):
 
         self.widgets = []
 
-        self.addButton = Button(self, text='➕', command=self.add)
+        self.recordingsOptionsFrame = Frame(self)
+        self.recordingsOptionsFrame.pack()
+
+        self.addButton = Button(self.recordingsOptionsFrame, text='➕', command=self.add)
         self.addButton.grid(row=0, column=0)
 
-        self.refreshButton = Button(self, text='Refresh', command=self.update)
+        self.refreshButton = Button(self.recordingsOptionsFrame, text='Refresh', command=self.update)
         self.refreshButton.grid(row=0, column=1)
 
         self.recordingsFrame = gui.ScrollFrame(self, (400, 100))
-        self.recordingsFrame.grid(row=1, column=0, columnspan=2)
+        self.recordingsFrame.pack(fill=BOTH, expand=YES)
         self.recordingsGrid = self.recordingsFrame.viewPort
 
         self.recordingsFile = RecordingsFile()

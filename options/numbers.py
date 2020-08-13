@@ -47,11 +47,14 @@ class Numbers(LabelFrame):
         self.assigned = {}
         self.widgets = []
 
-        self.addButton = Button(self, text='➕', command=self.add)
+        self.numbersOptionsFrame = Frame(self)
+        self.numbersOptionsFrame.pack()
+
+        self.addButton = Button(self.numbersOptionsFrame, text='➕', command=self.add)
         self.addButton.grid(row=0, column=0)
 
         self.numbersFrame = gui.ScrollFrame(self, (400, 100))
-        self.numbersFrame.grid(row=1, column=0)
+        self.numbersFrame.pack(fill=BOTH, expand=YES)
         self.numbersGrid = self.numbersFrame.viewPort
 
     def add(self):

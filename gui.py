@@ -97,15 +97,18 @@ class GUI:
         self.logFrame = LabelFrame(master, text='Log')
         self.logFrame.grid(row=6, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
+        self.logOptionsFrame = Frame(self.logFrame)
+        self.logOptionsFrame.pack()
+
         self.level = StringVar(master)
-        self.setLevel = OptionMenu(self.logFrame, self.level, *list(logging._levelToName.values()), command=self.changeLevel)
+        self.setLevel = OptionMenu(self.logOptionsFrame, self.level, *list(logging._levelToName.values()), command=self.changeLevel)
         self.setLevel.grid(row=0, column=0)
 
-        self.clearLogButton = Button(self.logFrame, text='Clear Log', command=self.clearLog)
+        self.clearLogButton = Button(self.logOptionsFrame, text='Clear Log', command=self.clearLog)
         self.clearLogButton.grid(row=0, column=1)
 
         self.log = scrolledtext.ScrolledText(self.logFrame, width=50, height=10, state='disabled')
-        self.log.grid(row=1, column=0, columnspan=2)
+        self.log.pack(fill=BOTH, expand=YES)
 
         self.textHandler = TextHandler(self.log)
         self.textHandler.setLevel(logging.DEBUG)
@@ -128,10 +131,10 @@ class GUI:
         self.recordings.grid(row=5, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.options = LabelFrame(master, text='Options')
-        self.options.grid(row=0, column=3, rowspan=7, sticky=W, padx=5)
+        self.options.grid(row=0, column=3, rowspan=7, sticky='NSEW', padx=5)
 
-        self.optionsScrollFrame = ScrollFrame(self.options, (400, 880))
-        self.optionsScrollFrame.grid(row=0, column=0)
+        self.optionsScrollFrame = ScrollFrame(self.options, (880, 880))
+        self.optionsScrollFrame.pack(fill=BOTH, expand=YES)
 
         self.optionManager = OptionList(self.optionsScrollFrame.viewPort,
                                         options.nonsequential,
@@ -140,6 +143,15 @@ class GUI:
                                         self.logger,
                                         self.numbers,
                                         self.recordings)
+
+        master.grid_columnconfigure(3,weight=1)
+        master.grid_rowconfigure(0,weight=1)
+        master.grid_rowconfigure(1,weight=1)
+        master.grid_rowconfigure(2,weight=1)
+        master.grid_rowconfigure(3,weight=1)
+        master.grid_rowconfigure(4,weight=1)
+        master.grid_rowconfigure(5,weight=1)
+        master.grid_rowconfigure(6,weight=1)
 
         self.level.set("INFO")
         self.readSetting()
@@ -324,6 +336,8 @@ class ScrollFrame(Frame):
     def __init__(self, parent, dimensions):
         super().__init__(parent)
 
+        self.width, self.height = dimensions
+
         self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0', width=dimensions[0], height=dimensions[1])
         self.viewPort = Frame(self.canvas, background='#F0F0F0')
         self.hsb = Scrollbar(self, orient='horizontal', command=self.canvas.xview)
@@ -347,4 +361,10 @@ class ScrollFrame(Frame):
 
     def onCanvasConfigure(self, event):
         '''Reset the canvas window to encompass inner frame when required'''
+        wscale = float(event.width)/self.width
+        hscale = float(event.height)/self.height
+        self.width = event.width
+        self.height = event.height
+        self.canvas.scale("all",0,0,wscale,hscale)
+
         self.canvas.itemconfig(self.canvas_window)
