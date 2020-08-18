@@ -87,6 +87,10 @@ class OptionList(OptionBase):
     def addOption(self, option):
         self.wrappers.append(OptionWrapper(self.parent, self.optionType, option, *self.args, wrappersList=self.wrappers))
 
+    def registerSettings(self):
+        for o in self.wrappers:
+            o.widget.registerSettings()
+
     def runAsync(self, func):
         threads = []
         for o in self.wrappers:
@@ -144,23 +148,26 @@ class SingleOption(OptionBase):
         self.frame = Frame(parent)
         self.frame.grid(row=row, column=column)
 
-        self.showList()
+        self._showList()
 
-    def showList(self):
+    def _showList(self):
         try:
             self.option.frame.destroy()
         except AttributeError:
             pass
         self.selectedOption = StringVar(self.parent)
         self.selectedOption.set('Click to select')
-        self.addOptions = OptionMenu(self.frame, self.selectedOption, *self.optionType.optList, command=self.showOption)
+        self.addOptions = OptionMenu(self.frame, self.selectedOption, *self.optionType.optList, command=self._showOption)
         self.addOptions.pack()
         self.optionAvailable = False
 
-    def showOption(self, option):
+    def _showOption(self, option):
         self.addOptions.destroy()
-        self.option = OptionWrapper(self.frame, self.optionType, option, *self.args, destroyCommand=self.showList)
+        self.option = OptionWrapper(self.frame, self.optionType, option, *self.args, destroyCommand=self._showList)
         self.optionAvailable = True
+
+    def registerSettings(self):
+        self.option.widget.registerSettings()
 
     def evaluateOption(self):
         return self.option.widget.evaluate()
@@ -178,7 +185,7 @@ class SingleOption(OptionBase):
     @settings.setter
     def settings(self, settings):
         try:
-            self.showOption(settings['name'])
+            self._showOption(settings['name'])
             self.option.widget.settings = settings['settings']
         except KeyError as e:
             if 'name' in settings:

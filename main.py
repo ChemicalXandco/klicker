@@ -33,6 +33,8 @@ with keyboard.Events() as events:
                             gui.enableOverlay()
                         gui.logger.system('Hotkey pressed - activated')
                         timer = time.time()
+                        # start options
+                        gui.optionManager.registerSettings()
                         gui.optionManager.startOptions()
                 if event.key == gui.profileHotkey.key:
                     if activated:

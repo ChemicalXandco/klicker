@@ -4,7 +4,7 @@ import os
 
 def getOptions(path):
     optDict = {}
-    for importer, package, ispkg in pkgutil.walk_packages(path):  
+    for importer, package, ispkg in pkgutil.walk_packages(path):
         optDict[package] = importlib.import_module('options.'+os.path.split(path[0])[1]+'.'+package)
     try:
         del optDict['abstract']
@@ -43,6 +43,11 @@ class Base(OptionBase):
     def __init__(self, parent, spacing, *args):
         super().__init__(parent, *args)
         self.spacing = spacing
+
+        self.cache = {}
+
+    def registerSettings(self):
+        self.cache = self.settings
 
     @property
     def settings(self):
