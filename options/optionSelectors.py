@@ -1,4 +1,5 @@
 from tkinter import *
+import threading
 
 import options
 from options import OptionBase
@@ -86,17 +87,23 @@ class OptionList(OptionBase):
     def addOption(self, option):
         self.wrappers.append(OptionWrapper(self.parent, self.optionType, option, *self.args, wrappersList=self.wrappers))
 
-    def startOptions(self):
+    def runAsync(self, func):
+        threads = []
         for o in self.wrappers:
-            o.widget.start()
+            threads.append(threading.Thread(target=getattr(o.widget, func)))
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+    def startOptions(self):
+        self.runAsync('start')
 
     def stopOptions(self):
-        for o in self.wrappers:
-            o.widget.stop()
+        self.runAsync('stop')
 
     def updateOptions(self):
-        for o in self.wrappers:
-            o.widget.update()
+        self.runAsync('update')
 
     def runOptions(self):
         for o in self.wrappers:

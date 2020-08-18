@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 import logging
 import uuid
+import threading
 
 from pynput import keyboard
 
@@ -139,17 +140,27 @@ class TextHandler(logging.Handler):
         # Store a reference to the Text it will log to
         self.text = text
 
+        # Messages cannot be added in a thread
+        self.backlog = []
+
+    def append(self, msg):
+        self.text.configure(state='normal')
+        startIndex = self.text.index(INSERT)
+        self.text.insert(END, msg + '\n')
+        level = (msg.split('['))[2].split(']')[0]
+        tempUuid = str(uuid.uuid4()) # Tempory uuid to avoid conflicts between tags
+        self.text.tag_add(tempUuid, startIndex, END)
+        self.text.tag_config(tempUuid, foreground=levelStrToColour(level))
+        # Autoscroll to the bottomxx
+        self.text.yview(END)
+        self.text.configure(state='disabled')
+
     def emit(self, record):
         msg = self.format(record)
-        def append():
-            self.text.configure(state='normal')
-            startIndex = self.text.index(INSERT)
-            self.text.insert(END, msg + '\n')
-            level = (msg.split('['))[2].split(']')[0]
-            tempUuid = str(uuid.uuid4()) # Tempory uuid to avoid conflicts between tags
-            self.text.tag_add(tempUuid, startIndex, END)
-            self.text.tag_config(tempUuid, foreground=levelStrToColour(level))
-            # Autoscroll to the bottom
-            self.text.yview(END)
-            self.text.configure(state='disabled')
-        append()
+        if threading.current_thread() is threading.main_thread():
+            for i in range(len(self.backlog)):
+                self.append(self.backlog[0])
+                del self.backlog[0]
+            self.append(msg)
+        else:
+            self.backlog.append(msg)
