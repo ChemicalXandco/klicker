@@ -20,11 +20,15 @@ class MouseMoveBase(SequentialBase):
         self.y = Number(self.parent, self.numbers)
         self.y.grid(row=1, column=self.spacing+1)
 
+    def registerSettings(self):
+        self.xCache = int(self.x.parse())
+        self.yCache = int(self.y.parse())
+
     def move(x, y):
         raise NotImplementedError
 
     def run(self):
-        self.move(int(self.x.parse()), int(self.y.parse()))
+        self.move(self.xCache, self.yCache)
 
     @property
     def settings(self):

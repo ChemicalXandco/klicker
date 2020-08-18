@@ -44,10 +44,8 @@ class Base(OptionBase):
         super().__init__(parent, *args)
         self.spacing = spacing
 
-        self.cache = {}
-
     def registerSettings(self):
-        self.cache = self.settings
+        return
 
     @property
     def settings(self):

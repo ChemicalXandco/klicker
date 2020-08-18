@@ -8,4 +8,4 @@ class Widget(MouseButtonBase):
         super().__init__(*args)
 
     def run(self):
-        pyautogui.mouseUp(button=self.choice.get())
+        pyautogui.mouseUp(button=self.buttonCache)

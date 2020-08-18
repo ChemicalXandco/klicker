@@ -20,8 +20,10 @@ class Widget(NonsequentialBase):
         self.labelTwo = Label(self.parent, text='mouse button')
         self.labelTwo.grid(row=0, column=self.spacing+2)
 
-    def start(self):
+    def registerSettings(self):
         self.currentButton = self.choice.get()
+
+    def start(self):
         pyautogui.mouseDown(button=self.currentButton)
 
     def stop(self):

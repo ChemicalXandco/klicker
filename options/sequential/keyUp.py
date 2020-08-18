@@ -9,4 +9,4 @@ class Widget(KeyBase):
         super().__init__(*args)
 
     def run(self):
-        keyboard.release(self.key.key)
+        keyboard.release(self.keyCache)

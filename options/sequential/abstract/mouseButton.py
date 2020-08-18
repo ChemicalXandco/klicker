@@ -13,6 +13,9 @@ class MouseButtonBase(SequentialBase):
         self.mouseClick = OptionMenu(self.parent, self.choice, *self.choices)
         self.mouseClick.grid(row=0, column=self.spacing)
 
+    def registerSettings(self):
+        self.buttonCache = self.choice.get()
+
     @property
     def settings(self):
         return { 'mouseButton': self.choice.get() }

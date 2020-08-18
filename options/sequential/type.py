@@ -13,8 +13,11 @@ class Widget(SequentialBase):
         self.text = Entry(self.parent, width=20)
         self.text.grid(row=0, column=self.spacing)
 
+    def registerSettings(self):
+        self.textCache = self.text.get()
+
     def run(self):
-        keyboard.type(self.text.get())
+        keyboard.type(self.textCache)
 
     @property
     def settings(self):

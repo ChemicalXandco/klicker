@@ -18,8 +18,11 @@ class Widget(SequentialBase):
         self.labelTwo = Label(self.parent, text='seconds')
         self.labelTwo.grid(row=0, column=self.spacing+2, sticky=W)
 
+    def registerSettings(self):
+        self.periodCache = self.period.parse()
+
     def run(self):
-        sleep(self.period.parse())
+        sleep(self.periodCache)
 
     @property
     def settings(self):

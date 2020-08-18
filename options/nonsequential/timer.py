@@ -28,9 +28,12 @@ class Widget(NonsequentialBase):
 
         self.optionManger = OptionList(self.options, options.sequential, *self.args)
 
+    def registerSettings(self):
+        self.interval = self.seconds.parse()
+        self.optionManger.registerSettings()
+
     def start(self):
         self.timer = time.time()
-        self.interval = self.seconds.parse()
         self.addTime = 0
 
     def update(self):

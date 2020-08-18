@@ -14,6 +14,10 @@ class BooleanOperatorBase(BooleanBase):
         self.selectOperator = OptionMenu(self.parent, self.selectedOperator, *operators)
         self.selectOperator.grid(row=0, column=self.spacing+1)
 
+    def registerSettings(self):
+        for optionManager in [self.a, self.b]:
+            optionManager.registerSettings()
+
     def getResults(self, a=None, b=None):
         """
         Get a dictionary representing names of operators and the outcome if they were applied.

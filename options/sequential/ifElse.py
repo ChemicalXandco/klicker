@@ -30,6 +30,10 @@ class Widget(SequentialBase):
 
         self.elseOptionManger = OptionList(self.elseOptions, options.sequential, *self.args)
 
+    def registerSettings(self):
+        for optionManager in [self.condition, self.ifOptionManger, self.elseOptionManger]:
+            optionManager.registerSettings()
+
     def run(self):
         if self.condition.evaluateOption():
             self.ifOptionManger.runOptions()

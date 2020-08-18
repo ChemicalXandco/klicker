@@ -29,8 +29,11 @@ class Widget(SequentialBase):
         except AttributeError:
             return
 
+    def registerSettings(self):
+        self.filenameCache = self.recordingFilename.get()
+
     def run(self):
-        replayRecording(self.recordingFilename.get(), self.logger)
+        replayRecording(self.filenameCache, self.logger)
 
     @property
     def settings(self):

@@ -11,6 +11,9 @@ class KeyBase(SequentialBase):
         self.key = KeySelector(self.parent, self.root)
         self.key.grid(row=0, column=self.spacing)
 
+    def registerSettings(self):
+        self.keyCache = self.key.key
+
     @property
     def settings(self):
         return { 'key': self.key.get() }

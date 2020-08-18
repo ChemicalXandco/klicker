@@ -23,8 +23,11 @@ class Number(Entry):
         # using eval allows math and random functions to be used, we are trusting the user not to input anything that would jeopardise the normal function of the software
         return eval(string)
 
-    def evaluateOption(self): # alternative name for parse function used by options.boolean.operator.BooleanOperatorBase
-        return self.parse()
+    def registerSettings(self):
+        self.cache = self.parse()
+
+    def evaluateOption(self):
+        return self.cache
 
     def set(self, value):
         self.delete(0, END)

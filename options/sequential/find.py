@@ -18,8 +18,11 @@ class Widget(SequentialBase):
         self.labelTwo = Label(self.parent, text='on screen and move cursor')
         self.labelTwo.grid(row=2, column=self.spacing)
 
+    def registerSettings(self):
+        self.imgPathCache = self.img.path.get()
+
     def run(self):
-        imgPath = self.img.path.get()
+        imgPath = self.imgPathCache
         location = pyautogui.locateCenterOnScreen(imgPath)
         if location != None:
             self.logger.debug('Found {} at ({}, {})'.format(imgPath, location[0], location[1]))

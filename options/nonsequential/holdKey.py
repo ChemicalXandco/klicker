@@ -17,8 +17,10 @@ class Widget(NonsequentialBase):
         self.key = KeySelector(self.parent, self.root)
         self.key.grid(row=0, column=self.spacing+1)
 
-    def start(self):
+    def registerSettings(self):
         self.keyCache = self.key.key
+
+    def start(self):
         keyboard.press(self.keyCache)
 
     def stop(self):

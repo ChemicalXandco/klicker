@@ -17,8 +17,11 @@ class Widget(SequentialBase):
         self.url = Entry(self.parent, width=20)
         self.url.grid(row=0, column=self.spacing+1)
 
+    def registerSettings(self):
+        self.urlCache = self.url.get()
+
     def run(self):
-        url = self.url.get()
+        url = self.urlCache
         timer = time.time()
         try:
             response = urlopen(url)

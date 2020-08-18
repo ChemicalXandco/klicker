@@ -14,6 +14,9 @@ class OnEventBase(NonsequentialBase):
 
         self.optionManger = OptionList(self.frameOne, options.sequential, *self.args)
 
+    def registerSettings(self):
+        self.optionManger.registerSettings()
+
     @property
     def settings(self):
         return { 'options': self.optionManger.settings }
