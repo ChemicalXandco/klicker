@@ -36,13 +36,18 @@ class Widget(SequentialBase):
         self.types = CheckList(self.parent, options.recordings.availableTypes, default=0)
         self.types.grid(row=2, column=self.spacing, columnspan=2, sticky=W)
 
+    def registerSettings(self):
+        #self.killKeyCache = self.killKey
+        self.recordingNameCache = self.newRecordingName.get()
+        self.typesCache = self.types.get()
+
     def run(self):
         self.recordings.killKey = self.killKey
-        if self.newRecordingName.get() != '':
-            self.recordings.newRecordingName = self.newRecordingName
+        if self.recordingNameCache != '':
+            self.recordings.newRecordingName = FakeWidget(self.recordingNameCache)
         else:
             self.recordings.newRecordingName = FakeWidget(str(uuid.uuid4())[:8])
-        self.recordings.types = self.types
+        self.recordings.types = FakeWidget(self.typesCache)
         self.recordings.childWindow = FakeWidget()
         self.recordings.record()
 

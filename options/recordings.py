@@ -3,6 +3,7 @@ import os
 import time
 from datetime import datetime
 from tkinter import *
+import threading
 
 import gui
 from options.utils import KeySelector, CheckList
@@ -191,16 +192,17 @@ class Recordings(LabelFrame):
             self.childWindow.destroy()
             self.logger.system('Recording started with kill key {}.'.format(self.killKey.get()))
 
-            keyboardListener = pynput.keyboard.Listener(on_press=self.recordingsFile.on_press, 
+            keyboardListener = pynput.keyboard.Listener(on_press=self.recordingsFile.on_press,
                                                 on_release=self.recordingsFile.on_release)
-            mouseListener = pynput.mouse.Listener(on_move=self.recordingsFile.on_move, 
-                                        on_click=self.recordingsFile.on_click, 
+            mouseListener = pynput.mouse.Listener(on_move=self.recordingsFile.on_move,
+                                        on_click=self.recordingsFile.on_click,
                                         on_scroll=self.recordingsFile.on_scroll)
 
             keyboardListener.start()
             mouseListener.start()
-            while keyboardListener.is_alive():
-                self.root.update()
+            if threading.current_thread() is threading.main_thread():
+                while keyboardListener.is_alive():
+                    self.root.update()
             keyboardListener.join()
             mouseListener.stop()
             mouseListener.join()
