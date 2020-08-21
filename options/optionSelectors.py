@@ -91,6 +91,10 @@ class OptionList(OptionBase):
         for o in self.wrappers:
             o.widget.registerSettings()
 
+    def resetStates(self):
+        for o in self.wrappers:
+            o.widget.resetState()
+
     def runAsync(self, func):
         threads = []
         for o in self.wrappers:
@@ -101,6 +105,7 @@ class OptionList(OptionBase):
             thread.join()
 
     def startOptions(self):
+        self.resetStates()
         self.runAsync('start')
 
     def stopOptions(self):
@@ -168,6 +173,9 @@ class SingleOption(OptionBase):
 
     def registerSettings(self):
         self.option.widget.registerSettings()
+
+    def resetState(self):
+        o.widget.resetState()
 
     def evaluateOption(self):
         return self.option.widget.evaluate()

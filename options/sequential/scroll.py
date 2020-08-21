@@ -19,7 +19,11 @@ class Widget(SequentialBase):
         self.labelTwo.grid(row=0, column=self.spacing+2, sticky=W)
 
     def registerSettings(self):
+        self.clicks.registerSettings()
         self.clicksCache = self.clicks.parse()
+
+    def resetState(self):
+        self.clicks.state.reset()
 
     def run(self):
         pyautogui.scroll(self.clicksCache)

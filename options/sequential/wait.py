@@ -19,7 +19,11 @@ class Widget(SequentialBase):
         self.labelTwo.grid(row=0, column=self.spacing+2, sticky=W)
 
     def registerSettings(self):
+        self.period.registerSettings()
         self.periodCache = self.period.parse()
+
+    def resetState(self):
+        self.period.state.reset()
 
     def run(self):
         sleep(self.periodCache)

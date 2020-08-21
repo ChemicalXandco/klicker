@@ -11,6 +11,9 @@ class Widget(BooleanBase):
 
         self.a = SingleOption(self.parent, options.boolean, *self.args, column=self.spacing)
 
+    def resetState(self):
+        self.a.resetState()
+
     def evaluate(self):
         return not self.a.evaluateOption()
 

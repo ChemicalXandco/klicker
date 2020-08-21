@@ -12,6 +12,10 @@ class Widget(BooleanOperatorBase):
         self.a = SingleOption(self.parent, options.boolean, *self.args, column=self.spacing)
         self.b = SingleOption(self.parent, options.boolean, *self.args, column=self.spacing+2)
 
+    def resetState(self):
+        for option in [self.a, self.b]:
+            option.resetState()
+
     def getResults(self, a=None, b=None):
         return {
             'AND': a and b,

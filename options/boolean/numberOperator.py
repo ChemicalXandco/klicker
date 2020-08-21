@@ -13,6 +13,10 @@ class Widget(BooleanOperatorBase):
         self.a.grid(row=0, column=self.spacing)
         self.b.grid(row=0, column=self.spacing+2)
 
+    def resetState(self):
+        for number in [self.a, self.b]:
+            number.state.reset()
+
     def getResults(self, a=0, b=0):
         return {
             'EQUALS': a == b,
