@@ -15,19 +15,17 @@ class Number(Entry):
 
         self.numbers = numbers
 
-    def parse(self):
-        string = self.get()
+    def registerSettings(self):
+        self.cache = self.get()
 
+    def parse(self):
         for name,number in self.numbers.get().items():
             exec(name+'='+str(number))
         # using eval allows math and random functions to be used, we are trusting the user not to input anything that would jeopardise the normal function of the software
-        return eval(string)
+        return eval(self.cache)
 
-    def registerSettings(self):
-        self.cache = self.parse()
-
-    def evaluateOption(self):
-        return self.cache
+    def evaluateOption(self): # for boolean/abstract/operator.py
+        return self.parse()
 
     def set(self, value):
         self.delete(0, END)
