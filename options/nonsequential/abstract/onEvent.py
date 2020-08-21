@@ -17,6 +17,9 @@ class OnEventBase(NonsequentialBase):
     def registerSettings(self):
         self.optionManger.registerSettings()
 
+    def resetState(self):
+        self.optionManger.resetStates()
+
     @property
     def settings(self):
         return { 'options': self.optionManger.settings }

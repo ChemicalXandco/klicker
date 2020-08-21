@@ -35,6 +35,7 @@ class Widget(NonsequentialBase):
 
     def resetState(self):
         self.seconds.state.reset()
+        self.optionManger.resetStates()
 
     def start(self):
         self.timer = time.time()
