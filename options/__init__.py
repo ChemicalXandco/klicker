@@ -47,6 +47,9 @@ class Base(OptionBase):
     def registerSettings(self):
         return
 
+    def resetState(self):
+        return
+
     @property
     def settings(self):
         return {}

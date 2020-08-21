@@ -1,10 +1,37 @@
 from tkinter import *
+import time
 
 from random import *
 from random import uniform as randfloat
 from math import *
 
 import gui
+
+
+class NumberState:
+    def __init__(self):
+        self.reset()
+
+        self.stateNames = [
+            'counter',
+            'timer',
+        ]
+
+    def reset(self):
+        self._counter = 0
+        self._startTime = time.time()
+
+    def counter(self):
+        value = self._counter
+        self._counter += 1
+        return value
+
+    def timer(self):
+        return time.time() - self._startTime
+
+    @property
+    def states(self):
+        return { i: getattr(self, i)() for i in self.stateNames }
 
 
 class Number(Entry):
@@ -15,12 +42,18 @@ class Number(Entry):
 
         self.numbers = numbers
 
+        self.state = NumberState()
+
     def registerSettings(self):
         self.cache = self.get()
 
     def parse(self):
-        for name,number in self.numbers.get().items():
+        # setup variables
+        for state, value in self.state.states.items():
+            exec(state+'='+str(value))
+        for name, number in self.numbers.get().items():
             exec(name+'='+str(number))
+
         # using eval allows math and random functions to be used, we are trusting the user not to input anything that would jeopardise the normal function of the software
         return eval(self.cache)
 
