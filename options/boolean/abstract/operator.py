@@ -15,6 +15,7 @@ class BooleanOperatorBase(BooleanBase):
         self.selectOperator.grid(row=0, column=self.spacing+1)
 
     def registerSettings(self):
+        self.selectedOperatorCache = self.selectedOperator.get()
         for optionManager in [self.a, self.b]:
             optionManager.registerSettings()
 
@@ -32,7 +33,7 @@ class BooleanOperatorBase(BooleanBase):
 
     def evaluate(self):
         results = self.getResults(self.a.evaluateOption(), self.b.evaluateOption())
-        return results[self.selectedOperator.get()]
+        return results[self.selectedOperatorCache]
 
     @property
     def settings(self):
