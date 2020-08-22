@@ -25,7 +25,7 @@ profileFileTypes = [('Klicker Profile', '.kpro')]
 class GUI:
     def __init__(self, master):
         self.master = master
-        master.title('Simple Clicker')
+        master.title('Klicker')
         self.setWindowIcon(master)
 
         self.status = Label(master, text='Inactive', fg='#ff0000')
