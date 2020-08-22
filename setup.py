@@ -10,15 +10,15 @@ name = None
 bdist_msi_options = None
 if sys.platform == 'win32':
     base = 'Win32GUI'
-    name = 'Simple Clicker.exe'
+    name = 'Klicker.exe'
     shortcut_table = [
         ('DesktopShortcut',        # Shortcut
          'DesktopFolder',          # Directory_
-         'Simple Clicker',         # Name
+         'Klicker',                # Name
          'TARGETDIR',              # Component_
          '[TARGETDIR]'+name,       # Target
          None,                     # Arguments
-         'a simple clicker tool to click quickly/constantly',# Description
+         'A python GUI application for automating the keyboard and mouse.',# Description
          None,                     # Hotkey
          None,                     # Icon
          None,                     # IconIndex
@@ -27,15 +27,15 @@ if sys.platform == 'win32':
          )]
     msi_data = {"Shortcut": shortcut_table}
     bdist_msi_options = {'data': msi_data}
-    
+
 opts = {'include_files':['config.ini', 'LICENSE', 'README.MD',
                          'icon.ico', 'profiles.json',
                          (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tcl86t.dll'), os.path.join('lib', 'tcl86t.dll')),
                          (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tk86t.dll'), os.path.join('lib', 'tk86t.dll'))]}
 
-setup(  name = 'Simple Clicker',
-        version = '2.3',
-        description = 'Easily create complex macros.',
+setup(  name = 'Klicker',
+        version = '3.0',
+        description = 'A python GUI application for automating the keyboard and mouse.',
         options = {'build_exe': opts, "bdist_msi": bdist_msi_options},
         executables = [Executable('main.py', targetName=name,
                                   icon='icon.ico',

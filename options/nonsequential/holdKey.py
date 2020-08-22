@@ -1,30 +1,35 @@
 from tkinter import *
-import keyboard
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
+from pynput.keyboard import Controller
+keyboard = Controller()
 
-        self.labelOne = Label(parent, text='Hold')
-        self.labelOne.grid(row=0, column=spacing)
+from options.nonsequential import NonsequentialBase
+from options.utils import KeySelector
 
-        self.key = Entry(parent, width=5)
-        self.key.grid(row=0, column=spacing+1)
+
+class Widget(NonsequentialBase):
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.labelOne = Label(self.parent, text='Hold')
+        self.labelOne.grid(row=0, column=self.spacing)
+
+        self.key = KeySelector(self.parent, self.root)
+        self.key.grid(row=0, column=self.spacing+1)
+
+    def registerSettings(self):
+        self.keyCache = self.key.key
 
     def start(self):
-        keyboard.press(self.key.get())
+        keyboard.press(self.keyCache)
 
     def stop(self):
-        keyboard.release(self.key.get())
+        keyboard.release(self.keyCache)
 
-    def update(self):
-        return
+    @property
+    def settings(self):
+        return { 'key': self.key.get() }
 
-    def returnSettings(self):
-        settings = {}
-        settings['key'] = self.key.get()
-        return settings
-
-    def addSettings(self, settings):
-        self.key.delete(0,END)
-        self.key.insert(0, settings['key'])
+    @settings.setter
+    def settings(self, settings):
+        self.key.set(settings['key'])

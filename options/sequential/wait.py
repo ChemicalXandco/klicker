@@ -1,31 +1,36 @@
 from tkinter import *
 from time import sleep
 
+from options.sequential import SequentialBase
+from options.numbers import Number
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
 
-        self.labelOne = Label(parent, text='Wait')
-        self.labelOne.grid(row=0, column=spacing, sticky=E)
+class Widget(SequentialBase):
+    def __init__(self, *args):
+        super().__init__(*args)
 
-        self.period = Entry(parent, width=5)
-        self.period.grid(row=0, column=spacing+1)
-    
-        self.labelTwo = Label(parent, text='seconds')
-        self.labelTwo.grid(row=0, column=spacing+2, sticky=W)
+        self.labelOne = Label(self.parent, text='Wait')
+        self.labelOne.grid(row=0, column=self.spacing, sticky=E)
+
+        self.period = Number(self.parent, self.numbers)
+        self.period.grid(row=0, column=self.spacing+1)
+
+        self.labelTwo = Label(self.parent, text='seconds')
+        self.labelTwo.grid(row=0, column=self.spacing+2, sticky=W)
+
+    def registerSettings(self):
+        self.period.registerSettings()
+
+    def resetState(self):
+        self.period.state.reset()
 
     def run(self):
-        period = float(self.period.get())
-        
-        sleep(period)
-                
+        sleep(self.period.parse())
 
-    def returnSettings(self):
-        settings = {}
-        settings['period'] = self.period.get()
-        return settings
+    @property
+    def settings(self):
+        return { 'period': self.period.get() }
 
-    def addSettings(self, settings):
-        self.period.delete(0,END)
-        self.period.insert(0, settings['period'])
+    @settings.setter
+    def settings(self, settings):
+        self.period.set(settings['period'])

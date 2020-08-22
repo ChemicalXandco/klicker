@@ -2,23 +2,27 @@ from tkinter import *
 from options.utils import FileSelector
 import pyautogui
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
+from options.sequential import SequentialBase
 
-        self.labelOne = Label(parent, text='Locate image')
-        self.labelOne.grid(row=0, column=spacing)
 
-        self.img = FileSelector(parent)
-        self.img.grid(row=1, column=spacing)
-    
-        self.labelTwo = Label(parent, text='on screen and move cursor')
-        self.labelTwo.grid(row=2, column=spacing)
+class Widget(SequentialBase):
+    def __init__(self, *args):
+        super().__init__(*args)
 
-        self.logger = logger
-        
+        self.labelOne = Label(self.parent, text='Locate image')
+        self.labelOne.grid(row=0, column=self.spacing)
+
+        self.img = FileSelector(self.parent)
+        self.img.grid(row=1, column=self.spacing)
+
+        self.labelTwo = Label(self.parent, text='on screen and move cursor')
+        self.labelTwo.grid(row=2, column=self.spacing)
+
+    def registerSettings(self):
+        self.imgPathCache = self.img.path.get()
+
     def run(self):
-        imgPath = self.img.path.get()
+        imgPath = self.imgPathCache
         location = pyautogui.locateCenterOnScreen(imgPath)
         if location != None:
             self.logger.debug('Found {} at ({}, {})'.format(imgPath, location[0], location[1]))
@@ -26,11 +30,11 @@ class Widget:
         else:
             raise RuntimeError('Could not locate the given image on the screen')
 
-    def returnSettings(self):
-        settings = {}
-        settings['imgPath'] = self.img.path.get()
-        return settings
+    @property
+    def settings(self):
+        return { 'imgPath': self.img.path.get() }
 
-    def addSettings(self, settings):
+    @settings.setter
+    def settings(self, settings):
         self.img.path.delete(0,END)
         self.img.path.insert(0, settings['imgPath'])

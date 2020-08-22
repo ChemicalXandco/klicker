@@ -1,6 +1,8 @@
-# <img src="icon.png" width="32" height="32"> Simple Clicker
+# <img src="icon.png" width="32" height="32"> Klicker
 
-# Download the latest binary [here](https://github.com/ChemicalXandco/simple-clicker/releases)
+A python GUI application for automating the keyboard and mouse.
+
+# Download the latest binary [here](https://github.com/ChemicalXandco/klicker/releases)
 
 or...
 
@@ -9,7 +11,7 @@ or...
 You must have python 3 installed
 To get the required modules run `pip3 install -r requirements.txt`
 
-In order to start the application, run `python3 main.py`. 
+In order to start the application, run `python3 main.py`.
 
 ### Linux install
 
@@ -36,6 +38,21 @@ The log file is cleared on every startup, it can also be cleared by pressing the
 
 Profiles store options so that they can easily be used later.
 
-Profiles can be created by clicking on the plus symbol in the profile panel. A window will appear and you type the name of the profile and click `Create`, then all the options that are currently set will be written to a profile of that name.
+Profiles can be created by clicking on the plus symbol in the 'Profile' panel. A window will appear and you type the name of the profile and click `Create`, then all the options that are currently set will be written to a profile of that name.
 
 To delete a profile, select the one you want to delete and click the cross, then confirm deletion.
+
+### Number Usage
+
+Any option that takes a number as an input can have calculations and functions. Variables can be set in the 'Numbers' panel and used in the number entry. Additionally, the following variables can be used:
+
+- Constants from the python `math` library such as `pi` (written exactly like that)
+- `counter`: a value that increases by 1 every time the number is parsed
+- `timer`: the time in seconds since the state resetted
+
+The following functions can be used:
+- Standard python built-in functions such as `round()` and `abs()`
+- `cache()`: keep the same value for each time it is parsed, for example `cache(randint(1, 10))` will always be whatever is selected at random until the state resets, then another number will be chosen
+- Functions from the python `math` library such as `cos()` (written exactly like that)
+- Functions from the python `random` library such as `randint()` (written exactly like that)
+- `randfloat()` instead of the `random` library's `uniform()`

@@ -1,31 +1,9 @@
-from tkinter import *
-import time
+from options.nonsequential.abstract.onEvent import OnEventBase
 
-import gui
-import options.sequential
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
-
-        self.frameOne = Frame(parent)
-        self.frameOne.grid(row=0, column=spacing)
-
-        self.optionManger = gui.OptionManager(self.frameOne, options.sequential.optList, logger, True, 50)
+class Widget(OnEventBase):
+    def __init__(self, *args):
+        super().__init__(*args)
 
     def start(self):
         self.optionManger.runOptions()
-        
-    def stop(self):
-        return
-
-    def update(self):
-        return
-
-    def returnSettings(self):
-        settings = self.optionManger.getProfile()
-        return settings
-
-    def addSettings(self, settings):
-        self.optionManger.destroyOptions()
-        self.optionManger.setProfile(settings)

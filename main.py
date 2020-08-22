@@ -1,6 +1,8 @@
-import sys, keyboard
-from time import time, sleep
+import sys
+import time
 from tkinter import *
+
+from pynput import keyboard
 
 from gui import *
 from options.utils import DeactivateRequest
@@ -8,55 +10,57 @@ from options.utils import DeactivateRequest
 root = Tk()
 gui = GUI(root)
 gui.clearLog()
-try:
-    keyboard._os_keyboard.init()
-    keys = list(dict.fromkeys([i[0] for i in keyboard._os_keyboard.to_name.values()]))
-except Exception as e:
-    keys = ['x']
-    gui.logger.warning('Keys failed to load, only x can be used as an activation hotkey: '+str(e))
+
 activated = False
-currentButton = None
-warning = 'Cannot activate when this GUI is in focus'
-focus = False
-while True:
-    try:
-        if root.focus_get() != None:
-            if not focus:
-                gui.logger.warning(warning)
-            focus = True
-        else:
-            focus = False
-            if gui.hotkey.get() in keys:
-                if keyboard.is_pressed(gui.hotkey.get()):
+timer = time.time()
+with keyboard.Events() as events:
+    while True:
+        try:
+            event = events.get(0.01)
+            if isinstance(event, keyboard.Events.Press):
+                if event.key == gui.hotkey.key:
                     if activated:
                         raise DeactivateRequest('Hotkey pressed - deactivated')
-                    else:
-                        sleep(1)
+                    elif root.focus_get() != None:
+                        gui.logger.warning('Cannot activate while this window is in focus')
+                        timer = time.time()
+                    elif not activated:
                         activated = True
+                        released = False
                         gui.status.config(text='Active', fg='#00ff00')
-                        gui.optionManager.startOptions()
-                        timer = time()
                         gui.uptime.config(fg='#00ff00')
-                        gui.logger.info('Hotkey pressed - activated')
-        if activated:
-            gui.optionManager.updateOptions()
-            gui.uptime.config(text=str(round(time()-timer, 2)))
-        root.update_idletasks()
-        root.update()
-        sleep(0.01) # minimise CPU usage
-    except DeactivateRequest as e:
-        gui.logger.info(e)
-        gui.optionManager.stopOptions()
-        gui.status.config(text='Inactive', fg='#ff0000')
-        activated = False
-        gui.uptime.config(fg='#ff0000')
-        sleep(1)
-    except Exception as e:
-        try:
-            gui.logger.error(e)
+                        if gui.overlay.get() == 1:
+                            gui.enableOverlay()
+                        gui.logger.system('Hotkey pressed - activated')
+                        timer = time.time()
+                        # start options
+                        gui.optionManager.registerSettings()
+                        gui.optionManager.startOptions()
+                if event.key == gui.profileHotkey.key:
+                    if activated:
+                        gui.logger.warning('Could not switch profile because the system is activated.')
+                    elif root.focus_get() != None:
+                        gui.logger.warning('Could not switch profile because this window is in focus.')
+                    else:
+                        gui.nextProfile()
+            if activated:
+                gui.uptime.config(text=str(round(time.time()-timer, 2)))
+                gui.updateTextHandlers()
+            else:
+                gui.checkToDisableOverlay()
             root.update_idletasks()
             root.update()
-        except TclError:
-            sys.exit()
-
-
+        except DeactivateRequest as e:
+            gui.logger.system(e)
+            gui.timeSinceOverlayOpened = time.time()
+            gui.optionManager.stopOptions()
+            gui.status.config(text='Inactive', fg='#ff0000')
+            activated = False
+            gui.uptime.config(fg='#ff0000')
+        except Exception as e:
+            try:
+                gui.logger.error(e)
+                root.update_idletasks()
+                root.update()
+            except TclError:
+                sys.exit()

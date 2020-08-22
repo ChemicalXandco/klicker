@@ -1,18 +1,33 @@
 from tkinter import *
-from tkinter import scrolledtext
+from tkinter import scrolledtext, font
+from tkinter.filedialog import askopenfile, asksaveasfile
 import logging
+import time
+import json
 
-import options.sequential, options.nonsequential
-from options.utils import TextHandler
+import options.nonsequential
+from options.utils import KeySelector, OverlayWindow, TextHandler, CheckList
+from options.numbers import Numbers
+from options.recordings import Recordings
+from options.optionSelectors import OptionList
 import profile_manager as profileManager
+
+systemLogLevel = 25
+logging.addLevelName(systemLogLevel, 'SYSTEM')
+def system(self, message, *args, **kws):
+    if self.isEnabledFor(systemLogLevel):
+        self._log(systemLogLevel, message, args, **kws)
+logging.Logger.system = system
+
+profileFileTypes = [('Klicker Profile', '.kpro')]
 
 
 class GUI:
     def __init__(self, master):
         self.master = master
-        master.title('Simple Clicker')
+        master.title('Klicker')
         self.setWindowIcon(master)
-        
+
         self.status = Label(master, text='Inactive', fg='#ff0000')
         self.status.grid(row=0, column=0)
 
@@ -22,14 +37,37 @@ class GUI:
         self.config = LabelFrame(master, text='Configuration')
         self.config.grid(row=1, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
-        self.hotkeyFrame = Frame(self.config)
-        self.hotkeyFrame.grid(row=0, column=0, sticky=W)
+        self.settingsFrame = Frame(self.config)
+        self.settingsFrame.grid(row=0, column=0, columnspan=2, sticky=W)
 
-        self.hotkeyLabel = Label(self.hotkeyFrame, text='Hotkey')
-        vcmd = (master.register(self.limitChar), '%i')
-        self.hotkey = Entry(self.hotkeyFrame, validate='key', validatecommand=vcmd, width=2)
+        self.hotkeyLabel = Label(self.settingsFrame, text='Hotkey')
+        self.hotkey = KeySelector(self.settingsFrame, master)
         self.hotkeyLabel.grid(row=0, column=0, sticky=E)
         self.hotkey.grid(row=0, column=1, sticky=W)
+
+        self.timeSinceOverlayOpened = time.time()
+
+        self.profileHotkeyLabel = Label(self.settingsFrame, text='Profile switch hotkey')
+        self.profileHotkey = KeySelector(self.settingsFrame, master)
+        self.profileHotkeyLabel.grid(row=2, column=0, sticky=E)
+        self.profileHotkey.grid(row=2, column=1, sticky=W)
+
+        self.profilesScrollFrame = ScrollFrame(self.settingsFrame, (400, 100))
+        self.profilesScrollFrame.grid(row=3, column=0, columnspan=2)
+
+        self.profilesSelectFrame = LabelFrame(self.profilesScrollFrame.viewPort, text='Profiles to switch between')
+        self.profilesSelectFrame.grid(row=0, column=0, sticky=W, padx=5, pady=5)
+
+        self.profilesSelect = CheckList(self.profilesSelectFrame, default=0)
+        self.profilesSelect.grid(row=0, column=0)
+
+        self.overlayFrame = LabelFrame(self.settingsFrame, text='Overlay')
+        self.overlayFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+        self.overlayGeneral = IntVar()
+        self.overlayGeneralButton = Checkbutton(self.overlayFrame, text="Enable overlay when switching profiles (configuration)", variable=self.overlayGeneral)
+        self.overlayGeneralButton.grid(row=0, column=0, sticky=W)
+        self.overlay = IntVar()
+        self.overlayButton = Checkbutton(self.overlayFrame, text="Enabled (profile)", variable=self.overlay).grid(row=1, column=0, sticky=W)
 
         self.profiles = LabelFrame(self.config, text='Profile')
         self.profiles.grid(row=2, column=0, columnspan=2, sticky=W, padx=5, pady=5)
@@ -50,33 +88,36 @@ class GUI:
         self.delProfile = Button(self.profiles, text='❌', command=self.handleConfirmDelProfile)
         self.delProfile.grid(row=1, column=4)
 
+        self.delProfile = Button(self.profiles, text='Import', command=self.handleImportProfile)
+        self.delProfile.grid(row=1, column=5)
+
+        self.delProfile = Button(self.profiles, text='Export', command=self.handleExportProfile)
+        self.delProfile.grid(row=1, column=6)
+
         self.refreshButton = Button(self.config, text='Refresh Configuration', command=self.readSetting)
         self.refreshButton.grid(row=3, column=0)
 
         self.saveButton = Button(self.config, text='Save Configuration', command=self.writeSetting)
         self.saveButton.grid(row=3, column=1)
 
-        self.addOptionFrame = Frame(master)
-        self.addOptionFrame.grid(row=2, column=0, sticky=W)
-
-        self.scrollFrame = ScrollFrame(master)
-        self.scrollFrame.grid(row=3, column=0, columnspan=2, sticky=W)
-        
-        self.options = LabelFrame(self.scrollFrame.viewPort, text='Options')
-        self.options.grid(row=0, column=0) 
+        self.numbers = Numbers(master, text='Numbers')
+        self.numbers.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
         self.logFrame = LabelFrame(master, text='Log')
-        self.logFrame.grid(row=4, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+        self.logFrame.grid(row=6, column=0, columnspan=2, sticky=W, padx=5, pady=5)
+
+        self.logOptionsFrame = Frame(self.logFrame)
+        self.logOptionsFrame.pack()
 
         self.level = StringVar(master)
-        self.setLevel = OptionMenu(self.logFrame, self.level, *list(logging._levelToName.values()), command=self.changeLevel)
+        self.setLevel = OptionMenu(self.logOptionsFrame, self.level, *list(logging._levelToName.values()), command=self.changeLevel)
         self.setLevel.grid(row=0, column=0)
 
-        self.clearLogButton = Button(self.logFrame, text='Clear Log', command=self.clearLog)
+        self.clearLogButton = Button(self.logOptionsFrame, text='Clear Log', command=self.clearLog)
         self.clearLogButton.grid(row=0, column=1)
 
         self.log = scrolledtext.ScrolledText(self.logFrame, width=50, height=10, state='disabled')
-        self.log.grid(row=1, column=0, columnspan=2)
+        self.log.pack(fill=BOTH, expand=YES)
 
         self.textHandler = TextHandler(self.log)
         self.textHandler.setLevel(logging.DEBUG)
@@ -88,35 +129,56 @@ class GUI:
         self.textHandler.setFormatter(self.formatter)
         self.fileHandler.setFormatter(self.formatter)
         self.consoleHandler.setFormatter(self.formatter)
+
         self.logger = logging.getLogger()
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
         self.logger.addHandler(self.textHandler)
         self.logger.addHandler(self.fileHandler)
         self.logger.addHandler(self.consoleHandler)
 
-        self.optionManager = OptionManager(self.options, options.nonsequential.optList, self.logger)
+        self.recordings = Recordings(master, text='Recordings', logger=self.logger, root=self.master)
+        self.recordings.grid(row=5, column=0, columnspan=2, sticky=W, padx=5, pady=5)
 
+        self.options = LabelFrame(master, text='Options')
+        self.options.grid(row=0, column=3, rowspan=7, sticky='NSEW', padx=5)
+
+        self.optionsScrollFrame = ScrollFrame(self.options, (880, 880))
+        self.optionsScrollFrame.pack(fill=BOTH, expand=YES)
+
+        self.optionManager = OptionList(self.optionsScrollFrame.viewPort,
+                                        options.nonsequential,
+                                        master,
+                                        self.handleSaveProfile,
+                                        self.logger,
+                                        self.numbers,
+                                        self.recordings)
+
+        master.grid_columnconfigure(3,weight=1)
+        master.grid_rowconfigure(0,weight=1)
+        master.grid_rowconfigure(1,weight=1)
+        master.grid_rowconfigure(2,weight=1)
+        master.grid_rowconfigure(3,weight=1)
+        master.grid_rowconfigure(4,weight=1)
+        master.grid_rowconfigure(5,weight=1)
+        master.grid_rowconfigure(6,weight=1)
+
+        self.level.set("INFO")
         self.readSetting()
         self.changeLevel(self.level.get())
 
-    def setWindowIcon(self, window):
+    @staticmethod
+    def setWindowIcon(window):
         try:
             window.iconbitmap('icon.ico')
         except TclError:
             # Linux compatibility
             window.iconphoto(False, PhotoImage(file='icon.png'))
 
-
-    def limitChar(self, i):
-        if i == '1': #if the index is 1 it means the string will be 2 characters long
-            return False
-        else:
-            return True
-
     def profileList(self):
         profiles = list(profileManager.read().keys())
         if profiles == []:
             profiles = [None]
+        self.profilesSelect.update(profiles)
         return profiles
 
     def handleSaveProfile(self):
@@ -135,8 +197,18 @@ class GUI:
         createButton = Button(self.childWindow, text="Create", command=self.handleCreateProfile)
         createButton.pack(fill=X, expand=YES)
 
+    def getProfile(self):
+        profile = {}
+        profile['options'] = self.optionManager.settings
+        if not 'settings' in profile:
+            profile['settings'] = {}
+        profile['settings']['overlay'] = self.overlay.get()
+        profile['settings']['numbers'] = self.numbers.get()
+        profile['settings']['level'] = self.level.get()
+        return profile
+
     def handleCreateProfile(self):
-        profile = self.optionManager.getProfile()
+        profile = self.getProfile()
         profileManager.write(self.newProfileName.get(), profile)
         self.refreshProfiles()
         self.profile.set(self.newProfileName.get())
@@ -146,9 +218,17 @@ class GUI:
             pass
         self.handleSetProfile()
 
-    def handleSetProfile(self, *args): 
+    def handleSetProfile(self, *args, profile=None):
         self.optionManager.destroyOptions()
-        self.optionManager.setProfile(profileManager.read()[self.profile.get()])
+        if not profile:
+            profile = profileManager.read()[self.profile.get()]
+
+        settings = profile.pop('settings')
+
+        self.overlay.set(settings['overlay'])
+        self.numbers.set(settings['numbers'])
+        self.level.set(settings['level'])
+        self.optionManager.settings = profile['options']
 
     def menuCommand(self, value):
         self.profile.set(value)
@@ -156,11 +236,10 @@ class GUI:
 
     def refreshProfiles(self):
         profiles = self.profileList()
-        
         menu = self.setProfile['menu']
         menu.delete(0, END)
         for string in profiles:
-            menu.add_command(label=string, 
+            menu.add_command(label=string,
                              command=lambda value=string: self.menuCommand(value))
 
     def handleConfirmDelProfile(self):
@@ -179,22 +258,74 @@ class GUI:
         self.refreshProfiles()
         self.profile.set('')
 
+    def handleImportProfile(self):
+        f = askopenfile(
+            title='Import Profile',
+            filetypes=profileFileTypes,
+        )
+        self.handleSetProfile(profile=json.load(f))
+        f.close()
+
+    def handleExportProfile(self):
+        f = asksaveasfile(
+            title='Export Profile',
+            defaultextension=profileFileTypes[0][1],
+            filetypes=profileFileTypes,
+        )
+        json.dump(self.getProfile(), f)
+        f.close()
+
+    def nextProfile(self):
+        profiles = self.profilesSelect.get()
+        if len(profiles) == 0:
+            self.logger.warning('Could not change profile because no profiles are marked as switchable.')
+            return
+        try:
+            current = profiles.index(self.profile.get())
+        except ValueError:
+            current = -1
+        try:
+            new = profiles[current+1]
+        except IndexError:
+            new = profiles[0]
+        if new == None:
+            self.logger.warning('Could not change profile because there are no profiles to change to.')
+            return
+        self.profile.set(new)
+
+        self.timeSinceOverlayOpened = time.time()
+        if self.overlayGeneral.get() == 1:
+            self.enableOverlay()
+
+        self.logger.system('Change current profile to ' + new)
+
+    def checkToDisableOverlay(self):
+        try:
+            if self.overlayWindow.winfo_exists() == 1:
+                if time.time() - self.timeSinceOverlayOpened > 1:
+                    self.disableOverlay()
+        except AttributeError:
+            pass
+
     def readSetting(self):
         f = open('config.ini', 'r')
-        self.hotkey.delete(0, END)
-        self.hotkey.insert(0, f.readline().strip())
+        self.hotkey.set(f.readline().strip())
+        self.profileHotkey.set(f.readline().strip())
+        self.overlayGeneral.set(int(f.readline().strip()))
         self.profile.set(f.readline().strip())
         if self.profile.get() in self.profileList():
             self.handleSetProfile()
-        self.level.set(f.readline().strip())
+        self.profilesSelect.update(json.loads(f.readline()), updateTo=1)
         f.close
         self.refreshProfiles()
 
     def writeSetting(self):
         f = open('config.ini', 'w')
         f.write(self.hotkey.get()+'\n')
+        f.write(self.profileHotkey.get()+'\n')
+        f.write(str(self.overlayGeneral.get())+'\n')
         f.write(self.profile.get()+'\n')
-        f.write(self.level.get())
+        f.write(json.dumps(self.profilesSelect.get()))
         f.close()
 
     def changeLevel(self, level):
@@ -206,122 +337,70 @@ class GUI:
         self.log.delete('1.0', END)
         self.log.configure(state='disabled')
 
+    def enableOverlay(self):
+        try:
+            if self.overlayWindow.winfo_exists() == 1:
+                return
+        except AttributeError:
+            pass
+
+        self.overlayWindow = OverlayWindow(self.master)
+
+        self.overlayWindow.log = scrolledtext.ScrolledText(self.overlayWindow, width=100, height=10, state='disabled')
+        self.overlayWindow.log.grid(row=0, column=0)
+
+        self.overlayWindow.textHandler = TextHandler(self.overlayWindow.log)
+        self.overlayWindow.textHandler.setLevel(logging.DEBUG)
+        self.overlayWindow.textHandler.setFormatter(self.formatter)
+        self.logger.addHandler(self.overlayWindow.textHandler)
+
+    def disableOverlay(self):
+        try:
+            self.overlayWindow.destroy()
+            self.logger.handlers = [ h for h in self.logger.handlers if not isinstance(h, TextHandler) ]
+            self.logger.addHandler(self.textHandler)
+        except AttributeError:
+            pass
+
+    def updateTextHandlers(self):
+        for textHandler in [ h for h in self.logger.handlers if isinstance(h, TextHandler) ]:
+            textHandler.clearBacklog()
+
 
 class ScrollFrame(Frame):
     # from https://gist.github.com/mp035/9f2027c3ef9172264532fcd6262f3b01
-    def __init__(self, parent):
+    def __init__(self, parent, dimensions):
         super().__init__(parent)
 
-        self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0')          
-        self.viewPort = Frame(self.canvas, background='#F0F0F0')                    
-        self.vsb = Scrollbar(self, orient='vertical', command=self.canvas.yview)  
-        self.canvas.configure(yscrollcommand=self.vsb.set)                          
+        self.width, self.height = dimensions
 
-        self.vsb.pack(side='right', fill='y')                                       
-        self.canvas.pack(side='left', fill='both', expand=True)                     
-        self.canvas.create_window((4,4), window=self.viewPort, anchor='nw',
-                                  tags='self.viewPort')
+        self.canvas = Canvas(self, borderwidth=0, background='#F0F0F0', width=dimensions[0], height=dimensions[1])
+        self.viewPort = Frame(self.canvas, background='#F0F0F0')
+        self.hsb = Scrollbar(self, orient='horizontal', command=self.canvas.xview)
+        self.canvas.configure(xscrollcommand=self.hsb.set)
+        self.vsb = Scrollbar(self, orient='vertical', command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.vsb.set)
 
-        self.viewPort.bind('<Configure>', self.onFrameConfigure)
+        self.hsb.pack(side="bottom", fill="x")
+        self.vsb.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.canvas_window = self.canvas.create_window((4,4), window=self.viewPort, anchor="nw",
+                                  tags="self.viewPort")
 
-    def onFrameConfigure(self, event):                                              
+        self.viewPort.bind("<Configure>", self.onFrameConfigure)
+        self.canvas.bind("<Configure>", self.onCanvasConfigure)
+        self.onFrameConfigure(None)
+
+    def onFrameConfigure(self, event):
         '''Reset the scroll region to encompass the inner frame'''
-        self.canvas.configure(scrollregion=self.canvas.bbox('all'))
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
+    def onCanvasConfigure(self, event):
+        '''Reset the canvas window to encompass inner frame when required'''
+        wscale = float(event.width)/self.width
+        hscale = float(event.height)/self.height
+        self.width = event.width
+        self.height = event.height
+        self.canvas.scale("all",0,0,wscale,hscale)
 
-class OptionWrapper:
-    def __init__(self, master, sequential, option, widgets, logger):
-        self.widgets = widgets
-        
-        self.frame = LabelFrame(master, text=option)
-
-        self.deleteButton = Button(self.frame, text='❌', command=self.findIdAndDestroy)
-        self.deleteButton.grid(row=0, column=0)
-
-        self.name = option
-        
-        if sequential:
-            optionObject = options.sequential.optDict.get(option)
-        else:
-            optionObject = options.nonsequential.optDict.get(option)
-        self.widget = optionObject.Widget(self.frame, 1, logger)
-        
-        self.frame.pack(anchor=W, padx=5, pady=0)
-
-    def findIdAndDestroy(self):
-        for i in self.widgets:
-            if id(i) == id(self):
-                self.widgets.remove(i)
-        self.frame.destroy()
-
-
-class OptionManager:
-    def __init__(self, parent, availableOptions, logger, sequential=False,  maxOptions=None):
-        self.parent = parent
-        self.max = maxOptions
-        self.sequential = sequential
-
-        self.addOptionFrame = Frame(parent)
-        self.addOptionFrame.pack()
-        
-        self.addOptionLabel = Label(self.addOptionFrame, text='Add Option')
-        self.addOptionLabel.grid(row=0, column=0, sticky=E)
-
-        self.selectedOption = StringVar(parent)
-        self.selectedOption.set('➕')
-        self.addOptions = OptionMenu(self.addOptionFrame, self.selectedOption, *availableOptions, command=self.handleAddOption)
-        self.addOptions.grid(row=0, column=1, sticky=W)
-
-        self.wrappers = []
-        
-        self.logger = logger
-
-    def handleAddOption(self, *args):
-        if self.max == None:
-            self.addOption(self.selectedOption.get())
-        elif len(self.wrappers) < self.max:
-            self.addOption(self.selectedOption.get())
-        self.selectedOption.set('➕')
-
-    def addOption(self, option):
-        self.wrappers.append(OptionWrapper(self.parent, self.sequential, option, self.wrappers, self.logger))
-
-    def startOptions(self):
-        for o in self.wrappers:
-            o.widget.start() 
-
-    def stopOptions(self):
-        for o in self.wrappers:
-            o.widget.stop()
-
-    def updateOptions(self):
-        for o in self.wrappers:
-            o.widget.update()
-
-    def runOptions(self):
-        for o in self.wrappers:
-            o.widget.run()
-
-    def destroyOptions(self):
-        while self.wrappers != []:
-            for o in self.wrappers:
-                o.findIdAndDestroy()
-
-    def getProfile(self):
-        profile = {}
-        occurrences = {}
-        
-        for o in self.wrappers:
-            if not o.name in occurrences:
-                occurrences[o.name] = 0
-            else:
-                occurrences[o.name] += 1
-            optionName = '{}-{}'.format(o.name, occurrences[o.name])
-            profile[optionName] = o.widget.returnSettings()
-            
-        return profile
-
-    def setProfile(self, profile):
-        for option, attributes in profile.items():
-            self.addOption(option.split('-')[0])
-            self.wrappers[-1].widget.addSettings(attributes)
+        self.canvas.itemconfig(self.canvas_window)

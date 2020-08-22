@@ -1,50 +1,59 @@
 from tkinter import *
 import time
 
-import gui
 import options.sequential
+from options.nonsequential import NonsequentialBase
+from options.optionSelectors import OptionList
+from options.numbers import Number
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
 
-        self.frameOne = Frame(parent)
-        self.frameOne.grid(row=0, column=spacing)
+class Widget(NonsequentialBase):
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.frameOne = Frame(self.parent)
+        self.frameOne.grid(row=0, column=self.spacing, sticky=W)
 
         self.labelOne = Label(self.frameOne, text='Every')
         self.labelOne.grid(row=0, column=0, sticky=E)
 
-        self.seconds = Entry(self.frameOne, width=5)
+        self.seconds = Number(self.frameOne, self.numbers)
         self.seconds.grid(row=0, column=1)
 
         self.labelTwo = Label(self.frameOne, text='seconds')
         self.labelTwo.grid(row=0, column=2, sticky=W)
 
-        self.options = LabelFrame(parent, text='do')
-        self.options.grid(row=1, column=spacing, sticky=E)
+        self.options = LabelFrame(self.parent, text='do')
+        self.options.grid(row=1, column=self.spacing, sticky=W)
 
-        self.optionManger = gui.OptionManager(self.options, options.sequential.optList, logger, True, 50)
+        self.optionManger = OptionList(self.options, options.sequential, *self.args)
+
+    def registerSettings(self):
+        self.seconds.registerSettings()
+        self.optionManger.registerSettings()
+
+    def resetState(self):
+        self.seconds.state.reset()
+        self.optionManger.resetStates()
 
     def start(self):
         self.timer = time.time()
-        self.interval = float(self.seconds.get())
-
-    def stop(self):
-        return
+        self.addTime = 0
 
     def update(self):
-        timed = time.time()-self.timer
-        if timed >= self.interval:
-            self.timer = time.time()
+        if time.time() >= self.timer + self.addTime:
             self.optionManger.runOptions()
+            self.addTime += self.seconds.parse()
 
-    def returnSettings(self):
-        settings = self.optionManger.getProfile()
-        settings['interval'] = self.seconds.get()
-        return settings
+    @property
+    def settings(self):
+        return {
+            'options': self.optionManger.settings,
+            'interval': self.seconds.get(),
+        }
 
-    def addSettings(self, settings):
-        self.seconds.delete(0,END)
-        self.seconds.insert(0, settings.pop('interval'))
+    @settings.setter
+    def settings(self, settings):
+        self.seconds.set(settings.pop('interval'))
         self.optionManger.destroyOptions()
-        self.optionManger.setProfile(settings)
+        self.optionManger.settings = settings['options']

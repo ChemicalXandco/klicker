@@ -1,16 +1,16 @@
 from options import getOptions, Base
 
 
-class SequentialBase(Base):
+class BooleanBase(Base):
     '''
-    Basic construct for sequential option widgets
+    Basic construct for boolean option widgets
     '''
     def __init__(self, *args):
         super().__init__(*args)
 
-    def run(self):
+    def evaluate(self):
         raise NotImplementedError()
 
 
-movable = True
+movable = False
 optDict, optList = getOptions(__path__)

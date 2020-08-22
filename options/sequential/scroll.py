@@ -1,27 +1,36 @@
 from tkinter import *
 import pyautogui
 
-class Widget:
-    def __init__(self, parent, spacing, logger):
-        self.parent = parent
+from options.sequential import SequentialBase
+from options.numbers import Number
 
-        self.labelOne = Label(parent, text='scroll mouse wheel')
-        self.labelOne.grid(row=0, column=spacing, sticky=E)
 
-        self.clicks = Entry(parent, width=5)
-        self.clicks.grid(row=0, column=spacing+1)
-    
-        self.labelTwo = Label(parent, text='"clicks"')
-        self.labelTwo.grid(row=0, column=spacing+2, sticky=W)
+class Widget(SequentialBase):
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.labelOne = Label(self.parent, text='scroll mouse wheel')
+        self.labelOne.grid(row=0, column=self.spacing, sticky=E)
+
+        self.clicks = Number(self.parent, self.numbers)
+        self.clicks.grid(row=0, column=self.spacing+1)
+
+        self.labelTwo = Label(self.parent, text='"clicks"')
+        self.labelTwo.grid(row=0, column=self.spacing+2, sticky=W)
+
+    def registerSettings(self):
+        self.clicks.registerSettings()
+
+    def resetState(self):
+        self.clicks.state.reset()
 
     def run(self):
-        pyautogui.scroll(self.clicks.get())
+        pyautogui.scroll(self.clicks.parse())
 
-    def returnSettings(self):
-        settings = {}
-        settings['clicks'] = self.clicks.get()
-        return settings
+    @property
+    def settings(self):
+        return { 'clicks': self.clicks.get() }
 
-    def addSettings(self, settings):
-        self.clicks.delete(0,END)
-        self.clicks.insert(0, settings['clicks'])
+    @settings.setter
+    def settings(self, settings):
+        self.clicks.set(settings['clicks'])

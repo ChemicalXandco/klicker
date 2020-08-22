@@ -5,5 +5,5 @@ class Widget(OnEventBase):
     def __init__(self, *args):
         super().__init__(*args)
 
-    def stop(self):
+    def update(self):
         self.optionManger.runOptions()
