@@ -34,6 +34,11 @@ class Widget(SequentialBase):
         for optionManager in [self.condition, self.ifOptionManger, self.elseOptionManger]:
             optionManager.registerSettings()
 
+    def resetState(self):
+        self.condition.resetState()
+        for optionManager in [self.ifOptionManger, self.elseOptionManger]:
+            optionManager.resetStates()
+
     def run(self):
         if self.condition.evaluateOption():
             self.ifOptionManger.runOptions()

@@ -195,7 +195,7 @@ class SingleOption(OptionBase):
         self.option.widget.registerSettings()
 
     def resetState(self):
-        o.widget.resetState()
+        self.option.widget.resetState()
 
     def evaluateOption(self):
         return self.option.widget.evaluate()
