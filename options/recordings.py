@@ -9,7 +9,7 @@ import webbrowser
 import gui
 from options.utils import KeySelector, CheckList
 
-availableTypes = ['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll', 'Store Timings']
+availableTypes = ['Keyboard', 'Mouse Movements', 'Left Button', 'Right Button', 'Scroll', 'Store Timings', 'Clear File']
 
 
 class RecordingsFile:
@@ -188,10 +188,15 @@ class Recordings(LabelFrame):
             self.logger.error('Must set name for recording.')
         else:
             self.recordingsFile.killKey = self.killKey.key
+
             if not os.path.exists('recordings'):
                 os.makedirs('recordings')
             self.recordingsFile.path = 'recordings/{}.txt'.format(self.newRecordingName.get())
             self.recordingsFile.allowed = self.types.get()
+            if os.path.isfile(self.recordingsFile.path) and 'Clear File' in self.recordingsFile.allowed:
+                open(self.recordingsFile.path, 'w').close()
+                self.logger.debug('Cleared {}'.format(self.recordingsFile.path))
+
             self.recordingsFile.startTime = time.time()
             self.childWindow.destroy()
             self.logger.system('Recording started with kill key {}.'.format(self.killKey.get()))
@@ -211,7 +216,8 @@ class Recordings(LabelFrame):
             mouseListener.stop()
             mouseListener.join()
             self.logger.system("Recording stopped and saved as '{}'.".format(self.recordingsFile.path))
-            self.update()
+            if threading.current_thread() is threading.main_thread():
+                self.update()
 
     def update(self):
         for b,l,s,d in self.widgets:
