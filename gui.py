@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import scrolledtext, font
+from tkinter.filedialog import askopenfile, asksaveasfile
 import logging
 import time
 import json
@@ -17,6 +18,8 @@ def system(self, message, *args, **kws):
     if self.isEnabledFor(systemLogLevel):
         self._log(systemLogLevel, message, args, **kws)
 logging.Logger.system = system
+
+profileFileTypes = [('Klicker Profile', '.kpro')]
 
 
 class GUI:
@@ -84,6 +87,12 @@ class GUI:
 
         self.delProfile = Button(self.profiles, text='❌', command=self.handleConfirmDelProfile)
         self.delProfile.grid(row=1, column=4)
+
+        self.delProfile = Button(self.profiles, text='Import', command=self.handleImportProfile)
+        self.delProfile.grid(row=1, column=5)
+
+        self.delProfile = Button(self.profiles, text='Export', command=self.handleExportProfile)
+        self.delProfile.grid(row=1, column=6)
 
         self.refreshButton = Button(self.config, text='Refresh Configuration', command=self.readSetting)
         self.refreshButton.grid(row=3, column=0)
@@ -188,7 +197,7 @@ class GUI:
         createButton = Button(self.childWindow, text="Create", command=self.handleCreateProfile)
         createButton.pack(fill=X, expand=YES)
 
-    def handleCreateProfile(self):
+    def getProfile(self):
         profile = {}
         profile['options'] = self.optionManager.settings
         if not 'settings' in profile:
@@ -196,6 +205,10 @@ class GUI:
         profile['settings']['overlay'] = self.overlay.get()
         profile['settings']['numbers'] = self.numbers.get()
         profile['settings']['level'] = self.level.get()
+        return profile
+
+    def handleCreateProfile(self):
+        profile = self.getProfile()
         profileManager.write(self.newProfileName.get(), profile)
         self.refreshProfiles()
         self.profile.set(self.newProfileName.get())
@@ -205,11 +218,13 @@ class GUI:
             pass
         self.handleSetProfile()
 
-    def handleSetProfile(self, *args):
+    def handleSetProfile(self, *args, profile=None):
         self.optionManager.destroyOptions()
-        profile = profileManager.read()[self.profile.get()]
+        if not profile:
+            profile = profileManager.read()[self.profile.get()]
 
         settings = profile.pop('settings')
+
         self.overlay.set(settings['overlay'])
         self.numbers.set(settings['numbers'])
         self.level.set(settings['level'])
@@ -242,6 +257,23 @@ class GUI:
         profileManager.remove(self.profile.get())
         self.refreshProfiles()
         self.profile.set('')
+
+    def handleImportProfile(self):
+        f = askopenfile(
+            title='Import Profile',
+            filetypes=profileFileTypes,
+        )
+        self.handleSetProfile(profile=json.load(f))
+        f.close()
+
+    def handleExportProfile(self):
+        f = asksaveasfile(
+            title='Export Profile',
+            defaultextension=profileFileTypes[0][1],
+            filetypes=profileFileTypes,
+        )
+        json.dump(self.getProfile(), f)
+        f.close()
 
     def nextProfile(self):
         profiles = self.profilesSelect.get()
