@@ -28,8 +28,7 @@ if sys.platform == 'win32':
     msi_data = {"Shortcut": shortcut_table}
     bdist_msi_options = {'data': msi_data}
 
-opts = {'include_files':['config.ini', 'LICENSE', 'README.MD',
-                         'icon.ico', 'profiles.json',
+opts = {'include_files':['config.ini', 'LICENSE', 'README.MD', 'icon.ico',
                          (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tcl86t.dll'), os.path.join('lib', 'tcl86t.dll')),
                          (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tk86t.dll'), os.path.join('lib', 'tk86t.dll'))]}
 
