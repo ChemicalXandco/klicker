@@ -151,7 +151,7 @@ class TextHandler(logging.Handler):
         tempUuid = str(uuid.uuid4()) # Tempory uuid to avoid conflicts between tags
         self.text.tag_add(tempUuid, startIndex, END)
         self.text.tag_config(tempUuid, foreground=levelStrToColour(level))
-        # Autoscroll to the bottomxx
+        # Autoscroll to the bottom
         self.text.yview(END)
         self.text.configure(state='disabled')
 

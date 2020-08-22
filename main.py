@@ -44,7 +44,6 @@ with keyboard.Events() as events:
                     else:
                         gui.nextProfile()
             if activated:
-                gui.optionManager.updateOptions()
                 gui.uptime.config(text=str(round(time.time()-timer, 2)))
                 gui.updateTextHandlers()
             else:

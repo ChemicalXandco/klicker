@@ -32,7 +32,7 @@ class Widget(SequentialBase):
     def run(self):
         self.asyncOptionManger.startOptions()
         while self.condition.evaluateOption():
-            self.asyncOptionManger.updateOptions()
+            pass
         self.asyncOptionManger.stopOptions()
 
     @property

@@ -76,6 +76,25 @@ class Thread(threading.Thread):
         return self.exception
 
 
+class LoopThread(Thread):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._stopped = False
+
+    def stop(self):
+        self._stopped = True
+
+    def run(self):
+        while True:
+            try:
+                if self._target:
+                    self._target(*self._args, **self._kwargs)
+            except Exception as e:
+                self.exception = e
+            if self._stopped:
+                break
+
+
 class OptionList(OptionBase):
     def __init__(self, parent, optionType, *args):
         super().__init__(parent, *args)
@@ -111,14 +130,17 @@ class OptionList(OptionBase):
         for o in self.wrappers:
             o.widget.resetState()
 
-    def runAsync(self, func):
-        threads = []
-        for o in self.wrappers:
-            threads.append(Thread(target=getattr(o.widget, func)))
+    def runParallel(self, threads, join=True):
         for thread in threads:
             thread.start()
+        if join:
+            self.joinThreads(threads, stop=False)
+
+    def joinThreads(self, threads, stop=True):
         exceptions = []
         for thread in threads:
+            if stop:
+                thread.stop()
             exceptions.append(thread.join())
         for exception in exceptions:
             if exception:
@@ -126,13 +148,18 @@ class OptionList(OptionBase):
 
     def startOptions(self):
         self.resetStates()
-        self.runAsync('start')
+        self.runParallel([ Thread(target=o.widget.start) for o in self.wrappers ])
+
+        self.threads = [ LoopThread(target=o.widget.update) for o in self.wrappers ]
+        self.runParallel(self.threads, join=False)
 
     def stopOptions(self):
-        self.runAsync('stop')
-
-    def updateOptions(self):
-        self.runAsync('update')
+        try:
+            if hasattr(self, 'threads'):
+                self.joinThreads(self.threads)
+                del self.threads
+        finally:
+            self.runParallel([ Thread(target=o.widget.stop) for o in self.wrappers ])
 
     def runOptions(self):
         for o in self.wrappers:
