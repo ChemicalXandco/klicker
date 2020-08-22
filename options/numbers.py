@@ -21,6 +21,8 @@ class NumberState:
         self._counter = 0
         self._startTime = time.time()
 
+        self._cache = None
+
     def counter(self):
         value = self._counter
         self._counter += 1
@@ -28,6 +30,11 @@ class NumberState:
 
     def timer(self):
         return time.time() - self._startTime
+
+    def cache(self, number):
+        if self._cache is None:
+            self._cache = number
+        return self._cache
 
     @property
     def states(self):
@@ -53,6 +60,9 @@ class Number(Entry):
             exec(state+'='+str(value))
         for name, number in self.numbers.get().items():
             exec(name+'='+str(number))
+
+        # setup functions
+        cache = self.state.cache
 
         # using eval allows math and random functions to be used, we are trusting the user not to input anything that would jeopardise the normal function of the software
         return eval(self.cache)

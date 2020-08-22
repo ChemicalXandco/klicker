@@ -48,10 +48,11 @@ Any option that takes a number as an input can have calculations and functions. 
 
 - Constants from the python `math` library such as `pi` (written exactly like that)
 - `counter`: a value that increases by 1 every time the number is parsed
-- `timer`: the time in seconds since the highest nonsequential option started
+- `timer`: the time in seconds since the state resetted
 
 The following functions can be used:
 - Standard python built-in functions such as `round()` and `abs()`
+- `cache()`: keep the same value for each time it is parsed, for example `cache(randint(1, 10))` will always be whatever is selected at random until the state resets, then another number will be chosen
 - Functions from the python `math` library such as `cos()` (written exactly like that)
 - Functions from the python `random` library such as `randint()` (written exactly like that)
 - `randfloat()` instead of the `random` library's `uniform()`
