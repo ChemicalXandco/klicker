@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from tkinter import *
 import threading
+import webbrowser
 
 import gui
 from options.utils import KeySelector, CheckList
@@ -139,6 +140,9 @@ class Recordings(LabelFrame):
         self.refreshButton = Button(self.recordingsOptionsFrame, text='Refresh', command=self.update)
         self.refreshButton.grid(row=0, column=1)
 
+        self.openFolderButton = Button(self.recordingsOptionsFrame, text='Open folder', command=lambda: webbrowser.open(os.path.realpath(os.path.join(os.getcwd(), 'recordings'))))
+        self.openFolderButton.grid(row=0, column=2)
+
         self.recordingsFrame = gui.ScrollFrame(self, (400, 100))
         self.recordingsFrame.pack(fill=BOTH, expand=YES)
         self.recordingsGrid = self.recordingsFrame.viewPort
@@ -223,7 +227,7 @@ class Recordings(LabelFrame):
             self.widgets.append(
                 (
                     Button(self.recordingsGrid, text='❌', command=lambda file=fileList[i]: self.confirmRemove(file)),
-                    Label(self.recordingsGrid, text=fileList[i], width=30, anchor=W),
+                    Label(self.recordingsGrid, text=fileList[i], width=28, anchor=W),
                     Label(self.recordingsGrid, text=str(stats.st_size)+'B'),
                     Label(self.recordingsGrid, text=datetime.fromtimestamp(stats.st_mtime).strftime("%d %B %Y %I:%M:%S"))
                 )
