@@ -60,6 +60,22 @@ class OptionWrapper(OptionBase):
             self.logger.warning('Could not move option.')
 
 
+class Thread(threading.Thread):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.exception = None
+
+    def run(self):
+        try:
+            super().run()
+        except Exception as e:
+            self.exception = e
+
+    def join(self):
+        super().join()
+        return self.exception
+
+
 class OptionList(OptionBase):
     def __init__(self, parent, optionType, *args):
         super().__init__(parent, *args)
@@ -98,11 +114,15 @@ class OptionList(OptionBase):
     def runAsync(self, func):
         threads = []
         for o in self.wrappers:
-            threads.append(threading.Thread(target=getattr(o.widget, func)))
+            threads.append(Thread(target=getattr(o.widget, func)))
         for thread in threads:
             thread.start()
+        exceptions = []
         for thread in threads:
-            thread.join()
+            exceptions.append(thread.join())
+        for exception in exceptions:
+            if exception:
+                raise exception
 
     def startOptions(self):
         self.resetStates()
