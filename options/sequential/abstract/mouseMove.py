@@ -23,8 +23,6 @@ class MouseMoveBase(SequentialBase):
     def registerSettings(self):
         for n in [self.x, self.y]:
             n.registerSettings()
-        self.xCache = int(self.x.parse())
-        self.yCache = int(self.y.parse())
 
     def resetState(self):
         for number in [self.x, self.y]:
@@ -34,7 +32,7 @@ class MouseMoveBase(SequentialBase):
         raise NotImplementedError
 
     def run(self):
-        self.move(self.xCache, self.yCache)
+        self.move(self.x.parse(), self.y.parse())
 
     @property
     def settings(self):

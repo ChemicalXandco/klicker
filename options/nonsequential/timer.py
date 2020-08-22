@@ -30,7 +30,6 @@ class Widget(NonsequentialBase):
 
     def registerSettings(self):
         self.seconds.registerSettings()
-        self.interval = self.seconds.parse()
         self.optionManger.registerSettings()
 
     def resetState(self):
@@ -44,7 +43,7 @@ class Widget(NonsequentialBase):
     def update(self):
         if time.time() >= self.timer + self.addTime:
             self.optionManger.runOptions()
-            self.addTime += self.interval
+            self.addTime += self.seconds.parse()
 
     @property
     def settings(self):

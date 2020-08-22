@@ -20,13 +20,12 @@ class Widget(SequentialBase):
 
     def registerSettings(self):
         self.clicks.registerSettings()
-        self.clicksCache = self.clicks.parse()
 
     def resetState(self):
         self.clicks.state.reset()
 
     def run(self):
-        pyautogui.scroll(self.clicksCache)
+        pyautogui.scroll(self.clicks.parse())
 
     @property
     def settings(self):

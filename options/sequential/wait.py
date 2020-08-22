@@ -20,13 +20,12 @@ class Widget(SequentialBase):
 
     def registerSettings(self):
         self.period.registerSettings()
-        self.periodCache = self.period.parse()
 
     def resetState(self):
         self.period.state.reset()
 
     def run(self):
-        sleep(self.periodCache)
+        sleep(self.period.parse())
 
     @property
     def settings(self):
