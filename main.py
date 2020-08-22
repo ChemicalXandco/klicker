@@ -46,6 +46,7 @@ with keyboard.Events() as events:
             if activated:
                 gui.optionManager.updateOptions()
                 gui.uptime.config(text=str(round(time.time()-timer, 2)))
+                gui.updateTextHandlers()
             else:
                 gui.checkToDisableOverlay()
             root.update_idletasks()

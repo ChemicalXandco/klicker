@@ -155,12 +155,15 @@ class TextHandler(logging.Handler):
         self.text.yview(END)
         self.text.configure(state='disabled')
 
+    def clearBacklog(self):
+        for i in range(len(self.backlog)):
+            self.append(self.backlog[0])
+            del self.backlog[0]
+
     def emit(self, record):
         msg = self.format(record)
         if threading.current_thread() is threading.main_thread():
-            for i in range(len(self.backlog)):
-                self.append(self.backlog[0])
-                del self.backlog[0]
+            self.clearBacklog()
             self.append(msg)
         else:
             self.backlog.append(msg)

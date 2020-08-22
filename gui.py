@@ -362,6 +362,10 @@ class GUI:
         except AttributeError:
             pass
 
+    def updateTextHandlers(self):
+        for textHandler in [ h for h in self.logger.handlers if isinstance(h, TextHandler) ]:
+            textHandler.clearBacklog()
+
 
 class ScrollFrame(Frame):
     # from https://gist.github.com/mp035/9f2027c3ef9172264532fcd6262f3b01
