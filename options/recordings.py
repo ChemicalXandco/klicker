@@ -20,7 +20,10 @@ class RecordingsFile:
         self.startTime = None
 
     def listItems(self):
-        return os.listdir('recordings')
+        try:
+            return os.listdir('recordings')
+        except FileNotFoundError:
+            return []
 
     def write(self, string):
         if 'Store Timings' in self.allowed:
