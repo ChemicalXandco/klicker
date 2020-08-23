@@ -29,6 +29,12 @@ if sys.platform == 'win32':
     bdist_msi_options = {'data': msi_data}
 
 opts = {
+    # include dynamically loaded options
+    'packages': [
+        'options.boolean',
+        'options.nonsequential',
+        'options.sequential',
+    ],
     'include_files': [
         'config.ini', 'LICENSE', 'README.MD', 'icon.ico',
         (os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tcl86t.dll'), os.path.join('lib', 'tcl86t.dll')),
