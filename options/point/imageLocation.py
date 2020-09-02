@@ -1,32 +1,28 @@
 from tkinter import *
-from options.utils import FileSelector
 import pyautogui
 
-from options.sequential import SequentialBase
+from options.point import PointBase
+from options.utils import FileSelector
 
 
-class Widget(SequentialBase):
+class Widget(PointBase):
     def __init__(self, *args):
         super().__init__(*args)
 
-        self.labelOne = Label(self.parent, text='Locate image')
+        self.labelOne = Label(self.parent, text='Locate')
         self.labelOne.grid(row=0, column=self.spacing)
 
         self.img = FileSelector(self.parent)
         self.img.grid(row=1, column=self.spacing)
 
-        self.labelTwo = Label(self.parent, text='on screen and move cursor')
-        self.labelTwo.grid(row=2, column=self.spacing)
-
     def registerSettings(self):
         self.imgPathCache = self.img.path.get()
 
-    def run(self):
-        imgPath = self.imgPathCache
-        location = pyautogui.locateCenterOnScreen(imgPath)
+    def get(self):
+        location = pyautogui.locateCenterOnScreen(self.imgPathCache)
         if location != None:
-            self.logger.debug('Found {} at ({}, {})'.format(imgPath, location[0], location[1]))
-            pyautogui.moveTo(location[0], location[1])
+            self.logger.debug('Found {} at ({}, {})'.format(self.imgPathCache, location[0], location[1]))
+            return location
         else:
             raise RuntimeError('Could not locate the given image on the screen')
 
