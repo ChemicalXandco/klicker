@@ -292,6 +292,7 @@ class GUI:
             self.logger.warning('Could not change profile because there are no profiles to change to.')
             return
         self.profile.set(new)
+        self.handleSetProfile()
 
         self.timeSinceOverlayOpened = time.time()
         if self.overlayGeneral.get() == 1:
