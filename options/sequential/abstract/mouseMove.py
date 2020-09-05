@@ -1,47 +1,34 @@
 from tkinter import *
 
 from options.sequential import SequentialBase
-from options.numbers import Number
+from options.optionSelectors import SingleOption
+import options.point
 
 
 class MouseMoveBase(SequentialBase):
     def __init__(self, *args):
         super().__init__(*args)
 
-        self.labelOne = Label(self.parent, text='x:')
-        self.labelOne.grid(row=0, column=self.spacing, sticky=E)
-
-        self.x = Number(self.parent, self.numbers)
-        self.x.grid(row=0, column=self.spacing+1)
-
-        self.labelTwo = Label(self.parent, text='y:')
-        self.labelTwo.grid(row=1, column=self.spacing, sticky=E)
-
-        self.y = Number(self.parent, self.numbers)
-        self.y.grid(row=1, column=self.spacing+1)
+        self.point = SingleOption(self.parent, options.point, *self.args, row=0, column=0)
 
     def registerSettings(self):
-        for n in [self.x, self.y]:
-            n.registerSettings()
+        self.point.registerSettings()
 
     def resetState(self):
-        for number in [self.x, self.y]:
-            number.state.reset()
+        self.point.resetState()
 
     def move(x, y):
         raise NotImplementedError
 
     def run(self):
-        self.move(self.x.parse(), self.y.parse())
+        self.move(*self.point.getOption())
 
     @property
     def settings(self):
         return {
-            'x': self.x.get(),
-            'y': self.y.get(),
+            'point': self.point.settings,
         }
 
     @settings.setter
     def settings(self, settings):
-        self.x.set(settings['x'])
-        self.y.set(settings['y'])
+        self.point.settings = settings['settings']

@@ -228,7 +228,7 @@ class SingleOption(OptionBase):
         return self.option.widget.evaluate()
 
     def getOption(self):
-        return self.option.widget.evaluate()
+        return self.option.widget.get()
 
     @property
     def settings(self):
