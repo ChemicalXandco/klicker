@@ -65,7 +65,7 @@ class Widget(BooleanBase):
 
     @settings.setter
     def settings(self, settings):
-        self.point.settings = settings['settings']
+        self.point.settings = settings['point']
         self.r.set(settings['r'])
         self.g.set(settings['g'])
         self.b.set(settings['b'])

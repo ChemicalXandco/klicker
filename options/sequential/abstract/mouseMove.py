@@ -31,4 +31,4 @@ class MouseMoveBase(SequentialBase):
 
     @settings.setter
     def settings(self, settings):
-        self.point.settings = settings['settings']
+        self.point.settings = settings['point']
