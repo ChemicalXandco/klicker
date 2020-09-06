@@ -44,7 +44,7 @@ class Widget(BooleanBase):
     def evaluate(self):
         try:
             return pyautogui.pixelMatchesColor(
-                *self.point.getOption()
+                *self.point.getOption(),
                 (
                     self.r.parse(),
                     self.g.parse(),
