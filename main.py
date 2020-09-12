@@ -50,17 +50,16 @@ with keyboard.Events() as events:
                 gui.checkToDisableOverlay()
             root.update_idletasks()
             root.update()
-        except DeactivateRequest as e:
-            gui.logger.system(e)
-            gui.timeSinceOverlayOpened = time.time()
-            gui.optionManager.stopOptions()
-            gui.status.config(text='Inactive', fg='#ff0000')
-            activated = False
-            gui.uptime.config(fg='#ff0000')
+        except TclError:
+            sys.exit()
         except Exception as e:
-            try:
+            if isinstance(e, DeactivateRequest):
+                gui.logger.system(e)
+            else:
                 gui.logger.error(e)
-                root.update_idletasks()
-                root.update()
-            except TclError:
-                sys.exit()
+            if activated:
+                gui.timeSinceOverlayOpened = time.time()
+                gui.optionManager.stopOptions()
+                gui.status.config(text='Inactive', fg='#ff0000')
+                activated = False
+                gui.uptime.config(fg='#ff0000')

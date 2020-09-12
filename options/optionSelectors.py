@@ -61,19 +61,15 @@ class OptionWrapper(OptionBase):
 
 
 class Thread(threading.Thread):
-    def __init__(self, **kwargs):
+    def __init__(self, logger, **kwargs):
         super().__init__(**kwargs)
-        self.exception = None
+        self.logger = logger
 
     def run(self):
         try:
             super().run()
         except Exception as e:
-            self.exception = e
-
-    def join(self):
-        super().join()
-        return self.exception
+            self.logger.error(e)
 
 
 class LoopThread(Thread):
@@ -87,10 +83,12 @@ class LoopThread(Thread):
     def run(self):
         while True:
             try:
+                # code here is needed because calling threading.Thread.run() would del self._target making it only work once
                 if self._target:
                     self._target(*self._args, **self._kwargs)
             except Exception as e:
-                self.exception = e
+                self.logger.error(e)
+                break
             if self._stopped:
                 break
 
@@ -148,9 +146,9 @@ class OptionList(OptionBase):
 
     def startOptions(self):
         self.resetStates()
-        self.runParallel([ Thread(target=o.widget.start) for o in self.wrappers ])
+        self.runParallel([ Thread(logger=self.logger, target=o.widget.start) for o in self.wrappers ])
 
-        self.threads = [ LoopThread(target=o.widget.update) for o in self.wrappers ]
+        self.threads = [ LoopThread(logger=self.logger, target=o.widget.update) for o in self.wrappers ]
         self.runParallel(self.threads, join=False)
 
     def stopOptions(self):
@@ -159,7 +157,7 @@ class OptionList(OptionBase):
                 self.joinThreads(self.threads)
                 del self.threads
         finally:
-            self.runParallel([ Thread(target=o.widget.stop) for o in self.wrappers ])
+            self.runParallel([ Thread(logger=self.logger, target=o.widget.stop) for o in self.wrappers ])
 
     def runOptions(self):
         for o in self.wrappers:
