@@ -32,6 +32,13 @@ class KeySelector(Button):
 
         self.setText()
 
+    @property
+    def name(self):
+        try:
+            return self.key.name
+        except AttributeError:
+            return self.key.char
+
     def setText(self, text=''):
         if not text:
             text = 'Click to set a key'

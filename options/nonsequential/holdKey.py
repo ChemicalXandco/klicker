@@ -1,7 +1,5 @@
 from tkinter import *
-
-from pynput.keyboard import Controller
-keyboard = Controller()
+import keyboard
 
 from options.nonsequential import NonsequentialBase
 from options.utils import KeySelector
@@ -18,7 +16,7 @@ class Widget(NonsequentialBase):
         self.key.grid(row=0, column=self.spacing+1)
 
     def registerSettings(self):
-        self.keyCache = self.key.key
+        self.keyCache = self.key.name
 
     def start(self):
         keyboard.press(self.keyCache)

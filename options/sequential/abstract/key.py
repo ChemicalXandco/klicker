@@ -12,7 +12,7 @@ class KeyBase(SequentialBase):
         self.key.grid(row=0, column=self.spacing)
 
     def registerSettings(self):
-        self.keyCache = self.key.key
+        self.keyCache = self.key.name
 
     @property
     def settings(self):

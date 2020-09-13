@@ -1,5 +1,4 @@
-from pynput.keyboard import Controller
-keyboard = Controller()
+import keyboard
 
 from options.sequential.abstract.key import KeyBase
 
