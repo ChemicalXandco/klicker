@@ -34,6 +34,7 @@ with keyboard.Events() as events:
                         gui.logger.system('Hotkey pressed - activated')
                         timer = time.time()
                         # start options
+                        gui.numbers.registerSettings()
                         gui.optionManager.registerSettings()
                         gui.optionManager.startOptions()
                 if event.key == gui.profileHotkey.key:

@@ -126,7 +126,13 @@ class Numbers(LabelFrame):
         self.childWindow.destroy()
         self.update()
 
-    def get(self):
+    def registerSettings(self):
+        for var, widgets in zip(self.assigned.keys(), self.widgets):
+            self.assigned[var] = float(widgets[2].get())
+
+    def get(self, registerSettings=False):
+        if registerSettings:
+            self.registerSettings()
         return self.assigned
 
     def set(self, assigned):

@@ -203,7 +203,7 @@ class GUI:
         if not 'settings' in profile:
             profile['settings'] = {}
         profile['settings']['overlay'] = self.overlay.get()
-        profile['settings']['numbers'] = self.numbers.get()
+        profile['settings']['numbers'] = self.numbers.get(registerSettings=True)
         profile['settings']['level'] = self.level.get()
         return profile
 
