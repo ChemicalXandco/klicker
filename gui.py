@@ -10,7 +10,7 @@ from options.utils import KeySelector, OverlayWindow, TextHandler, CheckList
 from options.numbers import Numbers
 from options.recordings import Recordings
 from options.optionSelectors import OptionList
-import profile_manager as profileManager
+import profileManager
 
 systemLogLevel = 25
 logging.addLevelName(systemLogLevel, 'SYSTEM')
@@ -93,6 +93,9 @@ class GUI:
 
         self.delProfile = Button(self.profiles, text='Export', command=self.handleExportProfile)
         self.delProfile.grid(row=1, column=6)
+
+        self.appendProfile = Button(self.profiles, text='Append', command=self.handleAppendProfile)
+        self.appendProfile.grid(row=1, column=7)
 
         self.refreshButton = Button(self.config, text='Refresh Configuration', command=self.readSetting)
         self.refreshButton.grid(row=3, column=0)
@@ -182,10 +185,7 @@ class GUI:
         return profiles
 
     def handleSaveProfile(self):
-        self.newProfileName = Entry(self.master)
-        self.newProfileName.delete(0, END)
-        self.newProfileName.insert(0, self.profile.get())
-        self.handleCreateProfile()
+        self.handleCreateProfile(profileName=self.profile.get())
 
     def handleAddProfile(self):
         self.childWindow = Toplevel(self.master)
@@ -207,11 +207,14 @@ class GUI:
         profile['settings']['level'] = self.level.get()
         return profile
 
-    def handleCreateProfile(self):
-        profile = self.getProfile()
-        profileManager.write(self.newProfileName.get(), profile)
+    def handleCreateProfile(self, profileName=None, profile=None):
+        if not profileName:
+            profileName = self.newProfileName.get()
+        if not profile:
+            profile = self.getProfile()
+        profileManager.write(profileName, profile)
         self.refreshProfiles()
-        self.profile.set(self.newProfileName.get())
+        self.profile.set(profileName)
         try:
             self.childWindow.destroy()
         except AttributeError:
@@ -274,6 +277,32 @@ class GUI:
         )
         json.dump(self.getProfile(), f)
         f.close()
+
+    def appendSelectedProfile(self):
+        profile = self.getProfile()
+        otherProfile = profileManager.read()[self.profileToAppend.get()]
+        checked = self.appendCheckList.get()
+        if 'options' in checked:
+            profile['options'] += otherProfile['options']
+        if 'numbers' in checked:
+            for i, n in otherProfile['settings']['numbers'].items():
+                if i in profile['settings']['numbers'].keys():
+                    self.logger.warning('Number {} being overriden with {}'.format(i, n))
+                profile['settings']['numbers'][i] = n
+        self.handleSetProfile(profile=profile)
+
+    def handleAppendProfile(self):
+        self.childWindow = Toplevel(self.master)
+        self.childWindow.title('Append Profile')
+        self.setWindowIcon(self.childWindow)
+        self.childWindow.geometry('300x300')
+        self.profileToAppend = StringVar(self.master)
+        setProfile = OptionMenu(self.childWindow, self.profileToAppend, *self.profileList())
+        setProfile.pack(fill=X, expand=YES)
+        self.appendCheckList = CheckList(self.childWindow, ['options', 'numbers'])
+        self.appendCheckList.pack(fill=X, expand=YES)
+        createButton = Button(self.childWindow, text='Append', command=self.appendSelectedProfile)
+        createButton.pack(fill=X, expand=YES)
 
     def nextProfile(self):
         profiles = self.profilesSelect.get()
